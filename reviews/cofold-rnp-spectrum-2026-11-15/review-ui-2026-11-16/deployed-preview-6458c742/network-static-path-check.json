@@ -1,0 +1,11 @@
+{
+  "status": "pass",
+  "checkedAt": "2026-11-17T00:12:40.847151+00:00",
+  "scope": "Every captured page request is read-only and targets a deployed-manifest static file or the reviewer page. Query values and request bodies were never recorded. This covers only the observed review actions, not arbitrary use or browser background services.",
+  "requests": 22,
+  "nonReadOnlyRequests": 0,
+  "unexpectedOrigins": 0,
+  "unexpectedStaticPaths": [],
+  "unexpectedQueryKeys": 0,
+  "newNeuralForwards": 0
+}

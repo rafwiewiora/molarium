@@ -76,6 +76,14 @@ files retain empty decisions and the temporary profile is removed on close.
 
 **UI-PROVENANCE-01 — retain the upstream reconstruction check after local UI edits.** CI correctly rejected the old distributed reviewer hash. The receipt now records the new distributed bytes and an exact reversible presentation patch, while preserving the original Foldarium revision and upstream hash. The existing integrity test reconstructs the original upstream file byte for byte; its assertions were kept intact. The Local Lab manifest was regenerated. This provenance-only follow-up was prepared in an isolated checkout so the active UI sweep retained its frozen sources; the executable reviewer bytes are identical in both checkouts.
 
+## Actual deployed preview check
+
+The [deployed preview result](deployed-preview-6458c742/result.json) passes the same saved-pose workflow for the first frozen system: six predictions, the separate reference, every grid page, exact notes/preferences after reopening, full and shortlist JSON, PDB downloads, stable reference labels and the explicitly synthetic earlier-failure state. The [actual HTML/module comparison](deployed-preview-6458c742/http-source-check.json) matches all six source files after normalizing only release-version queries.
+
+During these observed actions, [22 page requests](deployed-preview-6458c742/network-check.json) were read-only and all targeted the reviewer page or [known static assets](deployed-preview-6458c742/network-static-path-check.json). No upload, unrelated origin or unexpected query key was observed. Query values and request bodies were not recorded. This is a test of one saved-input workflow, not a general privacy or legal guarantee. The isolated browser profile was removed on close.
+
+The [exact consumed adapter](deployed-preview-6458c742/run.mjs) and [reversible source certificate](deployed-preview-6458c742/source-adaptations.json) retain only import/root/URL substitutions and observational network instrumentation with additional assertions. Reversing those changes restores the original browser harness exactly; the shared helper and existing UI actions/assertions were not edited. The adapter records local task paths and this specific preview URL; it is preserved execution evidence rather than a portable application entry point.
+
 ## Reproduce
 
 The existing [exporter](../../../folding/comparison/export_stock_review.py)
