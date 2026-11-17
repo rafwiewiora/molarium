@@ -19,8 +19,21 @@ preflight was reused; the other 47 cases were each attempted once.
 A [saved-receipt check](all48-six-sample-verification.json) independently verifies
 input/source hashes and exact pose-page coverage against the original exports.
 No neural prediction, provider request, scientific preference or
-experimental-reference inference was performed. **This six-sample result does
-not establish ten-sample UI coverage; that check follows the completed run.**
+experimental-reference inference was performed. This six-sample result remains
+preserved separately from the completed ten-sample sweep below.
+
+The final **ten-sample workflow also passed all 48 systems**: 480 original
+predictions and 48 separate references across 288 grid pages, exercising both
+prediction-only and reference-inclusive libraries. Every case passed exact
+note/preference persistence after reopening and library/shortlist/PDB exports.
+The [actual full-cohort receipt](all48-ten-sample/receipt.json),
+[all saved-input checks](all48-ten-sample-verification.json), and
+[terminal controller record](all48-ten-sample-completion.json) retain the frozen
+sources, every case result/log and selected screenshots. The first completed
+preflight was reused and the other 47 cases were attempted once. The independent
+verifier reproduces against the final ten-sample exports and runs in CI without
+new inference or another browser sweep. The reviewer starts with empty human
+decisions; automated sentinel preferences are UI tests, not scientific selections.
 
 ## Findings and fixes
 
@@ -158,5 +171,19 @@ separate reference, all six grid pages across the two file variants, exact
 notes/preferences, library/shortlist/PDB exports and the explicit synthetic
 earlier-failure regression. The [frozen full-cohort plan](ten-sample-first-case/frozen-cohort-plan.json)
 then reuses that completed preflight and runs the remaining 47 systems once.
-The full ten-sample sweep is running; its all-case result is not yet claimed.
-The six-sample all-48 result above remains separate historical evidence.
+That full ten-sample sweep completed with all 48 systems passing; its full
+receipt and saved-input verification are linked above. The six-sample all-48
+result remains separate historical evidence.
+
+To verify the final saved receipts against the published ten-sample inputs:
+
+```sh
+python reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/verify-saved-cohort.py \
+  --cohort reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/all48-ten-sample \
+  --exports reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries \
+  --output /tmp/rnp-final48-saved-ui-verification.json
+```
+
+CI additionally regenerates all 96 exports from the original final prediction
+archive before running this saved-receipt check. No neural inference or browser
+sweep is repeated by the verifier.

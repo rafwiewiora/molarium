@@ -1,5 +1,14 @@
 # NVIDIA browser capability diagnostic: operational history
 
+Current status (17 November): the [capability-only L4 probe](observed-20285/README.md)
+completed successfully with physical NVIDIA WebGPU and integer readback 7.
+The [subsequent numerical attempts](numerical-2026-11-17/README.md) preserve a
+pre-payload Spot loss and a demonstrated saved-fixture mount failure. Canonical
+read-only fixture access is now verified in the actual container before
+submission; distinct requested-FP32 and strict-FP32 controls remain queued.
+No NVIDIA numerical-agreement result is claimed yet. The dated failure history
+below is preserved rather than relabelled as successful science.
+
 The numerical controls stopped before a measurement: job 19246 timed out
 starting a Chrome page; job 19250 reported no compatible WebGPU adapter and
 measured zero trunk seams. These are not measured numerical disagreements.

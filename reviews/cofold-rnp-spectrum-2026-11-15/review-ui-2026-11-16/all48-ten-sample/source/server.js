@@ -1,0 +1,152 @@
+import { extname, join } from 'node:path';
+import { sourceWebFiles } from './scripts/web-source-files.mjs';
+import { browserModuleClosure } from './scripts/web-bundle-dependencies.mjs';
+import { resolvePublicFile } from './scripts/public-file-policy.mjs';
+import { relayHostedCofold } from './server/hosted-cofold.mjs';
+
+const root = import.meta.dir;
+const portFlag = Bun.argv.findIndex((argument) => argument === '--port');
+const inlinePort = Bun.argv.find((argument) => argument.startsWith('--port='));
+const requestedPort = portFlag >= 0 ? Bun.argv[portFlag + 1] : inlinePort?.slice('--port='.length);
+const port = Number(requestedPort || Bun.env.PORT || 3000);
+const localOnly = Bun.argv.includes('--local-only') || Bun.env.MOLARIUM_LOCAL_ONLY === '1';
+const testApi = Bun.argv.includes('--test-api') || Bun.env.MOLARIUM_TEST_API === '1';
+const hostFlag = Bun.argv.indexOf('--host');
+const hostname = hostFlag >= 0 ? Bun.argv[hostFlag+1] : '127.0.0.1';
+if (!hostname || hostname.startsWith('--')) throw new Error('--host requires an explicit hostname');
+const loopbackNames = new Set(['localhost','127.0.0.1','::1','[::1]']);
+if (localOnly && !loopbackNames.has(hostname))
+  throw new Error('Local Lab must bind a loopback address');
+const runtimeFiles = await sourceWebFiles(root);
+const localManifest = await Bun.file(join(root,'local-lab-manifest.json')).json();
+const assetsManifest = await Bun.file(join(root,'r2-assets-manifest.json')).json();
+const diagnosticFiles = await browserModuleClosure(root,[
+  'benchmarks/simulation/runner.html','benchmarks/simulation/runner-page.mjs',
+  'scripts/sos1-calculation-popup.html','scripts/sos1-calculation-popup.mjs',
+]);
+const publicPaths = new Set([
+  ...runtimeFiles, ...runtimeFiles.map(path=>`dist/${path}`),
+  ...localManifest.files.map(file=>file.path), ...assetsManifest.files.map(file=>file.source),
+  ...diagnosticFiles, 'local-lab-manifest.json','dist/local-lab-manifest.json',
+  'r2-assets-manifest.json','dist/runtime-config.js',
+  ...(testApi ? ['openff/ubiquitin-1ubq.pdb','mlip/models/ani2x-goldens.json'] : []),
+]);
+
+const LOCAL_LAB_POLICY = [
+  "default-src 'self'",
+  "base-uri 'none'",
+  "connect-src 'self'",
+  "font-src 'self'",
+  "form-action 'none'",
+  "frame-ancestors 'none'",
+  "frame-src 'none'",
+  "img-src 'self' data: blob:",
+  "manifest-src 'self'",
+  "media-src 'self' blob:",
+  "object-src 'none'",
+  // RDKit's Emscripten/Embind glue constructs small JavaScript functions at
+  // runtime. This does not relax the independent egress directives below.
+  "script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval'",
+  "style-src 'self' 'unsafe-inline'",
+  "worker-src 'self' blob:",
+].join('; ');
+
+function responseHeaders(contentType, cacheControl = 'no-cache') {
+  const headers = {
+    'Content-Type': contentType,
+    'Cache-Control': cacheControl,
+    'Cross-Origin-Embedder-Policy': 'require-corp',
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Resource-Policy': 'same-origin',
+    'Origin-Agent-Cluster': '?1',
+    'Permissions-Policy': 'camera=(), geolocation=(), microphone=(), payment=(), serial=(), usb=()',
+    'Referrer-Policy': 'no-referrer',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Molarium-Network-Policy': localOnly ? 'local-only-v1' : 'connected-v1',
+  };
+  if (localOnly) headers['Content-Security-Policy'] = LOCAL_LAB_POLICY;
+  return headers;
+}
+
+const CONTENT_TYPES = Object.freeze({
+  '.css': 'text/css; charset=utf-8',
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.map': 'application/json; charset=utf-8',
+  '.md': 'text/markdown; charset=utf-8',
+  '.mp4': 'video/mp4',
+  '.pdf': 'application/pdf',
+  '.gz': 'application/gzip',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
+  '.txt': 'text/plain; charset=utf-8',
+  '.wasm': 'application/wasm',
+  '.wgsl': 'text/plain; charset=utf-8',
+});
+
+const server = Bun.serve({
+  port,
+  hostname,
+  async fetch(request) {
+    const url = new URL(request.url);
+    if (loopbackNames.has(hostname) && !loopbackNames.has(url.hostname))
+      return new Response('Invalid Host', {status:400,headers:responseHeaders('text/plain; charset=utf-8')});
+    if(url.pathname.startsWith('/api/cofold/nvidia/')){
+      const response=await relayHostedCofold(request,{localOnly});
+      for(const [key,value]of Object.entries(responseHeaders('application/json; charset=utf-8','no-store')))
+        response.headers.set(key,value);
+      return response;
+    }
+    if (!['GET','HEAD'].includes(request.method))
+      return new Response('Method not allowed', {status:405,headers:{
+        ...responseHeaders('text/plain; charset=utf-8'),Allow:'GET, HEAD'}});
+    if (['/reproductions','/reproductions/'].includes(url.pathname))
+      return Response.redirect(`${url.origin}/reproductions.html`, 302);
+    if (['/sos1','/sos1/','/sos1-hit-to-bay293/movies'].includes(url.pathname))
+      return Response.redirect(`${url.origin}/sos1.html`, 302);
+    if (url.pathname === '/sos1-hit-to-bay293/movie')
+      return Response.redirect(`${url.origin}/sos1#movie`, 302);
+    if (url.pathname === '/design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4')
+      return Response.redirect(`${url.origin}/sos1`, 302);
+    if (['/sos1-hit-to-bay293/replay','/sos1-hit-to-bay293/replay/',
+      '/sos1-hit-to-bay293/review','/sos1-hit-to-bay293/review/'].includes(url.pathname))
+      return Response.redirect(`${url.origin}/?story=sos1-hit-to-bay293-review`, 302);
+    if (url.pathname === '/sos1-hit-to-bay293' || url.pathname === '/sos1-hit-to-bay293/')
+      return Response.redirect(`${url.origin}/?story=sos1-hit-to-bay293`, 302);
+    let pathname;
+    try { pathname = decodeURIComponent(url.pathname); }
+    catch { return new Response('Bad request', { status:400,
+      headers:responseHeaders('text/plain; charset=utf-8') }); }
+    if (pathname === '/runtime-config.js') {
+      const config = {
+        mode: localOnly ? 'local-lab' : 'connected',
+        localOnly,
+        policy: localOnly ? 'local-only-v1' : 'connected-v1',
+        allowedNetworkOrigins: localOnly ? [url.origin] : ['user-approved external services'],
+        buildManifest: '/local-lab-manifest.json',
+        assetBase: null,
+        testApi,
+      };
+      return new Response(`globalThis.MOLARIUM_RUNTIME_CONFIG = Object.freeze(${JSON.stringify(config)});\n`, {
+        headers: responseHeaders('text/javascript; charset=utf-8', 'no-store'),
+      });
+    }
+    const resolved = await resolvePublicFile(root, url.pathname, publicPaths);
+    if (!resolved) return new Response('Not found', {status:404,
+      headers:responseHeaders('text/plain; charset=utf-8')});
+    const {absolute,relative} = resolved;
+
+    const file = Bun.file(absolute);
+    if (!(await file.exists())) return new Response('Not found', { status:404,
+      headers:responseHeaders('text/plain; charset=utf-8') });
+    return new Response(file, {
+      headers: responseHeaders(relative === 'LICENSE'
+        ? 'text/plain; charset=utf-8'
+        : CONTENT_TYPES[extname(absolute).toLowerCase()] || 'application/octet-stream'),
+    });
+  },
+});
+
+console.log(`Molarium ${localOnly ? 'Local Lab' : 'connected mode'} ready at ${server.url}`);

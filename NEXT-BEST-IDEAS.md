@@ -366,6 +366,7 @@ also require Gate J.
 | RDKit seed pool | Deterministic worker seeds, merged pruning, browser integration | Frozen serial-versus-pool conformer equivalence and quality/recall benchmark |
 | Conformer Arena | Shared seeds, one common Sage/OBC2 score, explicit vacuum ANI score, STORMM/OpenMM same-coordinate parity, symmetry-aware clustering, batch-use assertions | Checked-in end-to-end CPU baselines and external conformer-quality benchmark |
 | OpenFold 2 | Native graph parity, WebGPU/WASM parity, browser integration | Standard prediction-quality benchmark against experimental structures |
+| LocalFold cofolding | 480 pristine-page predictions on 48 native-positive systems, exact chemistry/pose replay, complete review exports; trained target-feature controls and 32-boundary trunk measurements with precision-source audit | Complete-trunk absolute gates, matched denoiser/confidence/random tensors and int5 controls, actual NVIDIA numerical results, broader device coverage and prospective pose selection |
 
 The immediate priorities are the remaining [review and reliability tasks](./TODO.md),
 matched native ensemble benchmarks for the production STORMM worker, three-vendor Gate I coverage,

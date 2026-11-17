@@ -190,6 +190,8 @@ jobs:
               assert path.read_bytes() == (expected / path.name).read_bytes(), path.name
           PYREVIEW
           node folding/comparison/check_stock_review.mjs --review reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480 --exports reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries --plan reviews/cofold-rnp-spectrum-2026-11-15/frozen-stock-plan.json --repository . --components reviews/cofold-rnp-spectrum-2026-11-15/stock-input-components/components --attribution reviews/cofold-rnp-spectrum-2026-11-15/dataset-attribution.json
+      - name: Verify all 48 saved ten-sample browser workflows against the final regenerated exports
+        run: /tmp/cofold-analysis/bin/python reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/verify-saved-cohort.py --cohort reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/all48-ten-sample --exports /tmp/rnp-final48-review --output /tmp/rnp-final48-saved-ui-verification.json
 
   browser:
     name: Browser integration

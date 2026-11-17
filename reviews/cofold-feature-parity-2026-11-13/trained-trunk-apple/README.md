@@ -30,11 +30,15 @@ Production folding kernels and default folding precision are unchanged.
 | Original FP32 requests, default pair arithmetic | 8 / 32 | 15 / 32 | 2.12e-3 | 59.3984 |
 | Two-pass variance, default pair arithmetic | 8 / 32 | 12 / 32 | 2.38e-3 | 69.0625 |
 | Strict FP32, observed shader gate | 14 / 32 | 32 / 32 | 3.49e-6 | 0.1875 |
+| Strict FP32 and two-pass variance | 14 / 32 | 32 / 32 | 4.05e-06 | 0.203125 |
 
 All outputs are finite. The [exact comparison](precision-comparison.json) links
 the [original](analysis.json), [two-pass](two-pass/analysis.json), and
 [strict-FP32](strict-fp32/analysis.json) analyses. The two-pass control did not
-resolve the discrepancy and is not promoted as a fix.
+resolve the discrepancy and is not promoted as a fix. The
+[strict two-pass control](strict-two-pass/analysis.json) completes the 2×2
+precision/variance experiment and also passes 14/32 combined gates. Neither
+variance mode resolves the retained absolute failures.
 
 | Cycle 0 boundary | Original relative RMS | Strict relative RMS | Original max absolute error | Strict max absolute error |
 |---|---:|---:|---:|---:|
@@ -50,6 +54,26 @@ maximum absolute error ≤1e-3, and finite values, as declared in the original
 [audit plan](../trunk-audit-plan.json). No tolerance was relaxed. Feature values
 are not energies or ångströms. This does not establish the cause of complete
 pose disagreement, quantized-model agreement or performance equivalence.
+
+## Scale of the remaining residuals
+
+A [data-only residual diagnostic](residual-scale/analysis.json) re-reads the
+original strict-FP32 arrays and retains the original acceptance outcome. At the
+largest single-feature absolute difference in cycle 3, the native value is
+124046.6796875 and the error is 0.1875: 24 float32 steps of 0.0078125. The original
+0.001 absolute gate is smaller than one such step at that magnitude. In the
+cycle-0 pair after MSA, the worst difference is 0.001953125 at native value
+2465.29931640625, or eight float32 steps. These are descriptions of specific
+entries, not replacement tolerances. The full report includes every boundary,
+absolute-failure counts, representable-value spacing and complete ULP-distance
+quantiles; near-zero and sign-crossing discrepancies are retained. Small relative
+RMS or a modest ULP distance at one large-valued entry does not qualify the
+complete output or establish binding-pose accuracy.
+
+`folding/comparison/analyze_trunk_residuals.py` recreates this diagnostic from
+`ORIGINAL/fixture` and `CONTROLS/strict-fp32/measured` using `--fixture`,
+`--measured` and a new `--output`. It performs no neural computation and does
+not change the independent checker's exit criteria.
 
 ## Exact arrays and offline replay
 
@@ -68,7 +92,12 @@ The [second archive receipt](control-archive-receipt.json) and
 1,208,862,374-byte precision-control archive, SHA-256
 `ec5b302d10e0ac036858bff174c6a6f681cb1e5c9b60ebdda45a8102e633f7e8`.
 It adds both precision follow-ups, complete observed arrays, isolated sources
-and failed packaging stages. It reuses the first
+and failed packaging stages. A third separate asset adds the strict two-pass
+control and the residual-scale diagnostic, completing the 2×2 design. Its
+[archive receipt](strict-two-pass/archive-receipt.json) and
+[verified upload](strict-two-pass/release-upload-verification.json) identify
+602,864,142 bytes with SHA-256
+`0838b50eb9f8633a1b0647c1bc2ff8e3000640658e5d112768d452b5bdc1c6a3`. It reuses the first
 archive's unchanged native fixture. Verify archive hashes before extracting
 into new directories. From a repository checkout, with NumPy installed:
 

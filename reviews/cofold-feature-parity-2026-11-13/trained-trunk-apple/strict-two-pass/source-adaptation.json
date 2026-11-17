@@ -1,0 +1,15 @@
+{
+  "parentRunnerSha256": "189d3717b0b7b1ca8d6258d5be934fe64da0f29c96d9f71fd5af2349323253c9",
+  "runnerSha256": "0cd1148707e59c7e45dd87605cc4c6aba3c590713d66170276679757dd1c0802",
+  "reversibleReplacements": [
+    {
+      "from": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-strict-fp32-20261117-attempt002/frozen",
+      "to": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-strict-twopass-20261117-attempt001/frozen"
+    },
+    {
+      "from": "readback:{pair:true,single:true,logits:false},onSeam:capture,",
+      "to": "variance:'two-pass',readback:{pair:true,single:true,logits:false},onSeam:capture,"
+    }
+  ],
+  "scope": "Complete the 2x2 precision/variance control: existing two-pass variance under observed strict FP32; only isolated paths and runtime variance option differ. No gate/input/native/conversion/pose change."
+}

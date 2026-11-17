@@ -32,7 +32,9 @@ assert.equal(forwarded,1); assert.deepEqual(audit.map(x=>x.usesF16),[false,true]
         repo = Path(__file__).resolve().parents[2]
         root = repo / 'reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple'
         summary = json.loads((root / 'precision-comparison.json').read_bytes())
-        for item, folder in zip(summary['controls'], ['', 'two-pass', 'strict-fp32']):
+        folders = ['', 'two-pass', 'strict-fp32', 'strict-two-pass']
+        self.assertEqual(len(summary['controls']), len(folders))
+        for item, folder in zip(summary['controls'], folders):
             analysis = json.loads((root / folder / 'analysis.json').read_bytes())
             self.assertEqual(len(analysis['records']), 32)
             self.assertEqual(item['passing'], sum(r['passes'] for r in analysis['records']))

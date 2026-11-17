@@ -1,6 +1,6 @@
 {
   "schema": "molarium.trained-trunk-precision-comparison.v1",
-  "scope": "One matched native-positive OpenBind-0 fixture. Original default pair arithmetic vs existing two-pass variance vs strict-FP32 pair arithmetic. Same native arrays, weights, four passes, 32 boundaries and gates; no full-pose inference.",
+  "scope": "One matched native-positive OpenBind-0 fixture, full 2x2 precision/variance design: default pair arithmetic vs observed strict FP32, each with original fast variance and existing two-pass variance. Same native arrays, weights, four passes, 32 boundaries and gates; no full-pose inference.",
   "gates": {
     "relativeRms": 0.0001,
     "maxAbsoluteDifference": 0.001,
@@ -35,6 +35,16 @@
       "relativeGatePasses": 32,
       "worstRelativeRms": 3.487416783496727e-06,
       "worstAbsoluteDifference": 0.1875,
+      "passesAllDeclaredGates": false
+    },
+    {
+      "label": "strict-fp32-pair-arithmetic-two-pass-variance",
+      "boundaries": 32,
+      "passing": 14,
+      "finite": true,
+      "relativeGatePasses": 32,
+      "worstRelativeRms": 4.047604464192299e-06,
+      "worstAbsoluteDifference": 0.203125,
       "passesAllDeclaredGates": false
     }
   ],

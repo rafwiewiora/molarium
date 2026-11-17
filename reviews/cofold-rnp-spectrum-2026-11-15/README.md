@@ -13,9 +13,10 @@ all 480 planned predictions, source-attempt histories and sampling receipts.
 The [six-sample](checkpoint-288/README.md), [221-prediction](checkpoint-221/README.md)
 and initial checkpoints remain preserved. The earlier
 [80-prediction study](../cofold-stock-localfold-2026-11-13/results-200x10/README.md)
-is a separate cohort. Final [ten-sample browser QA](review-ui-2026-11-16/README.md) and
-[NVIDIA component controls](../cofold-feature-parity-2026-11-13/gpu-capability-2026-11-16/README.md)
-are tracked separately from these completed accuracy results; the PR remains draft.
+is a separate cohort. Final [ten-sample browser QA](review-ui-2026-11-16/README.md)
+also passed all 48 systems. The separate
+[NVIDIA component controls](../cofold-feature-parity-2026-11-13/gpu-capability-2026-11-16/numerical-2026-11-17/README.md)
+remain pending; the PR stays draft while that investigation finishes.
 
 The public [Runs N’ Poses dataset](https://zenodo.org/records/18366081) and
 [repository](https://github.com/plinder-org/runs-n-poses/tree/197fafc60a5cef3a9e7f8a4b0dac7c965eed3839)
@@ -135,8 +136,10 @@ inference time in the viewer.
 The [actual six-sample browser sweep](review-ui-2026-11-16/README.md) passed all
 48 systems, 288 unique predictions and every grid page, including exact notes,
 preferences, original PDB/graph exports, shortlist and reference separation.
-The actual **ten-sample** sweep is now running separately on the final files;
-its complete result remains pending. Experimental cards omit prediction metadata,
+The actual **ten-sample** sweep also passed all 48 cases: 480 predictions,
+48 separate references and 288 grid pages, with the same export and persistence
+checks. The [saved complete receipts](review-ui-2026-11-16/all48-ten-sample-verification.json)
+replay against independently regenerated final exports in CI. Experimental cards omit prediction metadata,
 and prediction/PDB numbering stays stable when a reference or a failed request
 is present. UI behavior and pose accuracy are separate checks.
 

@@ -515,8 +515,10 @@ the fixed lowest-seed tie rule. Rounded-score ties remain explicit.
 retain the complete experiment and historical prefixes.
 [All 48 systems in portable Foldarium libraries](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries/README.md)
 are available for local human inspection, with optional separate references and
-exportable pose preferences. The actual six-sample browser sweep passed all
-48 systems; final ten-sample UI coverage is tracked separately.
+exportable pose preferences. Actual six-sample and final ten-sample browser
+sweeps both passed all 48 systems. The final sweep covers 480 predictions,
+48 separate references and 288 grid pages, including exact exports and
+preference persistence after reopening. [Saved receipts replay in CI](reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/README.md).
 
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree
@@ -531,7 +533,12 @@ CPU under Bun. Raw native arrays, controlled inputs/weights and offline replays
 are public. A [relative-position check](reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
 also exactly reproduces 12.63 million captured native one-hot values with the
 port's CPU reference, using original browser indices on both systems. The fused
-WebGPU projection remains untested. These component controls do not establish complete-model agreement.
+WebGPU projection remains untested. The [trained four-cycle trunk controls](reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple/README.md)
+now retain all 32 boundaries and exact raw-array releases. Enforcing actual strict
+FP32 gives 32/32 relative-gate passes and 14/32 combined passes; absolute failures
+remain under the original gates. The producer's precision omission is fixed and
+its original measurements are preserved. These component controls do not
+establish complete-model agreement.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

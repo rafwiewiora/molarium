@@ -9,8 +9,10 @@ hit selected by highest archived ipTM and the fixed lowest-seed tie rule. Rounde
 ties remain explicit. [Original outputs, final tables and sampling/time plots](../../reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/README.md)
 retain every planned denominator. [All 48 cases in portable review libraries](../../reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries/README.md)
 contain the original coordinates and graphs, optional separate references and
-no copied human decisions. Actual six-sample browser QA passed all 48 cases;
-actual ten-sample UI QA is running separately.
+no copied human decisions. Actual six-sample and ten-sample browser QA both
+passed all 48 cases; the final sweep covers 480 predictions, 48 separate
+references and 288 grid pages. The saved full-cohort receipts independently
+replay against the regenerated original exports in CI.
 
 The [stock LocalFold page control](../../reviews/cofold-stock-localfold-2026-11-13/README.md)
 runs the pristine upstream page through its own Fold button, bypassing Molarium's
@@ -79,9 +81,12 @@ and live finalizer process are required. Tests exercise the actual six-sample
 checkpoint and verify that changing its status label cannot make it final.
 The complete 480-prediction preparation has now succeeded: the original archive
 replay, 3/6/10 diagnostics and all 96 graph/PDB/alignment-checked libraries are
-preserved in the final report. Actual ten-sample UI QA remains a separate check.
+preserved in the final report. The separate actual ten-sample UI sweep also
+completed all 48 cases; its original receipts and data-only verification remain
+separate from the prediction/accuracy evidence.
 
-The next, **unqualified** stage uses `capture_native_trunk.py` to observe the
+The [measured, still-unqualified trunk stage](../../reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple/README.md)
+uses `capture_native_trunk.py` to observe the
 stock four-cycle `run_trunk` at exact frozen feature bytes. It exports trained
 weights, projected embeddings, template/MSA/pairformer boundaries and the
 actual MSA random draws. A module-local observer returns those draws unchanged;
@@ -89,9 +94,16 @@ the official neural computation is retained. The whole-model forward remains
 guarded, so this is not another pose prediction. `make_trained_trunk_fixture.py`
 uses the pinned upstream weight-layout converter, and
 `scripts/cofold-trained-trunk.browser.mjs` runs the production GPU trunk with
-FP32 storage, weights and accumulation. `check_trained_trunk.py` recomputes
+FP32 storage, weights and accumulation, disables independent half-arithmetic
+pair paths and rejects f16 shader sources. The original producer omitted that
+last precision policy; its measurements and correction remain separately
+archived. `check_trained_trunk.py` recomputes
 errors from all 32 required raw seams, rejecting partial transfers or changed
-gates. These tools have **no completed full-trunk parity result yet**.
+gates. Actual Apple measurements captured all 32 seams: the strict control passes
+all relative gates but only 14 combined gates, with absolute failures retained.
+These tools have **no passing complete-trunk parity result yet**. The native
+capture/conversion are complete and must not be repeated to repair browser or
+offline-analysis packaging. The public raw archives support data-only replay.
 
 ```sh
 MOLARIUM_FEATURE_CONTROL=/path/to/completed-feature-control \

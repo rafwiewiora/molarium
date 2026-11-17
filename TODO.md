@@ -6,12 +6,17 @@ separate confirmed defects, completed fixes, and remaining validation work.
 Design findings have their own [public finding-to-fix ledger](./reviews/DESIGN_FINDINGS_AND_FIXES_2026-09-06.md)
 with stable `DV-` identifiers and links to original observations and follow-up evidence.
 
-## Simulation correctness and release gates
+## Structure prediction evidence and release gates
+
+- [x] Complete the frozen 48-system, ten-seed pristine LocalFold study: independently replay all 480 predictions, publish 3/6/10-sample results and timing boundaries, and preserve the native-positive selection limits ([final report](reviews/cofold-rnp-spectrum-2026-11-15/README.md)).
+- [x] Export every final prediction into 96 graph/PDB/alignment-checked Foldarium libraries, with separate experimental-reference cards and empty human decisions; complete actual six-sample UI QA on all 48 systems.
+- [x] Finish the source-pinned all-48 ten-sample browser sweep and publish its complete export/persistence/reopening receipts ([UI coverage](reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/README.md)).
 
 - [x] Freeze a target-diverse, drug-like [recent PDB panel](reviews/cofold-recent-pdb-2026-11-13/README.md) from a complete release-window harvest; check generated biological assemblies before inference and preserve all exclusions.
 - [x] Correct SMILES aromatic/bond input features before browser cofolding; retain original predictions and independently verify all nine input graphs and specified stereocentres ([finding RCF-01](reviews/cofold-recent-pdb-2026-11-13/findings.md)).
 - [x] Complete both 27-pose provided-MSA browser phases and compare OpenBind alignment residue/deletion rows with the actual official CPU processor; preserve all 135 predictions and failures ([results](reviews/cofold-recent-pdb-2026-11-13/README.md)).
-- [ ] Complete 200-step browser controls, native GPU references, and further matched-input feature/numerical comparisons; broad recent-panel reconstruction remains unresolved ([status](reviews/cofold-recent-pdb-2026-11-13/README.md)).
+- [x] Complete the separate pristine-page 200-step/ten-seed control on eight native-positive model/system pairs, retaining all 80 predictions and 200-step frames ([results](reviews/cofold-stock-localfold-2026-11-13/results-200x10/README.md)).
+- [ ] Resolve matched-input numerical and broad recent-panel reconstruction differences; the completed protocol comparisons do not establish implementation parity ([status](reviews/cofold-recent-pdb-2026-11-13/README.md)).
 - [x] Complete the 27-pose OpenBind 200-step/MSA256 control; preserve all 162 complete-phase poses and the incomplete Boltz standard evidence, including one lost checkpoint.
 - [x] Retrieve and independently validate all 54 recent native single-sequence poses and the nine old-crystal native OpenBind poses; retain stereo failures and poor folds with raw output hashes and public reconstruction checks.
 - [x] Complete and independently reconstruct all 27 native OpenBind MSA poses and all nine old-crystal native Boltz poses; preserve interrupted sources and compute only missing seeds ([evidence](reviews/COFOLD_NATIVE_RECOVERY_EVIDENCE_2026-11-13.md)).
@@ -19,7 +24,10 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Preserve native and shared-JS tensor features for two diagnostic cases, replay all checked-field comparisons, and identify input-order/name/conformer differences ([RCF-15](reviews/cofold-feature-parity-2026-11-13/README.md)).
 - [x] Complete a stock-native processed-SMILES control: eliminate atom-name/order differences while retaining the remaining generated-reference-coordinate discrepancy ([result](reviews/cofold-feature-parity-2026-11-13/README.md#same-spelling-control-result)).
 - [x] Compare the actual trained atom/input-feature encoder with stock native FP32 at identical inputs/weights; preserve raw outputs and replayable evidence ([result](reviews/cofold-feature-parity-2026-11-13/trained-target/README.md)).
-- [ ] Complete the queued four-cycle stock-native trunk capture and all 32 matched production-GPU seam comparisons; require actual MSA draws, full-FP32 trained weights and the original predeclared gates ([tools](folding/comparison/README.md)).
+- [x] Capture the actual native four-cycle trunk, MSA draws and trained FP32 weights once; measure all 32 corresponding Apple WebGPU boundaries and preserve original and precision-control arrays ([evidence](reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple/README.md)).
+- [x] Fix the producer's readiness race and precision omission: require the exact fixture page, disable default half-arithmetic pair paths, and reject f16 shaders in the strict-FP32 control (TRUNK-PAGE-01 / TRUNK-PRECISION-01).
+- [ ] Resolve or qualify the retained absolute-error failures under the original trunk gates; 14/32 combined and 32/32 relative passes are not a complete-trunk parity pass.
+- [ ] Complete actual NVIDIA transition/trunk numerical controls. Physical L4 capability is verified; pre-payload Spot loss and immutable retries remain separate from numerical results ([job evidence](reviews/cofold-feature-parity-2026-11-13/gpu-capability-2026-11-16/numerical-2026-11-17/README.md)).
 - [x] Correct future feature-capture wall-clock timing boundaries without rewriting historical receipts or changing the separate CUDA timing (CAP-01, [details](folding/comparison/README.md)).
 - [ ] Establish matched full-feature/trained-weight/random-tensor browser/native parity; the 270-prediction review is a protocol comparison, not this gate.
 - [x] Publish native synchronized forward timings with explicit boundaries separate from browser end-to-end throughput.
@@ -40,6 +48,8 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Finish all native controls for the three-complex crystal-reference panel, preserving all 36 native/browser predictions and stereochemical checks.
 - [ ] Investigate OpenBind's poor single-sequence reconstruction and expand to genuinely held-out complexes; the three old structures may occur in training data.
 - [x] Preserve six OpenBind standard-sampling poses after Spot node failure, validate source-side inventory and submit only 42 missing query/seed pairs; require full unique coverage for assembly ([recovery](folding/comparison/README.md#interrupted-native-openbind-jobs)).
+
+## Simulation correctness and release gates
 
 - [x] Cancel queued/in-flight old-graph polish when chemistry invalidates the atom mapping ([SR-13](reviews/STALE_POLISH_2026-09-25.md)); retain exact coordinate-preservation assertions.
 

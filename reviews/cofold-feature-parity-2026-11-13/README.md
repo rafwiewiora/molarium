@@ -43,16 +43,19 @@ contain no measured transition cases or trunk seams.
 
 A later [physical NVIDIA L4 capability probe](gpu-capability-2026-11-16/observed-20285/README.md)
 completed successfully with integer probe 7 and zero model calls. The [separate numerical jobs](gpu-capability-2026-11-16/numerical-2026-11-17/README.md)
-preserve job 20382's pre-payload Spot loss, its one source-identical retry 20391,
-and the distinct strict-precision control 20390. No NVIDIA numerical pass is claimed.
+preserve the pre-payload Spot loss and the demonstrated absolute-symlink mount
+failure. Both corrected payloads now open the existing fixture in the actual
+container before submission, without regenerating it. Requested-FP32 job 20398
+and strict-FP32 job 20399 are queued separately; no NVIDIA numerical pass is claimed.
 
 The [physical-Apple four-cycle trunk controls](trained-trunk-apple/README.md)
 capture all 32 fixed-input boundaries. The original requested-FP32 configuration
 left default half-arithmetic pair paths enabled and passed 8/32 combined gates.
 Correcting that producer setting and checking all generated shaders gives 14/32
 combined passes: all 32 pass the relative-error gate, while 18 still fail the
-unchanged absolute gate. All outputs are finite. A separate two-pass variance
-control did not resolve the discrepancy. Exact arrays are publicly archived.
+unchanged absolute gate. All outputs are finite. The full 2×2 precision/variance
+control retains the same 14/32 strict-precision combined passes with two-pass
+variance; that option did not resolve the absolute discrepancies. Exact arrays are publicly archived.
 Producer readiness and precision findings are linked to fixes, with failed stages
 retained. No complete-model parity or pose-error cause is inferred; production
 folding defaults are unchanged.

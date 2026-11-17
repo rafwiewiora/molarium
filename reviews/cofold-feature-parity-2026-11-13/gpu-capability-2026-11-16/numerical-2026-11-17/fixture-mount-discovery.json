@@ -1,0 +1,286 @@
+{
+  "checkedAt": "2026-11-17T03:30:59.385618+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "paths": [
+    {
+      "requested": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture",
+      "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture",
+      "symlink": true,
+      "files": [
+        {
+          "relative": "cycle-0.tap.z_after_msa.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-0.tap.z_after_msa.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-3.tap.template_term.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-3.tap.template_term.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-1.trunk-output-single.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-1.trunk-output-single.bin",
+          "bytes": 365568
+        },
+        {
+          "relative": "cycle-2.tap.z_after_msa.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-2.tap.z_after_msa.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-2.tap.trunk_out_pair.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-2.tap.trunk_out_pair.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-2.tap.z_init_generic.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-2.tap.z_init_generic.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-0.tap.z_after_template.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-0.tap.z_after_template.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "receipt.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/receipt.json",
+          "bytes": 11644
+        },
+        {
+          "relative": "cycle-2.tap.trunk_in_single.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-2.tap.trunk_in_single.bin",
+          "bytes": 365568
+        },
+        {
+          "relative": "cycle-3.tap.msa_activations.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-3.tap.msa_activations.bin",
+          "bytes": 15658496
+        },
+        {
+          "relative": "cycle-0.trunk-output-single.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-0.trunk-output-single.bin",
+          "bytes": 365568
+        },
+        {
+          "relative": "cycle-0.tap.z_init_generic.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-0.tap.z_init_generic.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-1.tap.trunk_in_single.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-1.tap.trunk_in_single.bin",
+          "bytes": 365568
+        },
+        {
+          "relative": "cycle-3.tap.z_after_msa.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-3.tap.z_after_msa.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-2.tap.z_after_template.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-2.tap.z_after_template.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-1.tap.z_init_generic.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-1.tap.z_init_generic.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-2.tap.msa_activations.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-2.tap.msa_activations.bin",
+          "bytes": 15658496
+        },
+        {
+          "relative": "cycle-0.tap.msa_activations.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-0.tap.msa_activations.bin",
+          "bytes": 15658496
+        },
+        {
+          "relative": "cycle-1.tap.msa_activations.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-1.tap.msa_activations.bin",
+          "bytes": 15658496
+        },
+        {
+          "relative": "cycle-3.tap.trunk_out_pair.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-3.tap.trunk_out_pair.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-3.tap.z_after_template.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-3.tap.z_after_template.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "weights.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/weights.bin",
+          "bytes": 604789504
+        },
+        {
+          "relative": "cycle-2.tap.template_term.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-2.tap.template_term.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-0.tap.trunk_out_pair.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-0.tap.trunk_out_pair.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-3.tap.trunk_in_single.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-3.tap.trunk_in_single.bin",
+          "bytes": 365568
+        },
+        {
+          "relative": "cycle-0.tap.trunk_in_single.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-0.tap.trunk_in_single.bin",
+          "bytes": 365568
+        },
+        {
+          "relative": "target.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/target.bin",
+          "bytes": 425544
+        },
+        {
+          "relative": "cycle-1.tap.z_after_template.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-1.tap.z_after_template.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-3.tap.z_init_generic.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-3.tap.z_init_generic.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-1.tap.template_term.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-1.tap.template_term.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-3.trunk-output-single.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-3.trunk-output-single.bin",
+          "bytes": 365568
+        },
+        {
+          "relative": "cycle-1.tap.trunk_out_pair.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-1.tap.trunk_out_pair.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "cycle-1.tap.z_after_msa.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-1.tap.z_after_msa.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "weights.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/weights.json",
+          "bytes": 58252
+        },
+        {
+          "relative": "cycle-2.trunk-output-single.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-2.trunk-output-single.bin",
+          "bytes": 365568
+        },
+        {
+          "relative": "cycle-0.tap.template_term.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/cycle-0.tap.template_term.bin",
+          "bytes": 29001728
+        },
+        {
+          "relative": "msa-1/features.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/msa-1/features.json",
+          "bytes": 1746
+        },
+        {
+          "relative": "msa-1/features.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/msa-1/features.bin",
+          "bytes": 733992
+        },
+        {
+          "relative": "msa-2/features.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/msa-2/features.json",
+          "bytes": 1746
+        },
+        {
+          "relative": "msa-2/features.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/msa-2/features.bin",
+          "bytes": 733992
+        },
+        {
+          "relative": "base/features.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/base/features.json",
+          "bytes": 39958
+        },
+        {
+          "relative": "base/features.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/base/features.bin",
+          "bytes": 462672
+        },
+        {
+          "relative": "msa-3/features.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/msa-3/features.json",
+          "bytes": 1746
+        },
+        {
+          "relative": "msa-3/features.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/msa-3/features.bin",
+          "bytes": 733992
+        },
+        {
+          "relative": "msa-0/features.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/msa-0/features.json",
+          "bytes": 1746
+        },
+        {
+          "relative": "msa-0/features.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/msa-0/features.bin",
+          "bytes": 733992
+        }
+      ]
+    },
+    {
+      "requested": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/original",
+      "canonical": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/original",
+      "symlink": false,
+      "files": [
+        {
+          "relative": "fixtures.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/original/fixtures.bin",
+          "bytes": 9934848
+        },
+        {
+          "relative": "manifest.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/original/manifest.json",
+          "bytes": 7863
+        }
+      ]
+    },
+    {
+      "requested": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/precision",
+      "canonical": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/precision",
+      "symlink": false,
+      "files": [
+        {
+          "relative": "fixtures.bin",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/precision/fixtures.bin",
+          "bytes": 27158576
+        },
+        {
+          "relative": "manifest.json",
+          "canonical": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/precision/manifest.json",
+          "bytes": 39658
+        }
+      ]
+    }
+  ],
+  "job20391Before": "JobId=20391 JobName=molarium-qualified-controls UserId=rafal_wiewiora_psivant_com(1706645947) GroupId=rafal_wiewiora_psivant_com(1706645947) MCS_label=N/A Priority=1 Nice=0 Account=(null) QOS=normal JobState=PENDING Reason=Resources Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-11-17T03:16:08 EligibleTime=2026-11-17T03:16:08 AccrueTime=2026-11-17T03:16:08 StartTime=2026-11-20T22:56:20 EndTime=2026-11-20T23:26:20 Deadline=2026-11-20T22:30:00 SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-17T03:30:43 Scheduler=Backfill:* Partition=gpu,l4spot AllocNode:Sid=psigreen-login-001:2505570 ReqNodeList=(null) ExcNodeList=psigreen-gpunodeset-[60-74],psigreen-l4spotnodeset-[11,20,25,31] NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=14G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=14G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt002/gpu.sh WorkDir=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt002 Comment=project:molarium,experiment:nvidia-fixed-input-controls,owner:rafal  StdErr=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt002/logs/gpu-20391.log StdIn=/dev/null StdOut=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt002/logs/gpu-20391.log Power= TresPerNode=gres/gpu:1 TresPerTask=cpu:4 \n",
+  "action": "Cancelled unstarted job20391 to repair demonstrated invisible fixture mount; no controls started.",
+  "accounting": "20390|FAILED|1:0|00:00:19|2026-11-17T03:24:41|2026-11-17T03:25:00|psigreen-l4spotnodeset-10\n20391|CANCELLED by 1706645947|0:0|00:00:00|None|2026-11-17T03:30:59|None assigned\n",
+  "newJobs": 0
+}

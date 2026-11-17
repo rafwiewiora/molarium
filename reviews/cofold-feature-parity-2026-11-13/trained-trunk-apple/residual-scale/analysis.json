@@ -1,0 +1,1256 @@
+{
+  "schema": "molarium.trained-trunk-residual-diagnostic.v1",
+  "scope": "Data-only description of exact saved learned-feature residuals. ULP counts are descriptive, not new tolerances, model equivalence, physical units or a pose-accuracy criterion. Large ULP distances near zero remain in the distribution.",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "measurementReceiptSha256": "0792c49256349f8cdfbf3c310d7777c2eccf8142dc4b88b99dccd62f5a488ad5",
+  "producerSha256": "a88964dbb2fba1e3ed40d39d090a7f4ba3767c735999252236cfc178e78ce2c6",
+  "gatesUnchanged": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "passesAllDeclaredGates": false,
+  "records": [
+    {
+      "seam": "cycle-0.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.92864934687354,
+      "relativeRms": 5.0583627748122893e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true,
+      "referenceMaxMagnitude": 161.09393310546875,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 0.0,
+        "95": 7.0,
+        "99": 32.0,
+        "100": 262144.0
+      },
+      "valuesWithinUlps": {
+        "0": 2078940,
+        "1": 2966621,
+        "2": 3474003,
+        "4": 3692930,
+        "8": 3806351,
+        "16": 3857298
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 13720,
+        "indices": [
+          0,
+          214,
+          24
+        ],
+        "reference": -130.42750549316406,
+        "actual": -130.42752075195312,
+        "absoluteError": 1.52587890625e-05,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 1
+      }
+    },
+    {
+      "seam": "cycle-0.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.626109183441187,
+      "relativeRms": 2.130770054637149e-07,
+      "maxAbs": 0.000244140625,
+      "passes": true,
+      "referenceMaxMagnitude": 231.67919921875,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 2.0,
+        "95": 15.0,
+        "99": 76.0,
+        "100": 1765241443.0
+      },
+      "valuesWithinUlps": {
+        "0": 1016948,
+        "1": 2733213,
+        "2": 4037987,
+        "4": 5564740,
+        "8": 6559768,
+        "16": 6919091
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 4740060,
+        "indices": [
+          155,
+          141,
+          92
+        ],
+        "reference": 225.44183349609375,
+        "actual": 225.44207763671875,
+        "absoluteError": 0.000244140625,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 16
+      }
+    },
+    {
+      "seam": "cycle-0.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.379994049578638,
+      "relativeRms": 4.2320877097402577e-07,
+      "maxAbs": 9.918212890625e-05,
+      "passes": true,
+      "referenceMaxMagnitude": 127.35880279541016,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 3.0,
+        "95": 13.0,
+        "99": 53.0,
+        "100": 54289.0
+      },
+      "valuesWithinUlps": {
+        "0": 7280,
+        "1": 21310,
+        "2": 34710,
+        "4": 57246,
+        "8": 80112,
+        "16": 88207
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 78867,
+        "indices": [
+          205,
+          147
+        ],
+        "reference": 87.58284759521484,
+        "actual": 87.58274841308594,
+        "absoluteError": 9.918212890625e-05,
+        "referenceMagnitudeSpacing": 7.62939453125e-06,
+        "ulpDistance": 13
+      }
+    },
+    {
+      "seam": "cycle-0.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 101.75904312262763,
+      "relativeRms": 1.8100119940851672e-06,
+      "maxAbs": 0.01171875,
+      "passes": false,
+      "referenceMaxMagnitude": 9521.7841796875,
+      "absoluteGateFailures": 25752,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 80.0,
+        "95": 1152.0,
+        "99": 5824.0,
+        "100": 1937342464.0
+      },
+      "valuesWithinUlps": {
+        "0": 84498,
+        "1": 128788,
+        "2": 202856,
+        "4": 348738,
+        "8": 626861,
+        "16": 1135574
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 1131929,
+        "indices": [
+          37,
+          37,
+          25
+        ],
+        "reference": -9182.2734375,
+        "actual": -9182.26171875,
+        "absoluteError": 0.01171875,
+        "referenceMagnitudeSpacing": 0.0009765625,
+        "ulpDistance": 12
+      }
+    },
+    {
+      "seam": "cycle-0.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 134.3344754510546,
+      "relativeRms": 2.201595997632883e-07,
+      "maxAbs": 0.001953125,
+      "passes": false,
+      "referenceMaxMagnitude": 3311.55419921875,
+      "absoluteGateFailures": 8,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 7.0,
+        "95": 92.0,
+        "99": 456.0,
+        "100": 1849458688.0
+      },
+      "valuesWithinUlps": {
+        "0": 390667,
+        "1": 1079570,
+        "2": 1732474,
+        "4": 2760208,
+        "8": 4106012,
+        "16": 5378797
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 3609948,
+        "indices": [
+          118,
+          118,
+          92
+        ],
+        "reference": 2465.29931640625,
+        "actual": 2465.30126953125,
+        "absoluteError": 0.001953125,
+        "referenceMagnitudeSpacing": 0.000244140625,
+        "ulpDistance": 8
+      }
+    },
+    {
+      "seam": "cycle-0.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 47.53410054377061,
+      "relativeRms": 1.2125961184467638e-07,
+      "maxAbs": 0.000244140625,
+      "passes": true,
+      "referenceMaxMagnitude": 485.1363220214844,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 2.0,
+        "95": 20.0,
+        "99": 96.0,
+        "100": 2097152.0
+      },
+      "valuesWithinUlps": {
+        "0": 1559121,
+        "1": 3228072,
+        "2": 4567200,
+        "4": 5681935,
+        "8": 6435344,
+        "16": 6846124
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 761052,
+        "indices": [
+          24,
+          233,
+          92
+        ],
+        "reference": 424.91650390625,
+        "actual": 424.916748046875,
+        "absoluteError": 0.000244140625,
+        "referenceMagnitudeSpacing": 3.0517578125e-05,
+        "ulpDistance": 8
+      }
+    },
+    {
+      "seam": "cycle-0.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 22.743715514170187,
+      "relativeRms": 6.078172763453506e-08,
+      "maxAbs": 4.57763671875e-05,
+      "passes": true,
+      "referenceMaxMagnitude": 264.27581787109375,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 1.0,
+        "95": 8.0,
+        "99": 35.0,
+        "100": 524288.0
+      },
+      "valuesWithinUlps": {
+        "0": 2677566,
+        "1": 5203022,
+        "2": 6164948,
+        "4": 6680956,
+        "8": 6957456,
+        "16": 7102360
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 151644,
+        "indices": [
+          4,
+          232,
+          92
+        ],
+        "reference": 218.2957305908203,
+        "actual": 218.29568481445312,
+        "absoluteError": 4.57763671875e-05,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 3
+      }
+    },
+    {
+      "seam": "cycle-0.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 12575.206239495845,
+      "relativeRms": 2.9927469584669317e-07,
+      "maxAbs": 0.09375,
+      "passes": false,
+      "referenceMaxMagnitude": 133900.828125,
+      "absoluteGateFailures": 52967,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 1190,
+      "ulpDistanceQuantiles": {
+        "50": 33.0,
+        "95": 465.0,
+        "99": 2417.0899999999965,
+        "100": 7274496.0
+      },
+      "valuesWithinUlps": {
+        "0": 1120,
+        "1": 3315,
+        "2": 5589,
+        "4": 9711,
+        "8": 17005,
+        "16": 29030
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 48936,
+        "indices": [
+          127,
+          168
+        ],
+        "reference": -118518.9140625,
+        "actual": -118518.8203125,
+        "absoluteError": 0.09375,
+        "referenceMagnitudeSpacing": 0.0078125,
+        "ulpDistance": 12
+      }
+    },
+    {
+      "seam": "cycle-1.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.92864934687354,
+      "relativeRms": 5.0583627748122893e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true,
+      "referenceMaxMagnitude": 161.09393310546875,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 0.0,
+        "95": 7.0,
+        "99": 32.0,
+        "100": 262144.0
+      },
+      "valuesWithinUlps": {
+        "0": 2078940,
+        "1": 2966621,
+        "2": 3474003,
+        "4": 3692930,
+        "8": 3806351,
+        "16": 3857298
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 13720,
+        "indices": [
+          0,
+          214,
+          24
+        ],
+        "reference": -130.42750549316406,
+        "actual": -130.42752075195312,
+        "absoluteError": 1.52587890625e-05,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 1
+      }
+    },
+    {
+      "seam": "cycle-1.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.5065852064891,
+      "relativeRms": 2.462729639028241e-07,
+      "maxAbs": 0.0002288818359375,
+      "passes": true,
+      "referenceMaxMagnitude": 230.7038116455078,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 4.0,
+        "95": 48.0,
+        "99": 231.0,
+        "100": 7417156.0
+      },
+      "valuesWithinUlps": {
+        "0": 543271,
+        "1": 1573783,
+        "2": 2487661,
+        "4": 3845935,
+        "8": 5222636,
+        "16": 6156579
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 1516252,
+        "indices": [
+          49,
+          183,
+          92
+        ],
+        "reference": 224.6762237548828,
+        "actual": 224.67599487304688,
+        "absoluteError": 0.0002288818359375,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 15
+      }
+    },
+    {
+      "seam": "cycle-1.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.325442043472094,
+      "relativeRms": 4.174457166298256e-07,
+      "maxAbs": 0.0001220703125,
+      "passes": true,
+      "referenceMaxMagnitude": 154.41531372070312,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 6.0,
+        "95": 72.0,
+        "99": 369.0,
+        "100": 2252799.0
+      },
+      "valuesWithinUlps": {
+        "0": 4489,
+        "1": 13284,
+        "2": 21664,
+        "4": 36571,
+        "8": 56321,
+        "16": 72239
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 86773,
+        "indices": [
+          225,
+          373
+        ],
+        "reference": 122.67183685302734,
+        "actual": 122.67171478271484,
+        "absoluteError": 0.0001220703125,
+        "referenceMagnitudeSpacing": 7.62939453125e-06,
+        "ulpDistance": 16
+      }
+    },
+    {
+      "seam": "cycle-1.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 108.21477347133218,
+      "relativeRms": 1.5329086149980552e-06,
+      "maxAbs": 0.0155029296875,
+      "passes": false,
+      "referenceMaxMagnitude": 10054.986328125,
+      "absoluteGateFailures": 22177,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 62.0,
+        "95": 958.0,
+        "99": 4768.0,
+        "100": 1915879424.0
+      },
+      "valuesWithinUlps": {
+        "0": 106310,
+        "1": 166814,
+        "2": 266506,
+        "4": 458740,
+        "8": 822434,
+        "16": 1462965
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 7210500,
+        "indices": [
+          236,
+          164,
+          4
+        ],
+        "reference": 518.626708984375,
+        "actual": 518.6422119140625,
+        "absoluteError": 0.0155029296875,
+        "referenceMagnitudeSpacing": 6.103515625e-05,
+        "ulpDistance": 254
+      }
+    },
+    {
+      "seam": "cycle-1.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 152.161507270864,
+      "relativeRms": 1.4268932936840756e-06,
+      "maxAbs": 0.01171875,
+      "passes": false,
+      "referenceMaxMagnitude": 2980.635009765625,
+      "absoluteGateFailures": 31886,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 42.0,
+        "95": 613.0,
+        "99": 3072.0,
+        "100": 1922433024.0
+      },
+      "valuesWithinUlps": {
+        "0": 72463,
+        "1": 208393,
+        "2": 348469,
+        "4": 613798,
+        "8": 1098094,
+        "16": 1914675
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 1316828,
+        "indices": [
+          43,
+          53,
+          92
+        ],
+        "reference": 1363.3114013671875,
+        "actual": 1363.3231201171875,
+        "absoluteError": 0.01171875,
+        "referenceMagnitudeSpacing": 0.0001220703125,
+        "ulpDistance": 96
+      }
+    },
+    {
+      "seam": "cycle-1.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 54.76042026274634,
+      "relativeRms": 1.3653810907870843e-06,
+      "maxAbs": 0.00201416015625,
+      "passes": false,
+      "referenceMaxMagnitude": 603.6307373046875,
+      "absoluteGateFailures": 73,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 50.0,
+        "95": 748.0,
+        "99": 3776.0,
+        "100": 1905590272.0
+      },
+      "valuesWithinUlps": {
+        "0": 81518,
+        "1": 197989,
+        "2": 345984,
+        "4": 588961,
+        "8": 1016623,
+        "16": 1731109
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 4623964,
+        "indices": [
+          151,
+          186,
+          92
+        ],
+        "reference": 440.6639404296875,
+        "actual": 440.66595458984375,
+        "absoluteError": 0.00201416015625,
+        "referenceMagnitudeSpacing": 3.0517578125e-05,
+        "ulpDistance": 66
+      }
+    },
+    {
+      "seam": "cycle-1.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 30.822054161617732,
+      "relativeRms": 2.416941267695068e-06,
+      "maxAbs": 0.0019989013671875,
+      "passes": false,
+      "referenceMaxMagnitude": 375.36407470703125,
+      "absoluteGateFailures": 75,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 55.0,
+        "95": 821.0,
+        "99": 4136.0,
+        "100": 1913937920.0
+      },
+      "valuesWithinUlps": {
+        "0": 61478,
+        "1": 167129,
+        "2": 285783,
+        "4": 500829,
+        "8": 894273,
+        "16": 1569299
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 4623964,
+        "indices": [
+          151,
+          186,
+          92
+        ],
+        "reference": 213.59429931640625,
+        "actual": 213.59629821777344,
+        "absoluteError": 0.0019989013671875,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 131
+      }
+    },
+    {
+      "seam": "cycle-1.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14196.394594586449,
+      "relativeRms": 2.8362411031901715e-07,
+      "maxAbs": 0.09375,
+      "passes": false,
+      "referenceMaxMagnitude": 142592.296875,
+      "absoluteGateFailures": 46421,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 1190,
+      "ulpDistanceQuantiles": {
+        "50": 24.0,
+        "95": 347.0,
+        "99": 1748.0,
+        "100": 3915776.0
+      },
+      "valuesWithinUlps": {
+        "0": 1496,
+        "1": 4221,
+        "2": 7056,
+        "4": 12323,
+        "8": 21159,
+        "16": 35417
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 3301,
+        "indices": [
+          8,
+          229
+        ],
+        "reference": -102374.9453125,
+        "actual": -102375.0390625,
+        "absoluteError": 0.09375,
+        "referenceMagnitudeSpacing": 0.0078125,
+        "ulpDistance": 12
+      }
+    },
+    {
+      "seam": "cycle-2.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.92864934687354,
+      "relativeRms": 5.0583627748122893e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true,
+      "referenceMaxMagnitude": 161.09393310546875,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 0.0,
+        "95": 7.0,
+        "99": 32.0,
+        "100": 262144.0
+      },
+      "valuesWithinUlps": {
+        "0": 2078940,
+        "1": 2966621,
+        "2": 3474003,
+        "4": 3692930,
+        "8": 3806351,
+        "16": 3857298
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 13720,
+        "indices": [
+          0,
+          214,
+          24
+        ],
+        "reference": -130.42750549316406,
+        "actual": -130.42752075195312,
+        "absoluteError": 1.52587890625e-05,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 1
+      }
+    },
+    {
+      "seam": "cycle-2.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.31517335321089,
+      "relativeRms": 2.3841050868825746e-07,
+      "maxAbs": 0.000213623046875,
+      "passes": true,
+      "referenceMaxMagnitude": 229.62353515625,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 4.0,
+        "95": 43.0,
+        "99": 206.0,
+        "100": 1793303096.0
+      },
+      "valuesWithinUlps": {
+        "0": 610839,
+        "1": 1755990,
+        "2": 2752793,
+        "4": 4177143,
+        "8": 5513466,
+        "16": 6324830
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 1073756,
+        "indices": [
+          35,
+          58,
+          92
+        ],
+        "reference": 220.8250732421875,
+        "actual": 220.82528686523438,
+        "absoluteError": 0.000213623046875,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 14
+      }
+    },
+    {
+      "seam": "cycle-2.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.359461059789094,
+      "relativeRms": 3.9525330332676224e-07,
+      "maxAbs": 0.0001220703125,
+      "passes": true,
+      "referenceMaxMagnitude": 153.813232421875,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 5.0,
+        "95": 50.0,
+        "99": 250.0,
+        "100": 74022.0
+      },
+      "valuesWithinUlps": {
+        "0": 5261,
+        "1": 15625,
+        "2": 25130,
+        "4": 42063,
+        "8": 62927,
+        "16": 77410
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 83570,
+        "indices": [
+          217,
+          242
+        ],
+        "reference": 125.88571166992188,
+        "actual": 125.88558959960938,
+        "absoluteError": 0.0001220703125,
+        "referenceMagnitudeSpacing": 7.62939453125e-06,
+        "ulpDistance": 16
+      }
+    },
+    {
+      "seam": "cycle-2.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 111.26999215253119,
+      "relativeRms": 1.3572001162538192e-06,
+      "maxAbs": 0.00982666015625,
+      "passes": false,
+      "referenceMaxMagnitude": 10026.970703125,
+      "absoluteGateFailures": 18895,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 48.0,
+        "95": 768.0,
+        "99": 3936.0,
+        "100": 1931673600.0
+      },
+      "valuesWithinUlps": {
+        "0": 140315,
+        "1": 222787,
+        "2": 357369,
+        "4": 613714,
+        "8": 1082371,
+        "16": 1863373
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 5411035,
+        "indices": [
+          177,
+          147,
+          91
+        ],
+        "reference": -377.40771484375,
+        "actual": -377.41754150390625,
+        "absoluteError": 0.00982666015625,
+        "referenceMagnitudeSpacing": 3.0517578125e-05,
+        "ulpDistance": 322
+      }
+    },
+    {
+      "seam": "cycle-2.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 159.94019969314928,
+      "relativeRms": 1.4681806521174251e-06,
+      "maxAbs": 0.0228271484375,
+      "passes": false,
+      "referenceMaxMagnitude": 2943.8857421875,
+      "absoluteGateFailures": 45062,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 37.0,
+        "95": 556.0,
+        "99": 2797.0,
+        "100": 1938874368.0
+      },
+      "valuesWithinUlps": {
+        "0": 78628,
+        "1": 228102,
+        "2": 382374,
+        "4": 676197,
+        "8": 1217393,
+        "16": 2116265
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 7191516,
+        "indices": [
+          236,
+          15,
+          92
+        ],
+        "reference": 2002.1014404296875,
+        "actual": 2002.07861328125,
+        "absoluteError": 0.0228271484375,
+        "referenceMagnitudeSpacing": 0.0001220703125,
+        "ulpDistance": 187
+      }
+    },
+    {
+      "seam": "cycle-2.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 53.59889121846041,
+      "relativeRms": 1.2226241070884868e-06,
+      "maxAbs": 0.0030517578125,
+      "passes": false,
+      "referenceMaxMagnitude": 600.1514892578125,
+      "absoluteGateFailures": 489,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 36.0,
+        "95": 575.0,
+        "99": 2896.0,
+        "100": 1912094720.0
+      },
+      "valuesWithinUlps": {
+        "0": 114588,
+        "1": 276490,
+        "2": 478344,
+        "4": 805798,
+        "8": 1367585,
+        "16": 2257659
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 5437020,
+        "indices": [
+          178,
+          112,
+          92
+        ],
+        "reference": 455.8516845703125,
+        "actual": 455.8486328125,
+        "absoluteError": 0.0030517578125,
+        "referenceMagnitudeSpacing": 3.0517578125e-05,
+        "ulpDistance": 100
+      }
+    },
+    {
+      "seam": "cycle-2.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 29.880262517596226,
+      "relativeRms": 2.1826157945984444e-06,
+      "maxAbs": 0.0030975341796875,
+      "passes": false,
+      "referenceMaxMagnitude": 375.4027099609375,
+      "absoluteGateFailures": 482,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 40.0,
+        "95": 636.0,
+        "99": 3200.0,
+        "100": 1913241600.0
+      },
+      "valuesWithinUlps": {
+        "0": 87227,
+        "1": 235787,
+        "2": 401984,
+        "4": 695737,
+        "8": 1221656,
+        "16": 2073608
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 5437020,
+        "indices": [
+          178,
+          112,
+          92
+        ],
+        "reference": 231.88551330566406,
+        "actual": 231.88241577148438,
+        "absoluteError": 0.0030975341796875,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 203
+      }
+    },
+    {
+      "seam": "cycle-2.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14411.638646445248,
+      "relativeRms": 2.8810656176781596e-07,
+      "maxAbs": 0.09375,
+      "passes": false,
+      "referenceMaxMagnitude": 143491.234375,
+      "absoluteGateFailures": 43578,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 1190,
+      "ulpDistanceQuantiles": {
+        "50": 22.0,
+        "95": 314.0,
+        "99": 1548.0,
+        "100": 976896.0
+      },
+      "valuesWithinUlps": {
+        "0": 1615,
+        "1": 4630,
+        "2": 7668,
+        "4": 13436,
+        "8": 23155,
+        "16": 38191
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 2588,
+        "indices": [
+          6,
+          284
+        ],
+        "reference": -139816.234375,
+        "actual": -139816.328125,
+        "absoluteError": 0.09375,
+        "referenceMagnitudeSpacing": 0.015625,
+        "ulpDistance": 6
+      }
+    },
+    {
+      "seam": "cycle-3.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.92864934687354,
+      "relativeRms": 5.0583627748122893e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true,
+      "referenceMaxMagnitude": 161.09393310546875,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 0.0,
+        "95": 7.0,
+        "99": 32.0,
+        "100": 262144.0
+      },
+      "valuesWithinUlps": {
+        "0": 2078940,
+        "1": 2966621,
+        "2": 3474003,
+        "4": 3692930,
+        "8": 3806351,
+        "16": 3857298
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 13720,
+        "indices": [
+          0,
+          214,
+          24
+        ],
+        "reference": -130.42750549316406,
+        "actual": -130.42752075195312,
+        "absoluteError": 1.52587890625e-05,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 1
+      }
+    },
+    {
+      "seam": "cycle-3.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.274425248422926,
+      "relativeRms": 2.3868014793659585e-07,
+      "maxAbs": 0.0002899169921875,
+      "passes": true,
+      "referenceMaxMagnitude": 228.88839721679688,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 3.0,
+        "95": 43.0,
+        "99": 210.0,
+        "100": 893975946.0
+      },
+      "valuesWithinUlps": {
+        "0": 644449,
+        "1": 1844450,
+        "2": 2876428,
+        "4": 4316399,
+        "8": 5614681,
+        "16": 6368202
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 4831964,
+        "indices": [
+          158,
+          145,
+          92
+        ],
+        "reference": 218.6579132080078,
+        "actual": 218.658203125,
+        "absoluteError": 0.0002899169921875,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 19
+      }
+    },
+    {
+      "seam": "cycle-3.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.35504059521067,
+      "relativeRms": 4.000099809375213e-07,
+      "maxAbs": 0.0001678466796875,
+      "passes": true,
+      "referenceMaxMagnitude": 153.93353271484375,
+      "absoluteGateFailures": 0,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 5.0,
+        "95": 43.0,
+        "99": 212.0,
+        "100": 384843.0
+      },
+      "valuesWithinUlps": {
+        "0": 5545,
+        "1": 16549,
+        "2": 26987,
+        "4": 44533,
+        "8": 65761,
+        "16": 79527
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 87203,
+        "indices": [
+          227,
+          35
+        ],
+        "reference": -140.609619140625,
+        "actual": -140.6097869873047,
+        "absoluteError": 0.0001678466796875,
+        "referenceMagnitudeSpacing": 1.52587890625e-05,
+        "ulpDistance": 11
+      }
+    },
+    {
+      "seam": "cycle-3.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 112.32374675947736,
+      "relativeRms": 3.487416783496727e-06,
+      "maxAbs": 0.031494140625,
+      "passes": false,
+      "referenceMaxMagnitude": 10013.205078125,
+      "absoluteGateFailures": 178419,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 69.0,
+        "95": 1502.449999999255,
+        "99": 7680.0,
+        "100": 1963069440.0
+      },
+      "valuesWithinUlps": {
+        "0": 104304,
+        "1": 161528,
+        "2": 257072,
+        "4": 442898,
+        "8": 793453,
+        "16": 1410365
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 5411163,
+        "indices": [
+          177,
+          148,
+          91
+        ],
+        "reference": -569.043701171875,
+        "actual": -569.0751953125,
+        "absoluteError": 0.031494140625,
+        "referenceMagnitudeSpacing": 6.103515625e-05,
+        "ulpDistance": 516
+      }
+    },
+    {
+      "seam": "cycle-3.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 170.11804245262115,
+      "relativeRms": 1.7687236018457313e-06,
+      "maxAbs": 0.033935546875,
+      "passes": false,
+      "referenceMaxMagnitude": 3011.768798828125,
+      "absoluteGateFailures": 86683,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 33.0,
+        "95": 533.0,
+        "99": 2688.0,
+        "100": 1933107200.0
+      },
+      "valuesWithinUlps": {
+        "0": 89563,
+        "1": 259309,
+        "2": 434339,
+        "4": 766803,
+        "8": 1372344,
+        "16": 2345197
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 3467484,
+        "indices": [
+          113,
+          195,
+          92
+        ],
+        "reference": 1451.996826171875,
+        "actual": 1452.03076171875,
+        "absoluteError": 0.033935546875,
+        "referenceMagnitudeSpacing": 0.0001220703125,
+        "ulpDistance": 278
+      }
+    },
+    {
+      "seam": "cycle-3.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 53.139915417590174,
+      "relativeRms": 1.0604789035526046e-06,
+      "maxAbs": 0.002197265625,
+      "passes": false,
+      "referenceMaxMagnitude": 612.5787963867188,
+      "absoluteGateFailures": 164,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 27.0,
+        "95": 472.0,
+        "99": 2384.0,
+        "100": 1907032064.0
+      },
+      "valuesWithinUlps": {
+        "0": 148449,
+        "1": 358385,
+        "2": 614744,
+        "4": 1027040,
+        "8": 1714181,
+        "16": 2727591
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 5380188,
+        "indices": [
+          176,
+          144,
+          92
+        ],
+        "reference": 455.757568359375,
+        "actual": 455.759765625,
+        "absoluteError": 0.002197265625,
+        "referenceMagnitudeSpacing": 3.0517578125e-05,
+        "ulpDistance": 72
+      }
+    },
+    {
+      "seam": "cycle-3.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 29.46876043035232,
+      "relativeRms": 1.9001690646670222e-06,
+      "maxAbs": 0.0021905899047851562,
+      "passes": false,
+      "referenceMaxMagnitude": 387.0848388671875,
+      "absoluteGateFailures": 161,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 0,
+      "ulpDistanceQuantiles": {
+        "50": 30.0,
+        "95": 520.0,
+        "99": 2624.0,
+        "100": 1899008000.0
+      },
+      "valuesWithinUlps": {
+        "0": 114650,
+        "1": 309717,
+        "2": 524652,
+        "4": 901977,
+        "8": 1550896,
+        "16": 2534294
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 5379848,
+        "indices": [
+          176,
+          142,
+          8
+        ],
+        "reference": -11.178879737854004,
+        "actual": -11.181070327758789,
+        "absoluteError": 0.0021905899047851562,
+        "referenceMagnitudeSpacing": 9.5367431640625e-07,
+        "ulpDistance": 2297
+      }
+    },
+    {
+      "seam": "cycle-3.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14486.52242067546,
+      "relativeRms": 3.947190560412042e-07,
+      "maxAbs": 0.1875,
+      "passes": false,
+      "referenceMaxMagnitude": 143855.375,
+      "absoluteGateFailures": 54333,
+      "referenceMagnitudeSpacingExceedsAbsoluteGate": 1190,
+      "ulpDistanceQuantiles": {
+        "50": 30.0,
+        "95": 517.0,
+        "99": 2584.179999999993,
+        "100": 3925824.0
+      },
+      "valuesWithinUlps": {
+        "0": 1290,
+        "1": 3634,
+        "2": 5952,
+        "4": 10249,
+        "8": 18017,
+        "16": 30738
+      },
+      "maximumAbsoluteErrorLocation": {
+        "flatIndex": 67681,
+        "indices": [
+          176,
+          97
+        ],
+        "reference": 124046.6796875,
+        "actual": 124046.8671875,
+        "absoluteError": 0.1875,
+        "referenceMagnitudeSpacing": 0.0078125,
+        "ulpDistance": 24
+      }
+    }
+  ],
+  "newNeuralForwards": 0
+}

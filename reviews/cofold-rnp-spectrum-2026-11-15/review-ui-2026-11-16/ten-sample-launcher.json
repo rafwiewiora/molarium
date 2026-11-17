@@ -1,0 +1,14 @@
+{
+  "pid": 68552,
+  "startedAt": "2026-11-17T01:10:19.809887+00:00",
+  "sourceManifestSha256": "d2675022e3b5f453c6d6846c8b5dba4883bc2461e16741b30b7534e0fa3774f7",
+  "deadline": "2026-11-17T05:30:00Z",
+  "preparerPid": 36066,
+  "plannedCases": 48,
+  "samplesPerCase": 10,
+  "newNeuralForwards": 0,
+  "newJobs": 0,
+  "publicationActions": 0,
+  "replacesUnstartedUiWaiter": "all48-ten-review-20261117-attempt001",
+  "scientificWorkRepeated": 0
+}

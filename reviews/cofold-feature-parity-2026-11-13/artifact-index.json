@@ -3,8 +3,8 @@
   "files": [
     {
       "file": "README.md",
-      "bytes": 14167,
-      "sha256": "2e2e51ed7edaf198e9eb6b1222d8706ae5228902456661fc28694b09b9b19493"
+      "bytes": 14427,
+      "sha256": "693e86dcdc1285e1adc89743b6074a5d24447af4339ecadb4ebf72a6b3f5c7fa"
     },
     {
       "file": "browser-32qy-a1keo/features.bin",
@@ -68,8 +68,8 @@
     },
     {
       "file": "gpu-capability-2026-11-16/README.md",
-      "bytes": 12492,
-      "sha256": "d4650931bf8747ae7bd48e055661870b7ed97a5220498b71e9839a14225ebae9"
+      "bytes": 13106,
+      "sha256": "6942a4685bad8ec95e899202579548ac62cb7bcf074ba15e25700806b7ee1ebe"
     },
     {
       "file": "gpu-capability-2026-11-16/chrome-logging-wrapper.sh",
@@ -253,8 +253,58 @@
     },
     {
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/README.md",
-      "bytes": 1235,
-      "sha256": "e68b9b886dd4551032d97bfe0800a85bf1d6494a6495a2dbeec7963cfe35efc1"
+      "bytes": 3047,
+      "sha256": "0a74394020af22e8cffac168fe4077035e62de847938edc98d6699e273e8fabd"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/fixture-mount-discovery.json",
+      "bytes": 15455,
+      "sha256": "4eeda636a1ddb590717986a794dbca9d934eed106bdd6a4b6baffe7bfed98431"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/fixture-preflight-transfer-receipt.json",
+      "bytes": 2000,
+      "sha256": "c26ab60b88cb4d40de0833f5664fe930d88253b8222c32fb33ce9e1a1fe76572"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/mount-failure-20390/control-source-verification.json",
+      "bytes": 742,
+      "sha256": "db42465ac6f79d5cb318548a7ca566f89807f06098e2a38651edd7207b956935"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/mount-failure-20390/observation.json",
+      "bytes": 6503,
+      "sha256": "f9e88bb9f828436494e43de391d6868736085ce383f8db8232f77f1f530c3ce6"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/mount-failure-20390/original/probe-result.json",
+      "bytes": 21273,
+      "sha256": "55bb09b6fadeaa73fa097933c8297742609791c44741f39cab271b354a3bea56"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/mount-failure-20390/result.json",
+      "bytes": 23219,
+      "sha256": "db7a7f03a9dc57af2641dc9a519b9c6668981c60365761fdcc0e0b8279496fa8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/mount-failure-20390/results/browser-exit-codes.json",
+      "bytes": 225,
+      "sha256": "7c06383da2a7fd551a88f86a96e597f80d69f1562c7b16c1a304db782b4263e4"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/mount-failure-20390/results/result.json",
+      "bytes": 277,
+      "sha256": "bbe56a1919eb44fc3334d3645bbf8ab7466c0e826c8aa375913f463d58399548"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/mount-failure-20390/results/trunk-analysis.log",
+      "bytes": 1192,
+      "sha256": "09668b4f11b6b92ecedabff3eb65bd067b1300e8e774c2ca464fb330d3b41f35"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/mount-failure-20390/results/trunk.log",
+      "bytes": 350,
+      "sha256": "a2b4faff47c41cc98c6b8f86d39571ffd71eb0c92f9a41d1d0cb5326ca39fc04"
     },
     {
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32/container-controls.sh",
@@ -295,6 +345,71 @@
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32/verify_sources.py",
       "bytes": 3191,
       "sha256": "6e93ad2e9cceda363c0c7893d7d69027172a8855c5a93830d6db7f72703ece7b"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/before-submission-fixture-preflight.json",
+      "bytes": 15104,
+      "sha256": "ddb7dc561f86386eacb21621067c867bd9fd79f788bc0caddfaf2d92c7fcf4a1"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/before-submission-fixture-preflight.log",
+      "bytes": 145,
+      "sha256": "610e8099b5dc971334eebd9741812d7d7f40cdd1e81fc3fec727338c9f6e9bdc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/container-controls.sh",
+      "bytes": 1431,
+      "sha256": "13939c2feac76abf19bd690f4da6c7e82323e77745cb58a4a22696c2e7235375"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/container-fixture-preflight.mjs",
+      "bytes": 1431,
+      "sha256": "e5b9eb787c78857bedb74b2eccf98cf358e27273d7ca1f998b83146b63a9cbaa"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/container-image-receipt.json",
+      "bytes": 224,
+      "sha256": "89eab1801bbb2946e9a08c92198e11dd7363dd527405b7b8b1e0087caa162169"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/fixture-mount-plan.json",
+      "bytes": 13822,
+      "sha256": "658695663a3a48fc5826fa4ee48cb0f93216bbb8a128cdbdbc4fc778bfd1bcee"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/gpu.sh",
+      "bytes": 2709,
+      "sha256": "4b04e4a5535cf8dc72cd7f57fc5bbbcdc5cd58ea8ab79d2578416e2059e84cd1"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/runner-adaptations.json",
+      "bytes": 2785,
+      "sha256": "8ab6a008de2c7b0264cb128b0f43173e3108efb534da937aff87bd86152efaa7"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/source-manifest.json",
+      "bytes": 1585,
+      "sha256": "2ce3a1e80a7232735fc1e77810bc66958c34aba5fb12b6f8cb236d14578a9876"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/submission.json",
+      "bytes": 6936,
+      "sha256": "606b9e100ea591d8b61b6fd0ab4a9e17f74f8de3bbc83299e1f37a024542a7a7"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/trunk-readiness-fix.json",
+      "bytes": 1328,
+      "sha256": "61da204be309fcad61156bb866b3746b06933f0bb3474d0f3c99cb8ed765308b"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/trunk.browser.mjs",
+      "bytes": 10904,
+      "sha256": "e141416006e3f8f5b7921352eb2c7065f39b3b274abfd0d40bea41098a0a44ce"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-mount-corrected/verify_sources.py",
+      "bytes": 3545,
+      "sha256": "472e47acfadc71216a1209e8d97477e896a491c09644a243930633f8f471cb7d"
     },
     {
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/requested-fp32-observation20382.json",
@@ -350,6 +465,76 @@
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32/verify_sources.py",
       "bytes": 3199,
       "sha256": "fd10bfd7de1110fdf7bfe901b195fae4ad319c47de377d1fa236ca06b1a3f015"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/before-submission-fixture-preflight.json",
+      "bytes": 15104,
+      "sha256": "ddb7dc561f86386eacb21621067c867bd9fd79f788bc0caddfaf2d92c7fcf4a1"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/before-submission-fixture-preflight.log",
+      "bytes": 145,
+      "sha256": "610e8099b5dc971334eebd9741812d7d7f40cdd1e81fc3fec727338c9f6e9bdc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/container-controls.sh",
+      "bytes": 1083,
+      "sha256": "e43688a5978bcbc61e87fa1cae7351fb50a72ff286a0776f8e147b7ac2955918"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/container-fixture-preflight.mjs",
+      "bytes": 1431,
+      "sha256": "e5b9eb787c78857bedb74b2eccf98cf358e27273d7ca1f998b83146b63a9cbaa"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/container-image-receipt.json",
+      "bytes": 224,
+      "sha256": "89eab1801bbb2946e9a08c92198e11dd7363dd527405b7b8b1e0087caa162169"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/fixture-mount-plan.json",
+      "bytes": 13822,
+      "sha256": "658695663a3a48fc5826fa4ee48cb0f93216bbb8a128cdbdbc4fc778bfd1bcee"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/gpu.sh",
+      "bytes": 2696,
+      "sha256": "c1a927ee03b057dd8c65384030980ecca702a1021cad72bbd555c10ab33cde0e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/runner-adaptations.json",
+      "bytes": 2901,
+      "sha256": "db50a353df8846f3cc20ced640e22f746bbf6438fbfc4ca29f3b9f9ec46ae2af"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/source-manifest.json",
+      "bytes": 1585,
+      "sha256": "bb74286ee381037fd0d7fa2120e3f46a5beac0388d8ff9026ee74142613bd482"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/submission.json",
+      "bytes": 6928,
+      "sha256": "849a6929f7320303073b769aff00a545dd40d705b7f09f99d2cb16106483ebb3"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/trunk-readiness-fix.json",
+      "bytes": 2817,
+      "sha256": "c4cb0649938083381a826cbc6996cb29f7772191bd831a42a828a7b6fff8df2d"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/trunk.browser.mjs",
+      "bytes": 11667,
+      "sha256": "2043dea16df3da70b8f17657f8e522a81d15e9342cb047743fcb970f1c1eb97a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/strict-fp32-mount-corrected/verify_sources.py",
+      "bytes": 3553,
+      "sha256": "987fa0143df3a92429fdfd382d207bb12ff99e13f89b5a7917bd16c4ac1e42d8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/t4-eligibility-amendment.json",
+      "bytes": 11416,
+      "sha256": "aaee00d0655476f9d86c1afef2d8762577fea51f5bf69bac497e6e439213e690"
     },
     {
       "file": "gpu-capability-2026-11-16/observed-20186/chrome-ldd.txt",
@@ -593,8 +778,8 @@
     },
     {
       "file": "gpu-capability-2026-11-16/observed-20285/README.md",
-      "bytes": 1155,
-      "sha256": "e90a32bfd5c27b94146556810e12de2b3dc3b9ac48d420702b15fa9057c25f75"
+      "bytes": 1137,
+      "sha256": "fdbe0b9e0ea21ae02e9095a0ccf476639feb25cb1acb7ebf6c63352f30984a64"
     },
     {
       "file": "gpu-capability-2026-11-16/observed-20285/container-egl-icd.json",
@@ -1378,8 +1563,8 @@
     },
     {
       "file": "trained-trunk-apple/README.md",
-      "bytes": 6379,
-      "sha256": "b7af566f9f70fc31390b8ba67f2767a2b55bcb164d8903408d9b2e320d931e82"
+      "bytes": 8263,
+      "sha256": "ed2e167fe20d27a8a979c624d20333ae5dff710021e04c5b49650307699f7463"
     },
     {
       "file": "trained-trunk-apple/analysis.json",
@@ -1493,8 +1678,8 @@
     },
     {
       "file": "trained-trunk-apple/precision-comparison.json",
-      "bytes": 2181,
-      "sha256": "8a2f28bc9909a389c3a5ac6a7da1db2d25c33b7b2c34c43cba89757683239fd8"
+      "bytes": 2542,
+      "sha256": "9353ceb037c2425d1ccdfdf51df8796b1c8f724fdde1b00f966711a9214ceca5"
     },
     {
       "file": "trained-trunk-apple/precision-fix.json",
@@ -1525,6 +1710,56 @@
       "file": "trained-trunk-apple/release-upload-verification.json",
       "bytes": 768,
       "sha256": "8830af18cbdd49c58ebcb3fe33807088170b72bce24c3eb5d7065dd67060911e"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/analysis.json",
+      "bytes": 33608,
+      "sha256": "e094aef385af08b362cdfac861b3197892b57f2ede0cf5c33ac6a0c2034cc8b0"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/plan.json",
+      "bytes": 1545,
+      "sha256": "5f57701c50124a5418b43c99527090365ee29008caf16a7db5961df589f308a6"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/source/analyze_trunk_residuals.py",
+      "bytes": 4316,
+      "sha256": "a88964dbb2fba1e3ed40d39d090a7f4ba3767c735999252236cfc178e78ce2c6"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/source/capture_native_features.py",
+      "bytes": 12666,
+      "sha256": "caa1ccb445b1d362310a9de90bc2fcde5a59b01a84a2575565c350312cb43437"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/source/check_trained_target.py",
+      "bytes": 9675,
+      "sha256": "a83f21867ecd7f4efadf6f769b7febe6a4c3be2193bb7a6bef45fcec757ce89f"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/source/check_trained_trunk.py",
+      "bytes": 3725,
+      "sha256": "143aaeb7067c4329f56410d27cc0d0a6afae5ff628232780613eaa4b7397a267"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/source/compare_feature_snapshots.py",
+      "bytes": 16409,
+      "sha256": "114bae788d05356b2ec8ccb786837fe9c9bb2beb54bb11fb262d9b0c71ac445f"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/source/feature_snapshot.py",
+      "bytes": 3234,
+      "sha256": "a65c7054477aaa5934a6e337748228ac9574f70cea37004e25361a2a6386ad3d"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/source/make_trained_target_fixture.py",
+      "bytes": 6390,
+      "sha256": "51b64aae3b688b30672b3787a4d1fdd0e078f98d7381b4739736e71ad4f6c490"
+    },
+    {
+      "file": "trained-trunk-apple/residual-scale/source/native_run.py",
+      "bytes": 9223,
+      "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
     },
     {
       "file": "trained-trunk-apple/run_control.py",
@@ -1615,6 +1850,81 @@
       "file": "trained-trunk-apple/strict-fp32/source-manifest.json",
       "bytes": 560,
       "sha256": "0bab36251d3e9de607e607733aa413a5bfeb29c50661424b68894c004ec5a2cd"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/analysis.json",
+      "bytes": 8420,
+      "sha256": "14df4dbe58ca87fb0204a47c38b919fad0a73eaa4627a726b900166632f040fd"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/analysis.log",
+      "bytes": 31,
+      "sha256": "dac952dca228659513922a8e801af80b4a0b5f93e14c1b692588d6de9506b36b"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/archive-receipt.json",
+      "bytes": 488,
+      "sha256": "6810f641bafa03d1732ce521f04e0f5764663c85e235245fb81188c819c9e661"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/browser-expression-preflight.js",
+      "bytes": 6274,
+      "sha256": "293d8014aec58083e096c75221c88695c6d467a960161f686620baae62e206e1"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/browser.log",
+      "bytes": 1813,
+      "sha256": "7b20b529a59b04a50602c39ffea852a2600b836150de3f35395405addbc8709a"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/launcher.json",
+      "bytes": 114,
+      "sha256": "978339557c626ebe040a0058b60f92cf4623116446e4205ed21e063558e8dce5"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/measurement-receipt.json",
+      "bytes": 28366,
+      "sha256": "cb1e25200d7f442143252aefeb42b1a446d2912a32f1f77dbbed44d6dad6a9c6"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/plan.json",
+      "bytes": 3058,
+      "sha256": "80296beda120cbecc3285a2cb208afd6bab58f09813da458e21ee803a7b8dbce"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/production-source-pins.json",
+      "bytes": 21140,
+      "sha256": "c407146330783269671a8b2776d5583ca9b839543bfe52b944adf6776d29ecbe"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/progress.json",
+      "bytes": 680,
+      "sha256": "a5ea2cda4426ac44f0b8d1716cabb744dcb22b5f2757b2cb67eba0a1d4836f7d"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/release-upload-verification.json",
+      "bytes": 642,
+      "sha256": "7e4e6dc91006814283ab4a5ee0e91f728a11db42fc66ae393dff1e7941d20770"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/run_control.py",
+      "bytes": 3374,
+      "sha256": "bbe831257f279c34b66849958441c3e5c4605c4cdf75e5c23a9981c5c12b3dfa"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/runner.mjs",
+      "bytes": 11849,
+      "sha256": "0cd1148707e59c7e45dd87605cc4c6aba3c590713d66170276679757dd1c0802"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/source-adaptation.json",
+      "bytes": 897,
+      "sha256": "7ab61734799809c6cfec3da7989db944e23fbb454fc68a92a12f51ee169f9fb9"
+    },
+    {
+      "file": "trained-trunk-apple/strict-two-pass/source-manifest.json",
+      "bytes": 560,
+      "sha256": "5f1008d3d881c4e61a7dbdf38ff71e69a7589adeaff81f53d91be2e594adc9fe"
     },
     {
       "file": "trained-trunk-apple/two-pass/analysis.json",

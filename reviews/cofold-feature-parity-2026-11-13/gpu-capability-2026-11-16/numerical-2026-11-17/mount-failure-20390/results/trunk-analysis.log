@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo/folding/comparison/check_trained_trunk.py", line 70, in <module>
+    result = check(args.fixture, args.measured)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo/folding/comparison/check_trained_trunk.py", line 26, in check
+    report = json.loads((measured / 'receipt.json').read_bytes())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/rafal_wiewiora_psivant_com/miniforge3/envs/openfold3/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/rafal_wiewiora_psivant_com/miniforge3/envs/openfold3/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt001/results/trunk/receipt.json'

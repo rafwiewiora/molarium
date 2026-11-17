@@ -1,0 +1,7 @@
+{
+  "chrome-software-review.sh": "956917f6b68fa33188dd94856a5e44650f52a17d010623b5d121a4a99be425eb",
+  "runner.py": "9af2779b7635a66e17712f8c7ec2e5e9bfda239a2f6d256243532451bbd0096e",
+  "source-pins.json": "2787c894909c47ff4c3e4f1ced356510a818a9c4ecf05215187253256cfcf2ee",
+  "verify-saved-cohort.py": "e6a6541503f4df3e9ed4de6275b09a8349df9910f2abd81d369f8e460115bd67",
+  "wait_and_review.py": "81b352b578c36dc5eb4c415e5c05da4a0e4cd46d4684737b0e50c84747688655"
+}

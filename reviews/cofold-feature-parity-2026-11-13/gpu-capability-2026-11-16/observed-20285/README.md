@@ -4,4 +4,4 @@ Job 20285 completed on an actual NVIDIA L4. The original EGL-only Chrome phase o
 
 The original submission contained unrelated scheduler rows. Its public copy omits only that field and records the original SHA-256 in public-redactions.json. Numerical/device observations are unchanged; the private unredacted tar is not published.
 
-Numerical controls are separate: job 20382 lost its node before any payload and its source-identical retry 20391 is queued for the 126 transition configurations and four trained-trunk cycles. Its original requested-FP32 trunk configuration retains default half-arithmetic pair paths; the Apple strict-precision control and correction are documented in ../../trained-trunk-apple/README.md. No NVIDIA numerical pass is claimed here.
+Numerical controls are separate. The subsequent strict job reached a physical L4 but could not open an absolute-symlink fixture outside the old container bind. The [mount-failure record and actual corrected-container proofs](../numerical-2026-11-17/README.md) distinguish that data-visibility error from numerical agreement. Corrected jobs 20398 and 20399 remain queued. No NVIDIA numerical pass is claimed here.

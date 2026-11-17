@@ -1,7 +1,7 @@
 {
   "schema": "molarium.stock-execution-history.v1",
   "planSha256": "797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349",
-  "checkedAt": "2026-11-17T01:49:02.852599+00:00",
+  "checkedAt": "2026-11-17T04:00:12.770543+00:00",
   "attempts": [
     {
       "id": "initial",
@@ -51,5 +51,18 @@
       "scoresSha256": "1679e234ab2886f856b057cd6c6329cfd2f6dfe2bb0cdbf1e232aa67ce303f38",
       "archiveSha256": "8e8a756c200cdff7338c71ad2c30f4bbb93eff41126e80588eb658af62c457e3"
     }
-  ]
+  ],
+  "finalTenSampleUi": {
+    "status": "verified-for-review",
+    "finishedAt": "2026-11-17T03:56:11.374644Z",
+    "cases": 48,
+    "predictionRecords": 480,
+    "separateReferences": 48,
+    "gridPages": 288,
+    "failed": 0,
+    "newNeuralForwards": 0,
+    "scientificJudgements": 0,
+    "verification": "review-ui-2026-11-16/all48-ten-sample-verification.json",
+    "verificationSha256": "fbe93ebcde6e0233e5d1c32a1652bfd9b28db9f012410a124a4462700a63de11"
+  }
 }

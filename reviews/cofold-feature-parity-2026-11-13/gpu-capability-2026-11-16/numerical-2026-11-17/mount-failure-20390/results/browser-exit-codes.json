@@ -1,0 +1,7 @@
+{
+  "trunk": 1,
+  "transitionConfigurationsExecuted": 0,
+  "plannedCycles": 4,
+  "plannedBoundaries": 32,
+  "scope": "Strict-FP32 pair precision and observed shader gate; no native capture/conversion or complete pose run."
+}
