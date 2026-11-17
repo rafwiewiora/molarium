@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-11-17T05:23:29.114591+00:00",
+  "purpose": "Pre-merge canonical baseline; not production-release verification.",
+  "manifestSha256": "77c1e047a900209177c0cf90ae79e353f6fdd88b903601611fd5cc98385163d5",
+  "codeVersion": "4bcb1f2eab5fe9e80480e704065ece4ea04416c9b549975f8d55da39e7cc7bc2",
+  "reviewerSha256": "190cb5b59144861be344638668fc5391810c040b6c24ac74e251ca9c77e092ee",
+  "reviewerMatchesProposedSourceAfterVersionNormalization": false,
+  "client": "curl normal HTTP client; initial urllib request received403, cause not diagnosed",
+  "newNeuralForwards": 0
+}

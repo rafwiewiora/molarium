@@ -1,0 +1,20 @@
+{
+  "schema": "molarium.merge-CI-startup-failure.v1",
+  "runId": 44024048190,
+  "originalJobId": 133840017658,
+  "head": "5ddf1d2add2eda26cde40cd16fd3fee20c15847c",
+  "checkedPRHead": "ab2ad85e75760ab3197bd887ec44d3bdb6f48bce",
+  "checkedPRRun": 44021700525,
+  "sourceTrees": {
+    "ab2ad85e75760ab3197bd887ec44d3bdb6f48bce": "e910d7bf687b38d71c23805ef23372e1fd080c86",
+    "5ddf1d2add2eda26cde40cd16fd3fee20c15847c": "e910d7bf687b38d71c23805ef23372e1fd080c86"
+  },
+  "exactSourceTreeUnchanged": true,
+  "observedFailure": "Timed out waiting for Chrome page, before initial browser suite assertions.",
+  "originalCause": "Unproven",
+  "failureLogSha256": "a59648a9a576bf1225ca83606ccc8fe44568e656e4c7ee7068c9cc148f45d7ab",
+  "maximumIdenticalRetries": 1,
+  "helperSourceTimeoutsAndGatesChanged": false,
+  "newNativeCalls": 0,
+  "recordedAt": "2026-11-17T05:31:02.899359+00:00"
+}

@@ -241,3 +241,13 @@ declared rule. Preserve rounded confidence ties and every planned denominator.
 Portable review files should carry every original pose, explicit chemistry and
 empty human decisions. A software UI test can verify export and persistence;
 it cannot provide scientific selections or validate binding poses.
+
+
+### Verify the actual custom-domain browser network
+
+The canonical reviewer matched repository HTTP bytes while an actual browser
+observed an additional provider-injected analytics script. CSP blocked that
+script load. After the user disabled automatic Web Analytics, the same
+saved-pose workflow passed its unchanged network guard. Preserve failed and
+passing observations separately, and distinguish attempted loads, blocked
+requests, executed scripts and uploaded data ([DN-01](reviews/COFOLD_REVIEW_PRODUCTION_NETWORK_2026-11-17.md)).

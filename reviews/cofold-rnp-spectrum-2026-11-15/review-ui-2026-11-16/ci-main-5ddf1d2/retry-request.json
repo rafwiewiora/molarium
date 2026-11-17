@@ -1,0 +1,13 @@
+{
+  "runId": 44024048190,
+  "originalJobId": 133840017658,
+  "headSha": "5ddf1d2add2eda26cde40cd16fd3fee20c15847c",
+  "requestedAt": "2026-11-17T05:31:57.699063+00:00",
+  "scope": "One identical-source failed-job-only retry after a verified Chrome page discovery timeout, before assertions.",
+  "maximumIdenticalRetries": 1,
+  "sourceHelperTimeoutsAndGatesChanged": false,
+  "newNativeCalls": 0,
+  "requestExitCode": 0,
+  "currentJobId": 133842334051,
+  "currentStatus": "queued"
+}

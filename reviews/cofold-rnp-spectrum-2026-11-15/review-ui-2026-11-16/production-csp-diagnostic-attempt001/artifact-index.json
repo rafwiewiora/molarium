@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "file": "result.json",
+      "bytes": 3723,
+      "sha256": "c300e08742dee5c4696064c1863c9ff851946894c6f0e93d1274a200e71e2fcc"
+    },
+    {
+      "file": "run.mjs",
+      "bytes": 2801,
+      "sha256": "968a8bc71148cf01bb5c9152188349a8b3145f9a4d09d9c19636bf45c07e2142"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema": "molarium.production-review-remediation.v1",
+  "parentAttempt": "production-review-20261117-attempt001",
+  "reason": "User-confirmed disabling of automatic Web Analytics; same functional and static-origin assertions rerun in a new immutable browser attempt.",
+  "recordedAt": "2026-11-17T05:53:15.533520+00:00",
+  "sourceIdentical": {
+    "run.mjs": true,
+    "verify-http.mjs": true,
+    "chrome-software-review.sh": true
+  },
+  "runtimeSourceChanged": false,
+  "networkAssertionRelaxed": false,
+  "newNeuralForwards": 0,
+  "originalFailureRetained": true
+}

@@ -1,0 +1,15 @@
+{
+  "startedAt": "2026-11-17T05:54:01.359244+00:00",
+  "target": "https://molarium.org/vendor/foldarium/library-review",
+  "sourceHead": "5ddf1d2add2eda26cde40cd16fd3fee20c15847c",
+  "samplesPerCase": 10,
+  "nativeCalls": 0,
+  "plannedModelCalls": 0,
+  "timeoutSeconds": 540,
+  "sourceAndAssertionsUnchanged": true,
+  "preflightExtraOriginRequests": 0,
+  "reason": "Verify actual production behavior after user-confirmed disabling of analytics injection.",
+  "pid": 89871,
+  "finishedAt": "2026-11-17T05:57:15.780185+00:00",
+  "exitCode": 0
+}

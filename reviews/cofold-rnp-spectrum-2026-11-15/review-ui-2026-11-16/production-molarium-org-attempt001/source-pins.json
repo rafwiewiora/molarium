@@ -1,0 +1,8 @@
+{
+  "scripts/headless-chrome.mjs": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13",
+  "scripts/stock-cofold-review.browser.mjs": "8546cb1a85790348e5cbc1c124287a856bf5c74190102a668685f4f898ec73ad",
+  "vendor/foldarium/library-review.js": "a5e7f664b0317076541cc17c5fa295f8923d3dcccbdffeeca70f93f6acc76180",
+  "vendor/foldarium/library-store.js": "a378bbca2420acb17be4ba44c45689ad1b57b2de450630945e74acc6ec848f9b",
+  "vendor/foldarium/library-alignment.js": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65",
+  "scripts/version-web-code.mjs": "814486b0431c00128616d2acc6cfb02dd037ed2cfae551043ca879c1505a598a"
+}

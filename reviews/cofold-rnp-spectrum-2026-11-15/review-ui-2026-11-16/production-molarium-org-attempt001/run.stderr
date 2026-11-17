@@ -1,0 +1,20 @@
+120 |     const partial=await exported('#export');assert.deepEqual(partial.poses.find(p=>p.id===first.id),{id:first.id,status:'failed',error:first.error});
+121 |     syntheticEarlierFailure={status:'pass',scope:'Explicit synthetic UI state only; original source libraries and recorded model results are unchanged.',firstVisiblePoseId:predictionIds[1],displayedOrdinal:expectedOrdinal,failedRecordPreservedOnExport:true};
+122 |   }
+123 |   const networkCheck={scope:'Page network events during file import, review, local persistence and export. URLs exclude query values; no payload/body is captured.',requests:networkRequests,nonReadOnlyRequests:networkRequests.filter(r=>!['GET','HEAD','OPTIONS'].includes(r.method)),unexpectedOrigins:networkRequests.filter(r=>!['https://molarium.org','https://assets.molarium.org'].includes(new URL(r.url).origin)),unexpectedQueryKeys:networkRequests.filter(r=>!r.queryAllowed),newNeuralForwards:0};
+124 | networkCheck.status=networkCheck.nonReadOnlyRequests.length===0&&networkCheck.unexpectedOrigins.length===0&&networkCheck.unexpectedQueryKeys.length===0?'pass':'failed';
+125 | await writeFile(new URL('./network-check.json',import.meta.url),JSON.stringify(networkCheck,null,2)+'\n',{flag:'wx'});assert.equal(networkCheck.status,'pass','Reviewer must not upload data or make unrelated remote requests');
+                                                                                                                                   ^
+AssertionError: Reviewer must not upload data or make unrelated remote requests
+
+'failed' !== 'pass'
+
+ generatedMessage: false,
+     actual: "failed",
+   expected: "pass",
+   operator: "strictEqual",
+       code: "ERR_ASSERTION"
+
+      at /Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/production-review-20261117-attempt001/run.mjs:125:126
+
+Bun v1.3.14 (macOS arm64)

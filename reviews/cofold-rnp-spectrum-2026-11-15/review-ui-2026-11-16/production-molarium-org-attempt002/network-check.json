@@ -1,0 +1,198 @@
+{
+  "scope": "Page network events during file import, review, local persistence and export. URLs exclude query values; no payload/body is captured.",
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://molarium.org/docking/validation/pose-viewer/vendor/molstar-5.11.0.css",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Stylesheet"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-review.css",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Stylesheet"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/assets/foldarium-mark.svg",
+      "queryKeys": [],
+      "queryAllowed": true,
+      "type": "Image"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/docking/validation/pose-viewer/vendor/molstar-5.11.0.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-review.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-store.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-format.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-alignment.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-chemistry.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/assets/foldarium-mark.svg",
+      "queryKeys": [],
+      "queryAllowed": true,
+      "type": "Other"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-store.js",
+      "queryKeys": [],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-review",
+      "queryKeys": [
+        "run"
+      ],
+      "queryAllowed": true,
+      "type": "Document"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/docking/validation/pose-viewer/vendor/molstar-5.11.0.css",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Stylesheet"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-review.css",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Stylesheet"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/assets/foldarium-mark.svg",
+      "queryKeys": [],
+      "queryAllowed": true,
+      "type": "Image"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/docking/validation/pose-viewer/vendor/molstar-5.11.0.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-review.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-store.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-format.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-alignment.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-chemistry.js",
+      "queryKeys": [
+        "v"
+      ],
+      "queryAllowed": true,
+      "type": "Script"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-store.js",
+      "queryKeys": [],
+      "queryAllowed": true,
+      "type": "Script"
+    }
+  ],
+  "nonReadOnlyRequests": [],
+  "unexpectedOrigins": [],
+  "unexpectedQueryKeys": [],
+  "newNeuralForwards": 0,
+  "status": "pass"
+}

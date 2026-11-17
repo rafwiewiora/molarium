@@ -1,0 +1,340 @@
+﻿2026-11-17T05:25:49.0101799Z Current runner version: '2.338.2'
+2026-11-17T05:25:49.0126382Z ##[group]Runner Image Provisioner
+2026-11-17T05:25:49.0127264Z Hosted Compute Agent
+2026-11-17T05:25:49.0127853Z Version: 20261103.629
+2026-11-17T05:25:49.0128586Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-17T05:25:49.0129321Z Build Date: 2026-11-03T17:26:59Z
+2026-11-17T05:25:49.0130036Z Worker ID: {581828ad-1abb-4476-8fb7-70374aaaf165}
+2026-11-17T05:25:49.0130791Z Region: westus2
+2026-11-17T05:25:49.0131533Z Cloud: Azure
+2026-11-17T05:25:49.0132163Z ##[endgroup]
+2026-11-17T05:25:49.0133684Z ##[group]Operating System
+2026-11-17T05:25:49.0134430Z Ubuntu
+2026-11-17T05:25:49.0134981Z 26.04.1
+2026-11-17T05:25:49.0135490Z LTS
+2026-11-17T05:25:49.0136064Z ##[endgroup]
+2026-11-17T05:25:49.0136617Z ##[group]Runner Image
+2026-11-17T05:25:49.0137190Z Image: ubuntu-26.04
+2026-11-17T05:25:49.0137860Z Version: 20261111.196.1
+2026-11-17T05:25:49.0139101Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-17T05:25:49.0140766Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+2026-11-17T05:25:49.0142188Z ##[endgroup]
+2026-11-17T05:25:49.0143406Z ##[group]GITHUB_TOKEN Permissions
+2026-11-17T05:25:49.0145541Z Contents: read
+2026-11-17T05:25:49.0146280Z Metadata: read
+2026-11-17T05:25:49.0146917Z ##[endgroup]
+2026-11-17T05:25:49.0149062Z Secret source: Actions
+2026-11-17T05:25:49.0150007Z Cache mode: write
+2026-11-17T05:25:49.0151529Z Prepare workflow directory
+2026-11-17T05:25:49.0546803Z Prepare all required actions
+2026-11-17T05:25:49.0595610Z Getting action download info
+2026-11-17T05:25:49.4038981Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-17T05:25:49.5206376Z Download action repository 'oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6' (SHA:0c5077e51419868618aeaa5fe8019c62421857d6)
+2026-11-17T05:25:49.7168093Z Download action repository 'browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4' (SHA:48ad923757ca74d66703209fe939badbdf80f2f4)
+2026-11-17T05:25:49.9733158Z Complete job name: Browser integration
+2026-11-17T05:25:50.0724078Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-11-17T05:25:50.0725186Z with:
+2026-11-17T05:25:50.0725651Z   repository: rafwiewiora/molarium
+2026-11-17T05:25:50.0729865Z   token: ***
+2026-11-17T05:25:50.0730309Z   ssh-strict: true
+2026-11-17T05:25:50.0730756Z   ssh-user: git
+2026-11-17T05:25:50.0731399Z   persist-credentials: true
+2026-11-17T05:25:50.0731912Z   clean: true
+2026-11-17T05:25:50.0732364Z   sparse-checkout-cone-mode: true
+2026-11-17T05:25:50.0732894Z   fetch-depth: 1
+2026-11-17T05:25:50.0733334Z   fetch-tags: false
+2026-11-17T05:25:50.0733781Z   show-progress: true
+2026-11-17T05:25:50.0734226Z   lfs: false
+2026-11-17T05:25:50.0734657Z   submodules: false
+2026-11-17T05:25:50.0735119Z   set-safe-directory: true
+2026-11-17T05:25:50.0735637Z   allow-unsafe-pr-checkout: false
+2026-11-17T05:25:50.0736460Z ##[endgroup]
+2026-11-17T05:25:50.3862431Z Syncing repository: rafwiewiora/molarium
+2026-11-17T05:25:50.3864883Z ##[group]Getting Git version info
+2026-11-17T05:25:50.3865724Z Working directory is '/home/runner/work/molarium/molarium'
+2026-11-17T05:25:50.3867212Z [command]/usr/bin/git version
+2026-11-17T05:25:50.3881735Z git version 2.56.1
+2026-11-17T05:25:50.3915165Z ##[endgroup]
+2026-11-17T05:25:50.3926785Z Temporarily overriding HOME='/home/runner/work/_temp/76818bc5-523d-41f7-aa79-7dbf424894d2' before making global git config changes
+2026-11-17T05:25:50.3934251Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T05:25:50.3936337Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/molarium/molarium
+2026-11-17T05:25:50.4018244Z Deleting the contents of '/home/runner/work/molarium/molarium'
+2026-11-17T05:25:50.4022264Z ##[group]Initializing the repository
+2026-11-17T05:25:50.4027286Z [command]/usr/bin/git init /home/runner/work/molarium/molarium
+2026-11-17T05:25:50.4167947Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-17T05:25:50.4169468Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-17T05:25:50.4170496Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-17T05:25:50.4171693Z hint: call:
+2026-11-17T05:25:50.4172440Z hint:
+2026-11-17T05:25:50.4173231Z hint: 	git config --global init.defaultBranch <name>
+2026-11-17T05:25:50.4173883Z hint:
+2026-11-17T05:25:50.4174634Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-17T05:25:50.4175838Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-17T05:25:50.4176598Z hint:
+2026-11-17T05:25:50.4177300Z hint: 	git branch -m <name>
+2026-11-17T05:25:50.4177818Z hint:
+2026-11-17T05:25:50.4178465Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-17T05:25:50.4182290Z Initialized empty Git repository in /home/runner/work/molarium/molarium/.git/
+2026-11-17T05:25:50.4195055Z [command]/usr/bin/git remote add origin https://github.com/rafwiewiora/molarium
+2026-11-17T05:25:50.4351158Z ##[endgroup]
+2026-11-17T05:25:50.4357914Z ##[group]Disabling automatic garbage collection
+2026-11-17T05:25:50.4359035Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-17T05:25:50.4361432Z ##[endgroup]
+2026-11-17T05:25:50.4363026Z ##[group]Setting up auth
+2026-11-17T05:25:50.4363990Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T05:25:50.4367902Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T05:25:50.4864538Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T05:25:50.4901515Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T05:25:50.5177377Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T05:25:50.5213470Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T05:25:50.5484393Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-17T05:25:50.5525300Z ##[endgroup]
+2026-11-17T05:25:50.5526847Z ##[group]Fetching the repository
+2026-11-17T05:25:50.5537197Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +5ddf1d2add2eda26cde40cd16fd3fee20c15847c:refs/remotes/origin/main
+2026-11-17T05:26:22.0118053Z From https://github.com/rafwiewiora/molarium
+2026-11-17T05:26:22.0119285Z  * [new ref]         5ddf1d2add2eda26cde40cd16fd3fee20c15847c -> origin/main
+2026-11-17T05:26:22.0124390Z ##[endgroup]
+2026-11-17T05:26:22.0125550Z ##[group]Determining the checkout info
+2026-11-17T05:26:22.0127379Z ##[endgroup]
+2026-11-17T05:26:22.0135191Z [command]/usr/bin/git sparse-checkout disable
+2026-11-17T05:26:22.0199114Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-17T05:26:22.0235140Z ##[group]Checking out the ref
+2026-11-17T05:26:22.0237116Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-11-17T05:26:23.0434074Z Updating files:  27% (1100/3982)
+2026-11-17T05:26:23.0997719Z Updating files:  28% (1115/3982)
+2026-11-17T05:26:23.1354626Z Updating files:  29% (1155/3982)
+2026-11-17T05:26:23.1804216Z Updating files:  30% (1195/3982)
+2026-11-17T05:26:23.2317837Z Updating files:  31% (1235/3982)
+2026-11-17T05:26:23.2995861Z Updating files:  32% (1275/3982)
+2026-11-17T05:26:23.3531123Z Updating files:  33% (1315/3982)
+2026-11-17T05:26:23.4181144Z Updating files:  34% (1354/3982)
+2026-11-17T05:26:23.4712804Z Updating files:  35% (1394/3982)
+2026-11-17T05:26:23.5115460Z Updating files:  36% (1434/3982)
+2026-11-17T05:26:23.5896613Z Updating files:  37% (1474/3982)
+2026-11-17T05:26:23.6352117Z Updating files:  38% (1514/3982)
+2026-11-17T05:26:23.6712613Z Updating files:  39% (1553/3982)
+2026-11-17T05:26:23.6945919Z Updating files:  40% (1593/3982)
+2026-11-17T05:26:23.7350236Z Updating files:  41% (1633/3982)
+2026-11-17T05:26:23.7745617Z Updating files:  42% (1673/3982)
+2026-11-17T05:26:23.8304859Z Updating files:  43% (1713/3982)
+2026-11-17T05:26:23.8585403Z Updating files:  44% (1753/3982)
+2026-11-17T05:26:23.9304047Z Updating files:  45% (1792/3982)
+2026-11-17T05:26:23.9326420Z Updating files:  46% (1832/3982)
+2026-11-17T05:26:23.9349644Z Updating files:  47% (1872/3982)
+2026-11-17T05:26:23.9367407Z Updating files:  48% (1912/3982)
+2026-11-17T05:26:23.9385060Z Updating files:  49% (1952/3982)
+2026-11-17T05:26:23.9407016Z Updating files:  50% (1991/3982)
+2026-11-17T05:26:23.9431256Z Updating files:  51% (2031/3982)
+2026-11-17T05:26:23.9447581Z Updating files:  52% (2071/3982)
+2026-11-17T05:26:23.9558483Z Updating files:  53% (2111/3982)
+2026-11-17T05:26:24.0074341Z Updating files:  54% (2151/3982)
+2026-11-17T05:26:24.0400248Z Updating files:  55% (2191/3982)
+2026-11-17T05:26:24.0472559Z Updating files:  55% (2199/3982)
+2026-11-17T05:26:24.0494880Z Updating files:  56% (2230/3982)
+2026-11-17T05:26:24.0656007Z Updating files:  57% (2270/3982)
+2026-11-17T05:26:24.3355721Z Updating files:  58% (2310/3982)
+2026-11-17T05:26:24.4423611Z Updating files:  59% (2350/3982)
+2026-11-17T05:26:24.5104704Z Updating files:  60% (2390/3982)
+2026-11-17T05:26:24.5466182Z Updating files:  61% (2430/3982)
+2026-11-17T05:26:24.5749250Z Updating files:  62% (2469/3982)
+2026-11-17T05:26:24.6393090Z Updating files:  63% (2509/3982)
+2026-11-17T05:26:24.6763595Z Updating files:  64% (2549/3982)
+2026-11-17T05:26:25.0698578Z Updating files:  65% (2589/3982)
+2026-11-17T05:26:25.3193008Z Updating files:  65% (2617/3982)
+2026-11-17T05:26:25.5977856Z Updating files:  66% (2629/3982)
+2026-11-17T05:26:25.8595824Z Updating files:  67% (2668/3982)
+2026-11-17T05:26:26.0596928Z Updating files:  68% (2708/3982)
+2026-11-17T05:26:26.3076579Z Updating files:  68% (2719/3982)
+2026-11-17T05:26:26.5661601Z Updating files:  69% (2748/3982)
+2026-11-17T05:26:26.7970317Z Updating files:  70% (2788/3982)
+2026-11-17T05:26:26.8662914Z Updating files:  71% (2828/3982)
+2026-11-17T05:26:26.8937209Z Updating files:  72% (2868/3982)
+2026-11-17T05:26:26.9131820Z Updating files:  73% (2907/3982)
+2026-11-17T05:26:26.9312202Z Updating files:  74% (2947/3982)
+2026-11-17T05:26:26.9625244Z Updating files:  75% (2987/3982)
+2026-11-17T05:26:26.9796361Z Updating files:  76% (3027/3982)
+2026-11-17T05:26:26.9965225Z Updating files:  77% (3067/3982)
+2026-11-17T05:26:26.9986711Z Updating files:  78% (3106/3982)
+2026-11-17T05:26:27.0246602Z Updating files:  79% (3146/3982)
+2026-11-17T05:26:27.0338176Z Updating files:  80% (3186/3982)
+2026-11-17T05:26:27.0413667Z Updating files:  80% (3205/3982)
+2026-11-17T05:26:27.0487494Z Updating files:  81% (3226/3982)
+2026-11-17T05:26:27.0713839Z Updating files:  82% (3266/3982)
+2026-11-17T05:26:27.0979127Z Updating files:  83% (3306/3982)
+2026-11-17T05:26:27.1002174Z Updating files:  84% (3345/3982)
+2026-11-17T05:26:27.1030226Z Updating files:  85% (3385/3982)
+2026-11-17T05:26:27.1072106Z Updating files:  86% (3425/3982)
+2026-11-17T05:26:27.1275964Z Updating files:  87% (3465/3982)
+2026-11-17T05:26:27.1853055Z Updating files:  88% (3505/3982)
+2026-11-17T05:26:27.2481509Z Updating files:  89% (3544/3982)
+2026-11-17T05:26:27.2508705Z Updating files:  90% (3584/3982)
+2026-11-17T05:26:27.2537619Z Updating files:  91% (3624/3982)
+2026-11-17T05:26:27.2566723Z Updating files:  92% (3664/3982)
+2026-11-17T05:26:27.2606756Z Updating files:  93% (3704/3982)
+2026-11-17T05:26:27.2640359Z Updating files:  94% (3744/3982)
+2026-11-17T05:26:27.2711328Z Updating files:  95% (3783/3982)
+2026-11-17T05:26:27.2773262Z Updating files:  96% (3823/3982)
+2026-11-17T05:26:27.2839410Z Updating files:  97% (3863/3982)
+2026-11-17T05:26:27.2933438Z Updating files:  98% (3903/3982)
+2026-11-17T05:26:27.3005108Z Updating files:  99% (3943/3982)
+2026-11-17T05:26:27.3005821Z Updating files: 100% (3982/3982)
+2026-11-17T05:26:27.3006535Z Updating files: 100% (3982/3982), done.
+2026-11-17T05:26:27.3210754Z Switched to a new branch 'main'
+2026-11-17T05:26:27.3219657Z branch 'main' set up to track 'origin/main'.
+2026-11-17T05:26:27.3450168Z ##[endgroup]
+2026-11-17T05:26:27.4542008Z [command]/usr/bin/git log -1 --format=%H
+2026-11-17T05:26:27.4578676Z 5ddf1d2add2eda26cde40cd16fd3fee20c15847c
+2026-11-17T05:26:27.5762654Z ##[group]Run oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+2026-11-17T05:26:27.5763067Z with:
+2026-11-17T05:26:27.5763266Z   bun-version: 1.3.14
+2026-11-17T05:26:27.5763484Z   no-cache: false
+2026-11-17T05:26:27.5766198Z   token: ***
+2026-11-17T05:26:27.5766405Z ##[endgroup]
+2026-11-17T05:26:28.0112399Z Cache hit for: bun-fR4r1tsFeXfPQkusQwkKD2kGnsE=
+2026-11-17T05:26:29.3378120Z Received 12582912 of 33843768 (37.2%), 12.0 MBs/sec
+2026-11-17T05:26:29.4969075Z Received 33843768 of 33843768 (100.0%), 27.8 MBs/sec
+2026-11-17T05:26:29.4969907Z Cache Size: ~32 MB (33843768 B)
+2026-11-17T05:26:29.5001580Z [command]/usr/bin/tar -xf /home/runner/work/_temp/55c86b6b-5900-40d6-9c0b-e9b94b8a7fe8/cache.tzst -P -C /home/runner/work/molarium/molarium --use-compress-program unzstd
+2026-11-17T05:26:29.6662270Z Cache restored successfully
+2026-11-17T05:26:29.6685003Z [command]/home/runner/.bun/bin/bun --revision
+2026-11-17T05:26:29.6760234Z 1.3.14+0d9b296af
+2026-11-17T05:26:29.6768652Z Using a cached version of Bun: 1.3.14+0d9b296af
+2026-11-17T05:26:29.6978553Z ##[group]Run browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4
+2026-11-17T05:26:29.6978996Z with:
+2026-11-17T05:26:29.6979193Z   chrome-version: stable
+2026-11-17T05:26:29.6979442Z   install-dependencies: false
+2026-11-17T05:26:29.6979715Z   install-chromedriver: false
+2026-11-17T05:26:29.6979972Z   no-sudo: false
+2026-11-17T05:26:29.6980175Z ##[endgroup]
+2026-11-17T05:26:29.7701583Z Setup chrome stable
+2026-11-17T05:26:29.7711815Z Attempting to download chrome stable...
+2026-11-17T05:26:29.9006565Z Acquiring chrome stable from https://storage.googleapis.com/chrome-for-testing-public/157.0.8103.78/linux64/chrome-linux64.zip
+2026-11-17T05:26:31.4426668Z Installing chrome...
+2026-11-17T05:26:31.5564586Z [command]/usr/bin/unzip -o -q /home/runner/work/_temp/37053350-beaa-41db-ae7a-58daed80187d
+2026-11-17T05:26:36.0894607Z Successfully Installed chrome to /opt/hostedtoolcache/setup-chrome/chrome/stable/x64
+2026-11-17T05:26:36.0903195Z [command]/opt/hostedtoolcache/setup-chrome/chrome/stable/x64/chrome --version
+2026-11-17T05:26:36.1392014Z Google Chrome for Testing 157.0.8103.78 
+2026-11-17T05:26:36.1411716Z Successfully setup chrome 157.0.8103.78
+2026-11-17T05:26:36.1605728Z ##[group]Run bun install --frozen-lockfile
+2026-11-17T05:26:36.1606138Z [36;1mbun install --frozen-lockfile[0m
+2026-11-17T05:26:36.1659640Z shell: /usr/bin/bash -e {0}
+2026-11-17T05:26:36.1659907Z ##[endgroup]
+2026-11-17T05:26:36.1776594Z bun install v1.3.14 (0d9b296a)
+2026-11-17T05:26:36.5832929Z 
+2026-11-17T05:26:36.5833438Z + webgpu@0.4.0
+2026-11-17T05:26:36.5833715Z + onnxruntime-web@1.27.0
+2026-11-17T05:26:36.5833883Z 
+2026-11-17T05:26:36.5834002Z 22 packages installed [406.00ms]
+2026-11-17T05:26:36.5993009Z ##[group]Run npm run test:ci:browser
+2026-11-17T05:26:36.5993362Z [36;1mnpm run test:ci:browser[0m
+2026-11-17T05:26:36.6043154Z shell: /usr/bin/bash -e {0}
+2026-11-17T05:26:36.6043401Z env:
+2026-11-17T05:26:36.6043710Z   CHROME_PATH: /opt/hostedtoolcache/setup-chrome/chrome/stable/x64/chrome
+2026-11-17T05:26:36.6044099Z ##[endgroup]
+2026-11-17T05:26:36.9546675Z 
+2026-11-17T05:26:36.9547319Z > molarium-molecular-modeler@1.0.0 test:ci:browser
+2026-11-17T05:26:36.9550765Z > npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser && npm run test:design-history-browser && npm run test:live-campaign-production && npm run test:structure-story-browser && npm run test:designer-replay-review-browser && npm run test:sos1-frozen-routes-browser && npm run test:sos1-refinement-responsive-browser
+2026-11-17T05:26:36.9553405Z 
+2026-11-17T05:26:37.0849282Z 
+2026-11-17T05:26:37.0850159Z > molarium-molecular-modeler@1.0.0 test:docking-browser
+2026-11-17T05:26:37.0850785Z > MOLARIUM_TEST_SCOPE=docking-contact-remap bun browser-test.js
+2026-11-17T05:26:37.0851395Z 
+2026-11-17T05:26:42.8802237Z 79/79 browser checks passed
+2026-11-17T05:26:42.8831973Z Sage WebGPU: maximum OpenMM single-point deviation 0.000e+0 relative / 0.000e+0 kcal/mol ()
+2026-11-17T05:26:43.0488144Z 
+2026-11-17T05:26:43.0488918Z > molarium-molecular-modeler@1.0.0 test:2d
+2026-11-17T05:26:43.0489558Z > bun rdkit-depiction-browser-test.js
+2026-11-17T05:26:43.0489918Z 
+2026-11-17T05:26:48.8678866Z 19/19 RDKit 2D browser checks passed
+2026-11-17T05:26:48.8679874Z Repeated-click maximum panel-relative drift: 0.0000 px
+2026-11-17T05:26:48.8693560Z Repeated-click measurements: [{"click":0,"selected":false,"sameSvg":true,"x":68.35753217110268,"y":230.7589721679688},{"click":1,"selected":true,"sameSvg":true,"overlays":1,"x":68.35753217110268,"y":230.7589721679688},{"click":2,"selected":false,"sameSvg":true,"overlays":0,"x":68.35753217110268,"y":230.7589721679688},{"click":3,"selected":true,"sameSvg":true,"overlays":1,"x":68.35753217110268,"y":230.7589721679688},{"click":4,"selected":false,"sameSvg":true,"overlays":0,"x":68.35753217110268,"y":230.7589721679688},{"click":5,"selected":true,"sameSvg":true,"overlays":1,"x":68.35753217110268,"y":230.7589721679688},{"click":6,"selected":false,"sameSvg":true,"overlays":0,"x":68.35753217110268,"y":230.7589721679688},{"click":7,"selected":true,"sameSvg":true,"overlays":1,"x":68.35753217110268,"y":230.7589721679688},{"click":8,"selected":false,"sameSvg":true,"overlays":0,"x":68.35753217110268,"y":230.7589721679688}]
+2026-11-17T05:26:48.8702249Z Atom-edit maximum panel-relative centroid drift: 0.1702 px
+2026-11-17T05:26:48.8705308Z Atom-edit centroid drifts: [{"edit":0,"dx":0,"dy":0,"distance":0},{"edit":1,"dx":-0.14663358595399245,"dy":-0.08636738666700694,"distance":0.17017853568947872},{"edit":2,"dx":-0.0005231346998471054,"dy":-0.00006975406563469733,"distance":0.0005277646671165954},{"edit":3,"dx":0.0010178540445338058,"dy":0.000971174932658414,"distance":0.0014068431347516687},{"edit":4,"dx":-0.09328617260564442,"dy":0.08718768167028657,"distance":0.12768712477947536}]
+2026-11-17T05:26:48.8709471Z Atom-edit core RMSDs: [{"edit":0,"rmsd":0},{"edit":1,"rmsd":0.17705694253992957},{"edit":2,"rmsd":0.0073861407404924185},{"edit":3,"rmsd":0.036698680689753},{"edit":4,"rmsd":0.2888406614709519}]
+2026-11-17T05:26:48.8718067Z LSD indolic NH label hit: {"indolicNitrogenGlobalIndex":14,"indolicNitrogenLocalIndex":14,"indolicCarbonNeighbors":[13,15],"labelNodeCount":2,"labelBounds":{"left":510.3999938964844,"right":521.142333984375,"top":688.4154052734375,"bottom":697.4154052734375},"labelCenter":{"x":515.7711639404297,"y":692.9154052734375},"inferredHit":{"globalIndex":14,"localIndex":14,"element":"N","x":509.127885231605,"y":689.7009603060209,"distance":7.380095422938228},"nearestCandidates":[{"globalIndex":14,"localIndex":14,"element":"N","x":509.127885231605,"y":689.7009603060209,"distance":7.380095422938228},{"globalIndex":13,"localIndex":13,"element":"C","x":497.4971178494967,"y":699.4740359966571,"distance":19.415364984905725},{"globalIndex":15,"localIndex":15,"element":"C","x":510.4807692307692,"y":672.1700009859526,"distance":21.409345511603124},{"globalIndex":20,"localIndex":20,"element":"C","x":491.27788338294397,"y":670.2759640033429,"distance":33.353636885499775}],"addedCarbonGlobalIndex":48,"actualHeavyAnchorGlobalIndex":14,"globalBondToIndolicNitrogen":true,"twoDBondToIndolicNitrogen":true,"bondedToNeighboringCarbon":false}
+2026-11-17T05:26:49.0469103Z 
+2026-11-17T05:26:49.0470258Z > molarium-molecular-modeler@1.0.0 test:chemist-actions-browser
+2026-11-17T05:26:49.0471352Z > MOLARIUM_TEST_SCOPE=chemist-actions bun browser-test.js
+2026-11-17T05:26:49.0471815Z 
+2026-11-17T05:26:53.2099020Z 23/23 browser checks passed
+2026-11-17T05:26:53.2099899Z Sage WebGPU: maximum OpenMM single-point deviation 0.000e+0 relative / 0.000e+0 kcal/mol ()
+2026-11-17T05:26:53.3710631Z 
+2026-11-17T05:26:53.3711505Z > molarium-molecular-modeler@1.0.0 test:manual-hbond-browser
+2026-11-17T05:26:53.3712298Z > MOLARIUM_TEST_SCOPE=manual-hbond-api bun browser-test.js
+2026-11-17T05:26:53.3712736Z 
+2026-11-17T05:26:57.7656374Z 59/59 browser checks passed
+2026-11-17T05:26:57.7717609Z Sage WebGPU: maximum OpenMM single-point deviation 0.000e+0 relative / 0.000e+0 kcal/mol ()
+2026-11-17T05:26:57.9211756Z 
+2026-11-17T05:26:57.9212401Z > molarium-molecular-modeler@1.0.0 test:chemist-actions-production
+2026-11-17T05:26:57.9213096Z > MOLARIUM_TEST_SCOPE=chemist-actions-production-boundary bun browser-test.js
+2026-11-17T05:26:57.9213557Z 
+2026-11-17T05:26:58.8480570Z 4/4 browser checks passed
+2026-11-17T05:26:58.8572630Z Sage WebGPU: maximum OpenMM single-point deviation 0.000e+0 relative / 0.000e+0 kcal/mol ()
+2026-11-17T05:26:59.0259018Z 
+2026-11-17T05:26:59.0259666Z > molarium-molecular-modeler@1.0.0 test:openmm-worker-browser
+2026-11-17T05:26:59.0260577Z > MOLARIUM_TEST_SCOPE=openmm-worker-smoke bun browser-test.js
+2026-11-17T05:26:59.0261236Z 
+2026-11-17T05:27:00.5322044Z 2/2 browser checks passed
+2026-11-17T05:27:00.5362739Z Sage WebGPU: maximum OpenMM single-point deviation 0.000e+0 relative / 0.000e+0 kcal/mol ()
+2026-11-17T05:27:00.6850370Z 
+2026-11-17T05:27:00.6851226Z > molarium-molecular-modeler@1.0.0 test:design-history-browser
+2026-11-17T05:27:00.6851817Z > bun design-history/viewer/browser.test.mjs
+2026-11-17T05:27:00.6852058Z 
+2026-11-17T05:27:01.6687267Z design-history browser test passed: 4 commits, 9 labbook events, local SVG depiction
+2026-11-17T05:27:01.8286991Z 
+2026-11-17T05:27:01.8287742Z > molarium-molecular-modeler@1.0.0 test:live-campaign-production
+2026-11-17T05:27:01.8288584Z > npm run build:web && MOLARIUM_CAMPAIGN_DIST=1 bun design-history/live-campaign.browser.test.mjs
+2026-11-17T05:27:01.8289071Z 
+2026-11-17T05:27:01.9244458Z 
+2026-11-17T05:27:01.9245022Z > molarium-molecular-modeler@1.0.0 build:web
+2026-11-17T05:27:01.9246118Z > node scripts/verify-paper-submission.mjs && npm run verify:sos1-publication && node validation/validate-registry.mjs && bun scripts/build-web.mjs
+2026-11-17T05:27:01.9246843Z 
+2026-11-17T05:27:02.2975104Z {
+2026-11-17T05:27:02.2975890Z   "submittedPdf": "caa49f6fa273387ce52d0f51e15bbfc6ad23518e25350e49b004cb1259740cad",
+2026-11-17T05:27:02.2976983Z   "finalSource": "6964b04e39738a985e521bd8dc05bd0fff4bfad1abe715be47593b2382f80804",
+2026-11-17T05:27:02.2977781Z   "figures": 6,
+2026-11-17T05:27:02.2978170Z   "archivedOriginals": 564
+2026-11-17T05:27:02.2978537Z }
+2026-11-17T05:27:02.4048840Z 
+2026-11-17T05:27:02.4049460Z > molarium-molecular-modeler@1.0.0 verify:sos1-publication
+2026-11-17T05:27:02.4049995Z > node scripts/verify-sos1-deployment.mjs
+2026-11-17T05:27:02.4050251Z 
+2026-11-17T05:27:09.6318618Z SOS1 deployment preflight: verified designer intent · 159 actions · 7 exact checkpoints
+2026-11-17T05:27:09.6555109Z Checkpoint movie: 62.75s · 5 recorded-calculation popups · 1s each
+2026-11-17T05:27:09.7946395Z Validation registry: PASS (25 cases; 18 reference systems; 15 targets; 5 crystal-scored)
+2026-11-17T05:27:11.2984745Z Built dist: 1176 files, 836.13 MiB
+2026-11-17T05:27:11.2985549Z External assets: https://assets.molarium.org/v1.0.0/
+2026-11-17T05:27:14.3028097Z Live campaign production browser test passed: create/commit, branch checkout, merge, decision, explicit IndexedDB resume, blank/LSD preservation with saved SOS1, close/new, transactional import rejection
+2026-11-17T05:27:14.4658603Z 
+2026-11-17T05:27:14.4659317Z > molarium-molecular-modeler@1.0.0 test:structure-story-browser
+2026-11-17T05:27:14.4660491Z > bun design-history/structure-viewer/browser.test.mjs && bun design-history/structure-viewer/bclxl.browser.test.mjs && bun design-history/structure-viewer/cdk2-designer.browser.test.mjs
+2026-11-17T05:27:14.4661953Z 
+2026-11-17T05:27:29.7227665Z 12 |       const value = await check();
+2026-11-17T05:27:29.7229017Z 13 |       if (value) return value;
+2026-11-17T05:27:29.7229981Z 14 |     } catch { /* retry while the browser or page starts */ }
+2026-11-17T05:27:29.7230774Z 15 |     await delay(80);
+2026-11-17T05:27:29.7231540Z 16 |   }
+2026-11-17T05:27:29.7232136Z 17 |   throw new Error(`Timed out waiting for ${label}`);
+2026-11-17T05:27:29.7232829Z                  ^
+2026-11-17T05:27:29.7233367Z error: Timed out waiting for Chrome page
+2026-11-17T05:27:29.7234591Z       at waitFor (/home/runner/work/molarium/molarium/scripts/headless-chrome.mjs:17:13)
+2026-11-17T05:27:29.7236018Z       at async startMolariumBrowser (/home/runner/work/molarium/molarium/scripts/headless-chrome.mjs:101:24)
+2026-11-17T05:27:29.7236969Z 
+2026-11-17T05:27:29.7237273Z Bun v1.3.14 (Linux x64)
+2026-11-17T05:27:29.7619369Z ##[error]Process completed with exit code 1.
+2026-11-17T05:27:29.7796840Z Post job cleanup.
+2026-11-17T05:27:29.8663151Z [command]/usr/bin/git version
+2026-11-17T05:27:29.8710448Z git version 2.56.1
+2026-11-17T05:27:29.8749613Z Temporarily overriding HOME='/home/runner/work/_temp/a038009c-d3fe-4ec4-ab7d-c0198f3cb97e' before making global git config changes
+2026-11-17T05:27:29.8751142Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T05:27:29.8756102Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/molarium/molarium
+2026-11-17T05:27:29.8796058Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T05:27:29.8833569Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T05:27:29.9187910Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T05:27:29.9227370Z http.https://github.com/.extraheader
+2026-11-17T05:27:29.9253754Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-11-17T05:27:29.9294771Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T05:27:29.9616276Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T05:27:29.9655268Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T05:27:30.0126625Z Cleaning up orphan processes
+2026-11-17T05:27:30.0499484Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
