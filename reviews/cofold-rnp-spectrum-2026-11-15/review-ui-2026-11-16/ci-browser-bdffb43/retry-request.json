@@ -1,0 +1,12 @@
+{
+  "workflowRun": 43986195377,
+  "sourceHead": "bdffb43b02cdd37c9f6652d46b77e50a4635e98c",
+  "failedJob": 133714840119,
+  "failedStep": "Check local Foldarium pose review, decisions and portable export",
+  "observedError": "Timed out waiting for Chrome page",
+  "boundary": "Failure during startMolariumBrowser before reviewer assertions. Exact root cause is not established.",
+  "failureLogSha256": "922533aff1bcc04cd9e287cec29b38e2f363bdef9f3f7326873a5b3cc731a240",
+  "action": "One identical failed-job-only rerun; no source, helper, tolerance, timeout or scientific job change.",
+  "requestedAt": "2026-11-17T00:34:05.556103+00:00",
+  "newNativeOrStockPredictions": 0
+}

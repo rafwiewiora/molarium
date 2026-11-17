@@ -1,0 +1,50 @@
+{
+  "status": "pass",
+  "sourceExportManifestSha256": "5e705e40f4f624160b1a8755836e98c29fd9c6deea0752ff10d56d3415c6848e",
+  "caseId": "8jmo__1__1-a__1-d",
+  "fileImport": true,
+  "parsedViewers": 4,
+  "localPreferencePersisted": true,
+  "referenceViewSeparate": true,
+  "copiedDecisions": 0,
+  "isolatedInferenceTimingInvented": false,
+  "webgpuRequests": 0,
+  "newNeuralForwards": 0,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+  "predictionPages": [
+    [
+      "8jmo__1__1-a__1-d::stock-seed-0",
+      "8jmo__1__1-a__1-d::stock-seed-1",
+      "8jmo__1__1-a__1-d::stock-seed-2",
+      "8jmo__1__1-a__1-d::stock-seed-3"
+    ],
+    [
+      "8jmo__1__1-a__1-d::stock-seed-4",
+      "8jmo__1__1-a__1-d::stock-seed-5"
+    ]
+  ],
+  "referencePages": [
+    [
+      "8jmo__1__1-a__1-d::experimental",
+      "8jmo__1__1-a__1-d::stock-seed-0",
+      "8jmo__1__1-a__1-d::stock-seed-1",
+      "8jmo__1__1-a__1-d::stock-seed-2"
+    ],
+    [
+      "8jmo__1__1-a__1-d::stock-seed-3",
+      "8jmo__1__1-a__1-d::stock-seed-4",
+      "8jmo__1__1-a__1-d::stock-seed-5"
+    ]
+  ],
+  "renderedUniquePredictions": 6,
+  "renderedReferenceInclusiveRecords": 7,
+  "exactPoseNotePersisted": true,
+  "exportPreservesOriginalPdbAndGraph": true,
+  "shortlistContainsExactSelectedPose": true,
+  "predictionNumbersStableWithReference": true,
+  "experimentalReferenceHasNoPredictionMetadata": true,
+  "pdbExportsPreserveOriginalCoordinates": true,
+  "referenceDownloadLabelExplicit": true,
+  "syntheticEarlierFailure": null,
+  "testDecisionIsScientificJudgement": false
+}

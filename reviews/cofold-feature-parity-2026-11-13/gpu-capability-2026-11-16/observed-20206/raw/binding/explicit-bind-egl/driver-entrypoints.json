@@ -1,0 +1,8 @@
+{
+  "libraryPath": "/workspacenfs/rafal_wiewiora/molarium-gpu-driver-binding-20261116-attempt003/graphics-libs/libEGL_nvidia.so.0",
+  "LD_LIBRARY_PATH": "/workspacenfs/rafal_wiewiora/molarium-gpu-driver-binding-20261116-attempt003/graphics-libs:/.singularity.d/libs:/.singularity.d/libs",
+  "VK_ICD_FILENAMES": "/workspacenfs/rafal_wiewiora/molarium-gpu-driver-binding-20261116-attempt003/explicit-bind-egl/nvidia-icd.json",
+  "vkCreateInstanceEntryPointAvailable": true,
+  "enumerateInstanceExtensionsCode": 0,
+  "instanceExtensionCount": 23
+}

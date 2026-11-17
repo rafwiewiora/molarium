@@ -10,14 +10,17 @@ downloads preserve the original coordinates and explicit ligand graph. The
 [consumed source hashes](planned-slots-source-pins.json) are preserved. The
 earlier complete-input preflight remains in `preflight-result.json`.
 
-A serial software-rendered browser sweep of **all 48 preselected systems** is
-running under the [updated frozen UI plan](planned-slots-frozen-cohort-plan.json). It uses the
-[already verified 288-prediction exports](cohort-export-manifest.json), reuses
-the completed first-case preflight, and attempts the other 47 cases once. Its
-deadline is 17 November at 02:00 UTC. This plan is not proof that all 48 cases
-have passed; final per-case receipts are still pending. No neural prediction,
-provider request, scientific preference or experimental-reference inference is
-performed by these UI checks.
+The serial software-rendered browser sweep **passed all 48 preselected systems**
+at six samples per case: 288 prediction records and 48 separate references,
+across 192 grid pages in the two library variants. The
+[actual cohort receipt](all48-six-sample/receipt.json) retains every per-case
+result, log, frozen source and selected screenshot. The completed first-case
+preflight was reused; the other 47 cases were each attempted once.
+A [saved-receipt check](all48-six-sample-verification.json) independently verifies
+input/source hashes and exact pose-page coverage against the original exports.
+No neural prediction, provider request, scientific preference or
+experimental-reference inference was performed. **This six-sample result does
+not establish ten-sample UI coverage; that check follows the completed run.**
 
 ## Findings and fixes
 
@@ -61,9 +64,9 @@ browser library; it is not a model result, inference failure or benchmark case.
 The first full-cohort sweep was [stopped by its owner](prior-cohort-stop.json)
 after five cases passed, to cover this additional edge case before deployment.
 It had no UI failures and made no neural calls. The interrupted UI case is not
-classified as a scientific failure. The new immutable sweep uses the corrected
-source and the new completed first-case preflight. Its deadline remains 02:00
-UTC, and the earlier source/receipts remain available for history.
+classified as a scientific failure. The new immutable sweep used the corrected
+source and completed first-case preflight, and passed all 48 systems. Its earlier
+source and receipts remain available for history.
 
 **UI-EXPORT-01 — inspect exported scientific state, not only the preference
 counter.** The updated check verifies the exact selected pose ID and note after
@@ -126,3 +129,23 @@ These structures retain the attribution and CC BY 4.0 terms of the
 [Runs N’ Poses source dataset](../dataset-attribution.json). UI checks establish
 software behavior at saved inputs; they do not validate binding, pose accuracy
 or native/browser numerical agreement.
+
+## Preserved CI startup failure
+
+At commit `bdffb43`, the first Browser integration job timed out discovering the
+Chrome page before its reviewer assertions ran. One identical failed-job-only
+retry passed, with no source, helper, gate or timeout change. All required checks
+then passed. The exact original startup cause remains unknown.
+[Original log](ci-browser-bdffb43/original-failure.log),
+[retry request](ci-browser-bdffb43/retry-request.json),
+[actual retry result](ci-browser-bdffb43/retry-result.json) and
+[retry log](ci-browser-bdffb43/identical-retry.log) preserve both outcomes.
+
+To verify these saved UI receipts without opening a browser, first regenerate
+the six-sample exports with the command above, then run:
+
+```sh
+python reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/verify-saved-cohort.py \
+  --cohort reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/all48-six-sample \
+  --exports /tmp/rnp-all48-review --output /tmp/rnp-saved-ui-verification.json
+```

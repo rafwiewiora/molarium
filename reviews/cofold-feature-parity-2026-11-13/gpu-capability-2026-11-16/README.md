@@ -98,9 +98,9 @@ The [guarded recovery controller](regular-queue-recovery-controller.py) verified
 both terminal jobs, empty logs, unchanged source hashes, actual production
 identity and the absence of duplicate active controls. It submitted **20206**
 for capability qualification and **20207** for the dependent numerical controls
-at 22:20:35 UTC. Both now use only PSIgreen's regular `gpu` partition, at normal
-priority. This avoids further Spot recovery attempts while preserving scheduler
-fairness. These are managed jobs; no standalone VM or cluster configuration was
+at 22:20:35 UTC. Both were submitted to PSIgreen's regular `gpu` partition at normal
+priority. Their later eligibility update and terminal outcomes are recorded
+below; the original submission receipts retain the original request. These are managed jobs; no standalone VM or cluster configuration was
 created or changed.
 
 The [capability sources and receipt](regular-binding-attempt003/submission.json)
@@ -113,3 +113,55 @@ precision settings and numerical gates remain unchanged. Slurm again cancels
 the child if the prerequisite fails. The 10/30-minute limits and 20 November
 22:30 UTC deadline are retained. At submission these jobs were pending; their
 receipts do not establish successful execution or numerical agreement.
+
+## Actual explicit-binding outcome
+
+The regular queue later estimated a start after the unchanged 20 November
+22:30 UTC deadline. At 00:50 UTC on 17 November, the
+[same unstarted pair additionally became eligible for L4 Spot](observed-20206/l4spot-eligibility.json).
+No job, source, priority, resource, dependency or deadline was replaced. T4 Spot
+was excluded because the frozen recipe requires an L4. Requeue remained disabled.
+
+Job **20206** then ran on a genuine NVIDIA L4 from 00:53:28 to 00:54:43 UTC.
+Both explicit driver-library variants returned no WebGPU adapter. The GLX ICD
+still lacked `vkCreateInstance`; the EGL ICD exposed that entry point and 23
+instance extensions, but Chrome still returned null. Thus explicit library
+binding alone did not establish browser GPU capability. This does not identify
+the cause of the model's pose errors.
+
+Dependent **20207** automatically cancelled without allocation or starting its
+controls. **Zero transition cases or trained-trunk seams were measured.**
+The finite collector preserved all 32 selected files with hash checks in the
+[raw observation](observed-20206/observation.json),
+[collection receipt](observed-20206/collection-receipt.json) and
+[complete small output archive](observed-20206/terminal-results.tar.gz).
+Original sources, logs, driver entry-point records and actual Slurm/GPU identity
+remain in [the preserved files](observed-20206/raw). No native capture, conversion
+or complete pose prediction was repeated.
+
+## Focused device-discovery diagnostic
+
+The next finite capability-only job, **20230**, was
+[submitted](device-discovery-attempt001/submission.json) at 01:01:37 UTC on
+17 November. It reuses the pinned container, Chrome and shared helper, and the
+same physical-NVIDIA integer-readback gate. It measures host/container Vulkan
+instance and physical-device discovery with the explicit EGL ICD; the already
+failed GLX path is not repeated. It also corrects the diagnostic observer to
+request `SystemInfo.getInfo` on Chrome's browser target rather than its page
+target. That observer correction changes no molecular calculation.
+
+If the diagnostic baseline still finds no adapter, one second browser phase
+adds only `--enable-gpu`, as described in
+[Chromium's headless GPU documentation](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/gpu/using-gpu-hardware-in-headless-chrome.md).
+The [exact reversible probe adaptation](device-discovery-attempt001/probe-adaptation.json)
+preserves the original physical-adapter and integer-7 assertions. This is a
+runtime investigation, not a passed numerical comparison. No molecular model,
+new native capture, conversion or pose prediction is requested; no dependent
+numerical job was submitted.
+
+The allocation is one GPU/four CPUs/14 GiB for ten minutes, at normal priority
+on `gpu,l4spot`, with no requeue and the original 20 November 22:30 UTC deadline.
+The [submission controller](device-discovery-attempt001/submission-controller.py)
+first verifies the previous terminal failures, production identity, source pins
+and absence of an active duplicate. It does not create a standalone VM or an
+automatic replacement loop. At submission the diagnostic was pending.

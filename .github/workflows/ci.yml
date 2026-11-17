@@ -124,6 +124,19 @@ jobs:
               assert path.read_bytes() == (expected / path.name).read_bytes(), path.name
           PY
           node folding/comparison/check_stock_review.mjs --review reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288 --exports reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/review-examples --plan reviews/cofold-rnp-spectrum-2026-11-15/frozen-stock-plan.json --repository . --components reviews/cofold-rnp-spectrum-2026-11-15/stock-input-components/components --attribution reviews/cofold-rnp-spectrum-2026-11-15/dataset-attribution.json
+      - name: Verify saved all-48 reviewer receipts against regenerated original six-sample exports
+        run: |
+          /tmp/cofold-analysis/bin/python - <<'PYCOHORT'
+          import json, sys
+          from pathlib import Path
+          sys.path.insert(0, 'folding/comparison')
+          from export_stock_review import export
+          root = Path('reviews/cofold-rnp-spectrum-2026-11-15')
+          cases = [p['caseId'] for p in json.loads((root / 'frozen-stock-plan.json').read_text())['pairs']]
+          export(root / 'checkpoint-288', Path('/tmp/rnp-all48-review'), cases, 6,
+                 attribution_file=root / 'dataset-attribution.json')
+          PYCOHORT
+          /tmp/cofold-analysis/bin/python reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/verify-saved-cohort.py --cohort reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/all48-six-sample --exports /tmp/rnp-all48-review --output /tmp/rnp-saved-ui-verification.json
 
   browser:
     name: Browser integration

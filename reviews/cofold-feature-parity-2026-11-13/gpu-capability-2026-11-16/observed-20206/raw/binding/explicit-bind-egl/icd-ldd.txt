@@ -1,0 +1,8 @@
+	linux-vdso.so.1 (0x00007fff43135000)
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x0000145e297b1000)
+	librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x0000145e297ac000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x0000145e29317000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x0000145e29104000)
+	libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x0000145e297a7000)
+	libnvidia-glsi.so.550.90.07 => /workspacenfs/rafal_wiewiora/molarium-gpu-driver-binding-20261116-attempt003/graphics-libs/libnvidia-glsi.so.550.90.07 (0x0000145e2906d000)
+	/lib64/ld-linux-x86-64.so.2 (0x0000145e297c2000)

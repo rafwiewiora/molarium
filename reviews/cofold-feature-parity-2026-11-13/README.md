@@ -35,6 +35,12 @@ document the exact scope and preserve historical receipts. Two
 script began; their unchanged science payloads were resubmitted in separate
 immutable attempts through the regular/L4 managed queues.
 
+The latest explicit-binding capability attempt, **20206**, also found no adapter:
+GLX lacked the instance entry point; EGL exposed it but Chrome still returned
+null. Its dependent numerical job **20207** cancelled without allocation.
+[Actual terminal outputs](gpu-capability-2026-11-16/observed-20206/observation.json)
+contain no measured transition cases or trunk seams.
+
 Two diagnostic systems were selected before capture: STARD4 (9T51), with
 0.48 Å seed-paired mean browser/native ligand disagreement, and YTHDF2 (32QY),
 with 13.85 Å disagreement. Selection uses the observed discrepancy; these are

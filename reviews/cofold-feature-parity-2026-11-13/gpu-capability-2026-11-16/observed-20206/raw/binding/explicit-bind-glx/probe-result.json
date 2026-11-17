@@ -1,0 +1,18 @@
+{
+  "schema": "molarium.physical-gpu-capability-probe.v1",
+  "scope": "Browser startup, physical NVIDIA adapter and integer readback only; zero model or scientific inference calls.",
+  "startedAt": "2026-11-17T00:54:25.060Z",
+  "finishedAt": "2026-11-17T00:54:40.408Z",
+  "slurmJobId": "20206",
+  "helperSha256": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13",
+  "status": "no-adapter",
+  "system": {
+    "unavailable": "Error: SystemInfo.getInfo is only supported on the browser target"
+  },
+  "webgpu": {
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+    "secureContext": true,
+    "webgpuAvailable": true,
+    "adapterAvailable": false
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-11-17T00:45:14.385045+00:00",
+  "run": 43986195377,
+  "head": "bdffb43b02cdd37c9f6652d46b77e50a4635e98c",
+  "status": "completed",
+  "conclusion": "success",
+  "runAttempt": 2,
+  "jobs": [
+    {
+      "id": 133723301922,
+      "name": "Browser integration",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 133723303681,
+      "name": "Cofolding comparison integrity",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 133723304598,
+      "name": "Production build",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 133723304698,
+      "name": "Local Lab network and integrity",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 133723343297,
+      "name": "Scientific validation",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 133723346204,
+      "name": "SOS1 interface render",
+      "status": "completed",
+      "conclusion": "skipped"
+    },
+    {
+      "id": 133723383311,
+      "name": "WebGPU worker contracts (software correctness only)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "originalFailureLogSha256": "922533aff1bcc04cd9e287cec29b38e2f363bdef9f3f7326873a5b3cc731a240",
+  "retryBrowserJob": 133723301922,
+  "retryBrowserLogSha256": "56d46ad3130ee71a3ad7e97cfff493e886f98e9a66769a3d54d4de3b1fe33ffd",
+  "retriesRequested": 1,
+  "sourceOrGateChanges": 0,
+  "scope": "One identical failed-job-only retry passed. The original Chrome page-discovery timeout occurred before reviewer assertions; its exact cause is not established."
+}
