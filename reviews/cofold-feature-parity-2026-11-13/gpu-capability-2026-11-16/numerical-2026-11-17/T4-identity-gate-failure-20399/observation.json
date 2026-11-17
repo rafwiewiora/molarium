@@ -1,0 +1,122 @@
+{
+  "checkedAt": "2026-11-17T04:02:04.622963+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "task": {
+    "job": 20399,
+    "name": "strict-fp32-mount-corrected",
+    "root": "/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002",
+    "sourcePin": "bb74286ee381037fd0d7fa2120e3f46a5beac0388d8ff9026ee74142613bd482"
+  },
+  "accounting": "20399|FAILED|1:0|00:00:00|2026-11-17T04:00:33|2026-11-17T04:00:33|psigreen-t4spotnodeset-1",
+  "state": "FAILED",
+  "terminal": true,
+  "started": false,
+  "controlsStarted": false,
+  "inventory": {
+    "before-submission-fixture-preflight.json": {
+      "bytes": 15104,
+      "sha256": "ddb7dc561f86386eacb21621067c867bd9fd79f788bc0caddfaf2d92c7fcf4a1"
+    },
+    "before-submission-fixture-preflight.log": {
+      "bytes": 145,
+      "sha256": "610e8099b5dc971334eebd9741812d7d7f40cdd1e81fc3fec727338c9f6e9bdc"
+    },
+    "chrome-wrapper.sh": {
+      "bytes": 472,
+      "sha256": "d83935fa804672e1d466b06c0a18e9b2667f97c64d2c9dc131b275144c364e1b"
+    },
+    "collect_driver_libraries.py": {
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    "container-controls.sh": {
+      "bytes": 1083,
+      "sha256": "e43688a5978bcbc61e87fa1cae7351fb50a72ff286a0776f8e147b7ac2955918"
+    },
+    "container-fixture-preflight.mjs": {
+      "bytes": 1431,
+      "sha256": "e5b9eb787c78857bedb74b2eccf98cf358e27273d7ca1f998b83146b63a9cbaa"
+    },
+    "container-image-receipt.json": {
+      "bytes": 224,
+      "sha256": "89eab1801bbb2946e9a08c92198e11dd7363dd527405b7b8b1e0087caa162169"
+    },
+    "container.sh": {
+      "bytes": 218,
+      "sha256": "3077582737b3eb60bf2268fb8103e668428ea709de1fc097454a38b568022c64"
+    },
+    "fixture-mount-plan.json": {
+      "bytes": 13822,
+      "sha256": "658695663a3a48fc5826fa4ee48cb0f93216bbb8a128cdbdbc4fc778bfd1bcee"
+    },
+    "gpu.sh": {
+      "bytes": 2696,
+      "sha256": "c1a927ee03b057dd8c65384030980ecca702a1021cad72bbd555c10ab33cde0e"
+    },
+    "logs/gpu-20399.log": {
+      "bytes": 621,
+      "sha256": "5549d86af051f2d230849b5193eca0e0006bfd3d36c4f3f2792d89332ca6bbc2"
+    },
+    "probe-adaptation.json": {
+      "bytes": 1850,
+      "sha256": "27c5dbd8e90e35d69ea8733a2fc9cb255da110ae1829a81a7eb66094c3d8159e"
+    },
+    "probe.mjs": {
+      "bytes": 4510,
+      "sha256": "41c85b6c0bd7845cdaa44df496cc5f22c129b5ddb1ccb9794e0ebf2b58d1e08b"
+    },
+    "runner-adaptations.json": {
+      "bytes": 2901,
+      "sha256": "db50a353df8846f3cc20ced640e22f746bbf6438fbfc4ca29f3b9f9ec46ae2af"
+    },
+    "runtime-capability.sh": {
+      "bytes": 3538,
+      "sha256": "565be051747c66e408ee76bd12573eabf6f796a02ebc8c9ee105572acbd946f8"
+    },
+    "source-manifest.json": {
+      "bytes": 1585,
+      "sha256": "bb74286ee381037fd0d7fa2120e3f46a5beac0388d8ff9026ee74142613bd482"
+    },
+    "source-sha256.txt": {
+      "bytes": 1463,
+      "sha256": "8f56d418c7432012d62f0fa30d54946be7e28c73b75cb8d2ffa9281f6d53fd60"
+    },
+    "submission.json": {
+      "bytes": 5329,
+      "sha256": "072cba2eb6fca1796d1e8015af214299acb06d4ac257c0fff1e1ce4ff69fddfe"
+    },
+    "t4-eligibility-amendment-20261117.json": {
+      "bytes": 3718,
+      "sha256": "93efe21daa89ab5ab7bf2a0cb7ffe16a412f8b776ad9ec1b1f7867e41446a167"
+    },
+    "transition.browser.mjs": {
+      "bytes": 9482,
+      "sha256": "d58026d1b0d0756610364392459e34e2d16a9843cdf167ec8557ed90f9cf1caa"
+    },
+    "trunk-readiness-fix.json": {
+      "bytes": 2817,
+      "sha256": "c4cb0649938083381a826cbc6996cb29f7772191bd831a42a828a7b6fff8df2d"
+    },
+    "trunk.browser.mjs": {
+      "bytes": 11667,
+      "sha256": "2043dea16df3da70b8f17657f8e522a81d15e9342cb047743fcb970f1c1eb97a"
+    },
+    "verify_sources.py": {
+      "bytes": 3553,
+      "sha256": "987fa0143df3a92429fdfd382d207bb12ff99e13f89b5a7917bd16c4ac1e42d8"
+    },
+    "vulkan_devices.py": {
+      "bytes": 3747,
+      "sha256": "13476c5fa373a39519906417a44dd33d93e573270a78b0546fb31b4eb708e9ad"
+    },
+    "warm-browser.mjs": {
+      "bytes": 953,
+      "sha256": "b3d6133ae01e0ab0950feccf6a815559f5ba9be13dc9fea285ec3f71dd74334f"
+    }
+  }
+}

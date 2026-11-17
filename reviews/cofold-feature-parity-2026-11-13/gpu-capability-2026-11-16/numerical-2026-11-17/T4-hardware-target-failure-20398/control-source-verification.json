@@ -1,0 +1,22 @@
+{
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-t4spotnodeset-0",
+    "instance/id": "2304887463620275827",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "parentCapabilityJob": 20285,
+  "records": [
+    {
+      "root": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001",
+      "sourceManifestSha256": "f6dbb0999ef5f1e47cea66c84800d25c4c28c14ec6378597538c882f49ec1452",
+      "files": 179
+    },
+    {
+      "root": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001",
+      "sourceManifestSha256": "d7f15752ef64f611a8ce265014a52ba952353fc527bdcc3bfa19f9dc027fa1be",
+      "files": 189
+    }
+  ],
+  "newNativeCalls": 0
+}

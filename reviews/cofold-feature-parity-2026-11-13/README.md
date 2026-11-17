@@ -45,8 +45,9 @@ A later [physical NVIDIA L4 capability probe](gpu-capability-2026-11-16/observed
 completed successfully with integer probe 7 and zero model calls. The [separate numerical jobs](gpu-capability-2026-11-16/numerical-2026-11-17/README.md)
 preserve the pre-payload Spot loss and the demonstrated absolute-symlink mount
 failure. Both corrected payloads now open the existing fixture in the actual
-container before submission, without regenerating it. Requested-FP32 job 20398
-and strict-FP32 job 20399 are queued separately; no NVIDIA numerical pass is claimed.
+container before submission, without regenerating it. Subsequent T4 setup attempts
+stopped at hardware/identity gates before numerical work. Current L4-only jobs
+20400 and 20402 retain those gates and saved inputs; no NVIDIA numerical pass is claimed.
 
 The [physical-Apple four-cycle trunk controls](trained-trunk-apple/README.md)
 capture all 32 fixed-input boundaries. The original requested-FP32 configuration

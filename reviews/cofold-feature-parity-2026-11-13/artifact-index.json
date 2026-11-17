@@ -3,8 +3,8 @@
   "files": [
     {
       "file": "README.md",
-      "bytes": 14427,
-      "sha256": "693e86dcdc1285e1adc89743b6074a5d24447af4339ecadb4ebf72a6b3f5c7fa"
+      "bytes": 14514,
+      "sha256": "5538c50dae92b59f14ada1aab92bcf97d930682fe633ad381267901015557cbd"
     },
     {
       "file": "browser-32qy-a1keo/features.bin",
@@ -252,9 +252,104 @@
       "sha256": "6d613e57a7de8fe25dfc2a8387c75d31b8d1a3cad10f95e1115538c1e9e312f7"
     },
     {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/L4-requested-fp32-current/runtime-capability.sh",
+      "bytes": 3538,
+      "sha256": "565be051747c66e408ee76bd12573eabf6f796a02ebc8c9ee105572acbd946f8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/L4-requested-fp32-current/source-manifest.json",
+      "bytes": 1585,
+      "sha256": "dc0883c69b689a50c1534a498eea1e26ca790c89a1c033569fdbb5fd736ec55a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/L4-requested-fp32-current/submission.json",
+      "bytes": 7121,
+      "sha256": "91fe9a7538a69f1bbc1bcc91dc4e2f68047508066a9185c7b20f292f2a77e720"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/L4-requested-fp32-current/verify_sources.py",
+      "bytes": 3793,
+      "sha256": "6374f066ecfa3986faf81a0ed0b75f5bf40c71d67a5b756ed5d6b36abfc0d43e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/L4-strict-fp32-current/runtime-capability.sh",
+      "bytes": 3538,
+      "sha256": "565be051747c66e408ee76bd12573eabf6f796a02ebc8c9ee105572acbd946f8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/L4-strict-fp32-current/source-manifest.json",
+      "bytes": 1585,
+      "sha256": "024f3b83d87add3e72de6917fe3af387e4bea720623eff7d5f4ff2715267fd40"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/L4-strict-fp32-current/submission.json",
+      "bytes": 7104,
+      "sha256": "7581666ee03870618f23810e8d277ae49ab587e476865c195b846a036a9b2766"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/L4-strict-fp32-current/verify_sources.py",
+      "bytes": 3801,
+      "sha256": "c0d5fa74f519f8f8ad86198e2fb15f54ac679df387fd92de823653aa16039f4f"
+    },
+    {
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/README.md",
-      "bytes": 3047,
-      "sha256": "0a74394020af22e8cffac168fe4077035e62de847938edc98d6699e273e8fabd"
+      "bytes": 4937,
+      "sha256": "62a186a1c09b607481c44dd67c2df6c4e3ede6d5737db2e9afe9b0bbd5534fee"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-hardware-target-failure-20398/capability.log",
+      "bytes": 597,
+      "sha256": "2ecc99222e64922951cb5beae2016ac269f5e86e2c556f5e536fb10f3f4aa155"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-hardware-target-failure-20398/control-source-verification.json",
+      "bytes": 741,
+      "sha256": "73c4129ada3e97675eb8bdc3475559a3253d3460678a9a0ad7e2e60d270f4606"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-hardware-target-failure-20398/gpu-identity.txt",
+      "bytes": 89,
+      "sha256": "61a951859c0e174f3c76a872700e1dc715cc961a6bd6edb8778dbb48670ed07e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-hardware-target-failure-20398/logs/gpu-20398.log",
+      "bytes": 409,
+      "sha256": "2ab8003bb6b673dcf39bed15ed2d3d8440b37b9a5ba271a57378971e08bda885"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-hardware-target-failure-20398/observation.json",
+      "bytes": 4732,
+      "sha256": "e6d79ab46e38f2fc6ab6576a9e140dee7dde46e66b38c0add4194a43c07bfda2"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-hardware-target-failure-20398/runtime-capability.sh",
+      "bytes": 3538,
+      "sha256": "565be051747c66e408ee76bd12573eabf6f796a02ebc8c9ee105572acbd946f8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-hardware-target-failure-20398/verify_sources.py",
+      "bytes": 3545,
+      "sha256": "472e47acfadc71216a1209e8d97477e896a491c09644a243930633f8f471cb7d"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-identity-gate-failure-20399/logs/gpu-20399.log",
+      "bytes": 621,
+      "sha256": "5549d86af051f2d230849b5193eca0e0006bfd3d36c4f3f2792d89332ca6bbc2"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-identity-gate-failure-20399/observation.json",
+      "bytes": 4303,
+      "sha256": "3b6a4c4a35d1e701645514e21fd5937929bde418ec7cb8440fb4e4dc29f82663"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-identity-gate-failure-20399/runtime-capability.sh",
+      "bytes": 3538,
+      "sha256": "565be051747c66e408ee76bd12573eabf6f796a02ebc8c9ee105572acbd946f8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-identity-gate-failure-20399/verify_sources.py",
+      "bytes": 3553,
+      "sha256": "987fa0143df3a92429fdfd382d207bb12ff99e13f89b5a7917bd16c4ac1e42d8"
     },
     {
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/fixture-mount-discovery.json",
