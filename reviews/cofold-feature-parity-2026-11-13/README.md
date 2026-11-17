@@ -48,9 +48,12 @@ preserve the pre-payload Spot loss and the demonstrated absolute-symlink mount
 failure. Both corrected payloads now open the existing fixture in the actual
 container before submission, without regenerating it. Subsequent T4 setup attempts
 stopped at hardware/identity gates before numerical work. Those L4-only jobs (20400 and 20402) then lost their Spot nodes before payload.
-Source-identical replacements 20534 and 20535 use the verified regular L4 pool
-at normal priority, preserving the gates and saved inputs; no NVIDIA numerical
-pass is claimed.
+After regular-queue waiting and a verified Spot-eligibility amendment, the
+[strict-FP32 NVIDIA L4 measurement](trained-trunk-nvidia/README.md) completed all
+32 boundaries. All pass the original relative limit, and 16 pass both original
+limits; complete-trunk qualification remains failed. Its raw arrays and consumed
+source are public and independently replayed. The default-pair/126-transition
+control remains unmeasured after two pre-payload node failures; no retry is active.
 
 The [physical-Apple four-cycle trunk controls](trained-trunk-apple/README.md)
 capture all 32 fixed-input boundaries. The original requested-FP32 configuration

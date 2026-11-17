@@ -1,0 +1,733 @@
+{
+  "status": "complete",
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "runnerSha256": "2043dea16df3da70b8f17657f8e522a81d15e9342cb047743fcb970f1c1eb97a",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "startupContextBefore": {
+    "href": "http://127.0.0.1:39837/",
+    "baseURI": "http://127.0.0.1:39837/",
+    "title": "Stock-trained trunk comparison",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "startupContextReady": {
+    "href": "http://127.0.0.1:39837/",
+    "baseURI": "http://127.0.0.1:39837/",
+    "title": "Stock-trained trunk comparison",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "records": [
+    {
+      "cycle": 0,
+      "instrumentedMilliseconds": 5463.1449999999895,
+      "timings": {
+        "embedder": 258.570000000007,
+        "template": 1197.4700000000012,
+        "msa-stack": 1358.0849999999919,
+        "pairformer": 1428.3699999999953,
+        "distogram": 51.154999999998836
+      }
+    },
+    {
+      "cycle": 1,
+      "instrumentedMilliseconds": 2372.7449999999953,
+      "timings": {
+        "embedder": 13.119999999995343,
+        "template": 20.64999999999418,
+        "msa-stack": 59.68000000002212,
+        "pairformer": 687.2099999999919,
+        "distogram": 52.27499999999418
+      }
+    },
+    {
+      "cycle": 2,
+      "instrumentedMilliseconds": 2421.889999999985,
+      "timings": {
+        "embedder": 13.440000000002328,
+        "template": 25.464999999996508,
+        "msa-stack": 72.77999999999884,
+        "pairformer": 662.835000000021,
+        "distogram": 55.5
+      }
+    },
+    {
+      "cycle": 3,
+      "instrumentedMilliseconds": 2381.1350000000093,
+      "timings": {
+        "embedder": 11.434999999997672,
+        "template": 30.82500000001164,
+        "msa-stack": 78.33499999999185,
+        "pairformer": 655.2799999999988,
+        "distogram": 52.89499999998952
+      }
+    }
+  ],
+  "adapter": {
+    "vendor": "nvidia",
+    "architecture": "lovelace",
+    "device": "",
+    "description": ""
+  },
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "features": [
+    "core-features-and-limits",
+    "chromium-experimental-subgroup-matrix",
+    "subgroup-size-control",
+    "timestamp-query",
+    "subgroups"
+  ],
+  "precisionControl": {
+    "pairMatrixKernels": false,
+    "requireNoF16Shaders": true
+  },
+  "shaderAudit": [
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:projectTokens.generic.wgsl",
+      "usesF16": false,
+      "sha256": "f279a073aa87dee6c62639497004c90e3dc445a185324773e047b0314484a9ac"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:projectSingleInit.generic.wgsl",
+      "usesF16": false,
+      "sha256": "d2c72e58ff4f8ad531b580df00ca4751cb0bbffc46329448af766c1270d4eb0c"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assemblePair.generic.wgsl",
+      "usesF16": false,
+      "sha256": "8c2a6c1a61c18a00dd77a2ea2308b44bf413e1d1842850fdcaf43e0cd3b83046"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assembleMsa.generic.wgsl",
+      "usesF16": false,
+      "sha256": "bd08cebe241c75549cf8bae682db6159d3b328c816b1aeb0eca57ad04632f85a"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assembleSingle.generic.wgsl",
+      "usesF16": false,
+      "sha256": "df95bd5d1ab021f38eec93a423bc9ef3f67d3871341ba57f2f5e4b19973c753e"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::embed.generic.wgsl",
+      "usesF16": false,
+      "sha256": "e3d899560ff27b54f988f6598dd81fbb2bd49f69a63a8b15552974fae037403d"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::accumulate.generic.wgsl",
+      "usesF16": false,
+      "sha256": "4daa1419f8f93d03cb89b11e3b618dc1a33ab447d115bf224398d845462f3a4f"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::output.generic.wgsl",
+      "usesF16": false,
+      "sha256": "67ddda364200212a6206f938e657c48c27b749398a6039ec682ca95a8dc82d10"
+    },
+    {
+      "label": "af3-template:add-pair:7250432.generic.wgsl",
+      "usesF16": false,
+      "sha256": "046a6a21dac98c57aaec3287c214763eb148871fdb76d1495a758bd545d9bf57"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:normalizeInput.generic.wgsl",
+      "usesF16": false,
+      "sha256": "258aac6d95fa42a844741ddd1aeec6c59cb3aae62d2b0bdb59af8f06eb29be12"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:projectAB.generic.wgsl",
+      "usesF16": false,
+      "sha256": "f9917e611a54352efb2291fd1cfcdb47f1a31fabdfcd58bdf06c3bd85fc58fda"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:contract.generic.wgsl",
+      "usesF16": false,
+      "sha256": "95ef713484505940affa6075389abe287b8ab85a13423308cce7f6bd1ce60b13"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:normalizeHidden.generic.wgsl",
+      "usesF16": false,
+      "sha256": "a038346eb16346d92bf514237bba48469e2f7c47012b61fb64768c43b5e05f16"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:projectOutput.generic.wgsl",
+      "usesF16": false,
+      "sha256": "75e0ab5868fad54fe1edf8dbb7d13539a05d5e20e20fe9d028f39a1829545e88"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:incoming:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:contract.generic.wgsl",
+      "usesF16": false,
+      "sha256": "ec81e06cc1aef10ab397f14e634830257d0d8f2b4f60a9340a6bf707dca2eb1c"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:normalize.generic.wgsl",
+      "usesF16": false,
+      "sha256": "21eb609d68b70f8f28869cc9f041a9a94a9a3ecdb130f1b5cc953db6e6f9a845"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:bias.generic.wgsl",
+      "usesF16": false,
+      "sha256": "6e77855d1eaf7dd309d04827df3df162bd058af7ec8d520b13cb1d85e2a9a2d3"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.generic.wgsl",
+      "usesF16": false,
+      "sha256": "3535aa0bbb6c244ab9cd7eca5613f48c1cbfbc31ccb46540d7994d5ab5eb2718"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.generic.wgsl",
+      "usesF16": false,
+      "sha256": "fccd71aa241706fdf99d2d3788802ff3fbcea9dfe9d2e2f1fe768965cf45aca2"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.generic.wgsl",
+      "usesF16": false,
+      "sha256": "b177be9fa25c67d1478b413e6db2d02535f53af0adb40a965697402176f05015"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.generic.wgsl",
+      "usesF16": false,
+      "sha256": "a98129c909483ed28b6f88c917d297bb0aa97555699062498aaa793d5f5fc00c"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.generic.wgsl",
+      "usesF16": false,
+      "sha256": "fff7b2d17cf8b48ec1d63f833220f7ca72dfb9c9700c4b79bbbf1fdeaadc2cc0"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.generic.wgsl",
+      "usesF16": false,
+      "sha256": "d5c4731822c78fe7daafa7d05db23f38a07efc60134d81b097b04340f3791900"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:pair-transition:2:f32:f32.generic.wgsl",
+      "usesF16": false,
+      "sha256": "357d9158f53360c6247d16aff6ec277dffb5b5ed05a8675c92f04761b47d9e2c"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:normalizeInput.generic.wgsl",
+      "usesF16": false,
+      "sha256": "f842a1d0b9a25b86f57f9c6a6be42f3757cbdf0ca6263ad0db60412b2228b69d"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:contract.generic.wgsl",
+      "usesF16": false,
+      "sha256": "7d3d350d7638a7b9c5d3236f6c60c614346308c975c8cfc67bb7b2533f3bec14"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:normalizeHidden.generic.wgsl",
+      "usesF16": false,
+      "sha256": "bbbc7faa7946836c3a10ccdc1e84e7fd855d2b0a69c065ac05299a5c829f5922"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:incoming:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:contract.generic.wgsl",
+      "usesF16": false,
+      "sha256": "4b630c7542615da06bb37a81b74674bcdb5c74be58cedc7c50f752b3540e2253"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:normalize.generic.wgsl",
+      "usesF16": false,
+      "sha256": "6286297e717861527f2aab9c95ce0a0fc77523c103322a02e2c6a53079449448"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:bias.generic.wgsl",
+      "usesF16": false,
+      "sha256": "899970b16c180c781cd0940ded6008b6dac5151c6b0f4e4cd9ef446e70ca0cc6"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.generic.wgsl",
+      "usesF16": false,
+      "sha256": "52c11966e71b67905db59147e67d82cf3eb238034a6349e214ec35583b766110"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.generic.wgsl",
+      "usesF16": false,
+      "sha256": "c8f0063d7efc21a18ea23fab82bf3c7e73cc95168d90d26e442c7a6ba3a2426b"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.generic.wgsl",
+      "usesF16": false,
+      "sha256": "8f5168edd7bc1d91c0554957c30f6b486c6230b4ed9e3f390b285f2354eb3b3c"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:true:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.generic.wgsl",
+      "usesF16": false,
+      "sha256": "7041f1e6e2435ecad8419900c8b7605d024b6a0dd0ffce09d0c959b92828b62f"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:true:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.generic.wgsl",
+      "usesF16": false,
+      "sha256": "476e644bc67d12d671157f7ccf317e4dd2e7ea075da4dd3adc818f2885507d57"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:pair-transition:4:f32:f32.generic.wgsl",
+      "usesF16": false,
+      "sha256": "8f129f51413150e9e57b93f35e724f64ca74bb8254a2ca248df984a2a514712a"
+    },
+    {
+      "label": "af3-opm-vec-contract:32:64x64x16:f32.wgsl",
+      "usesF16": false,
+      "sha256": "7771a7df560a77e27bc6b23dbe7550207fbcf03f2e848501410f5b402b3d746f"
+    },
+    {
+      "label": "af3-opm-vec-output:banfalse:64x64x16:f32:r1.wgsl",
+      "usesF16": false,
+      "sha256": "3ffcac1b4af2b40e45c4dafc82c86a467759fa8878387bf93c00f16324323fbf"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:opm:project:2x4:d:banfalse:lrbfalse.generic.wgsl",
+      "usesF16": false,
+      "sha256": "ec9dd57c5f6bd477112a7e38855e139de1edec4888a103618986b747079984f4"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:opm:counts:2x4:d:banfalse:lrbfalse.generic.wgsl",
+      "usesF16": false,
+      "sha256": "595d372a434ba9dafa1bb33ae8e3a26582f9be577b7507e709ae0041b484485e"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:opm:contract:2x4:d:banfalse:lrbfalse.generic.wgsl",
+      "usesF16": false,
+      "sha256": "98d753069de61d23d3163e07a8ca9f5628b798bca2ba7b9c126314ce9461c095"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:msa:keyMask:8x8.generic.wgsl",
+      "usesF16": false,
+      "sha256": "ece02d1582c68b29863ca2ef78a1d4a109fbc129a908114a6e93fc4bac7a27dd"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:msa:attentionLogits:8x8.generic.wgsl",
+      "usesF16": false,
+      "sha256": "93cb3c1ef04e22a7a851654ab6ff60e9a05c3ead58b0e99bf14767be6cbf6bb1"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:msa:attentionWeights:8x8.generic.wgsl",
+      "usesF16": false,
+      "sha256": "c989394d5c5f5a070acb6a7efd8209eae2e9d9d8701200764a4ea37389b104af"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:msa:project:8x8:r16.generic.wgsl",
+      "usesF16": false,
+      "sha256": "51cd10a05f7ef77a3c79860118deaf395e042ee30bdd6f68532671e58361dfc8"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:msa:average:8x8:r8.generic.wgsl",
+      "usesF16": false,
+      "sha256": "21870d90b99920faf0cffe663686bfe10967987a66a9a6fc0c6c63159a4bd7a7"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:msa-transition.generic.wgsl",
+      "usesF16": false,
+      "sha256": "07f5da7bd8ed789995220e3626b0f5ffbd7fe295838de7fdddf2885b353aee1f"
+    },
+    {
+      "label": "af3-distogram:238:128:64:-1.generic.wgsl",
+      "usesF16": false,
+      "sha256": "382c682406b86fad54f1a5d00bdc4906e1e692a864039f6b62618d68f625cd3e"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:fast:false:nobias:single-transition:f32:t1.generic.wgsl",
+      "usesF16": false,
+      "sha256": "d0e8462fd638f114b6f4a6d25f18e12e22af5675cfa490a49d3b177401c04698"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:fast:false:nobias:single:f32:64:256:s6:pr1:r1:project.generic.wgsl",
+      "usesF16": false,
+      "sha256": "73434270e4d262a9299b4dfd1e624897d5090978fc67f1c736f7d0991cd01fd4"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:fast:false:nobias:single:f32:64:256:s6:pr1:r1:attend.generic.wgsl",
+      "usesF16": false,
+      "sha256": "62b14ce36534a3a7d9b9540e4bd1428f37ef4c341d694b92aa4ee26d644bcedc"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:fast:false:nobias:single:f32:64:256:s6:pr1:r1:project_out.generic.wgsl",
+      "usesF16": false,
+      "sha256": "3778481f98625c689e151fdf42cfd3331223c96ceb0d654ad5a93da584879095"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:fast:false:nobias:pair-logits.generic.wgsl",
+      "usesF16": false,
+      "sha256": "76f6a54889194b9a87ab5cab1bde878c1fddd4f9fcf09e6500c4e12a111cd3e2"
+    },
+    {
+      "label": "af3-template:add-pair:7250432.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "0b4d0c7b36f2c3b35e2647c60a3b17160a568122144057d6bbdb61d7b086a613"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:normalizeInput.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "0850b6be7129b1b9b58543fc075225eca8e4975af695b93ba7c006f2c649441e"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:normalizeInput.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "6431322daa8aea1cc8047b2eb7ccf6e841cad90c1ae0686b697c7b04226cf328"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:projectAB.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "b8c5a01a31b7cb4aec9d2c4fd2940b051e3037ee2f62f462fbfd66354af81695"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:normalizeHidden.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "18648bc3af4ef19f9d5118f819011fe053f6cb8f95ce5f27eb0233369d9acf6a"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:projectOutput.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "caf6a96ae024b37bd55aa5ef21b40292b72317f5dda789965cbc96a0974ca589"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:normalize.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "6c785fcfb7faaa8fa204c38d4aba212c42808129af2c34ba65252b574f45cd26"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:bias.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "4b70a001a514ed6d528e95362c0d917ace62a91bfdbb549eb9b94a4707724c76"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "022dc24e295dbb5b4c3fa1716991cf830456080637cadee85ff7d194f954331f"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:projectAB.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "ea77c49b7e7df9c1cabca39a7f6287463e920765da9c202843f5529af7c2e35e"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:normalizeHidden.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "dfb85042d8802a463e8ac5e25997afb4671e05661ceac450053533d0bc4012d4"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:projectOutput.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "77358b4a3578225abb1739b857b2aecb986439e6e5aa5e35e329bf75a5fed256"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:normalize.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "72bfdcff2b45c4b0c092d7b5c5040f3dcbb01a16b95f3e092f603221d4f77e7d"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:bias.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "239bcdace56ba6a7fc1ad7c86ebfc22ee98b8b8f383cf480567a13d8ddaaf0c0"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:contract.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "86a9991a5dc86e2a102d8205284de2aa2f89c5392f99cce814d1485d30f67e96"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:tri:incoming:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:contract.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "7a3ed986e0526dac6a47a0cfe38a9e6feb020a8f93ff367e7787d0015c51f528"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "8b0c5ce52ac912f2d35f4b48cafc943a82ce11fc2cf24ec7dea72c181be03030"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:false:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "c3bc46a0aae2d9b8582fe584ae80124100667a81ccb740c644547c4575ae9d5b"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:true:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "307a3e5dc8d9752eb513cfadb59c1cfc4760a22dafbe4ecb42627c0f0341f536"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:grid:true:f32:f32f32f32f32f32:mfalse:ttruesvf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "f4dc7bb570ba10ecd178d957b7691d5ef965e049f50fd076b79de86beb090dc4"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:pair-transition:4:f32:f32.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "10a8ed102f3ff740ee0db201e0b41989cc9f4a9fa501441318101e3629409d30"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:projectTokens.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "9d7d4a94ac076c90989fdf27dd64ba0741053ca86c366a26937816532cb2e25e"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:projectSingleInit.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "745ad6dadbcd085898290a3ee72ae8568cdad833e11e7eaea48736f19983652c"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assemblePair.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "88aa84b2625a70944aedf80930ff0fe0bb4d35f6ca81bca7fab010bfc1abe8bb"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assembleMsa.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "a711e8c5d8b10edbf99554f3c9bc514779a335b8933c9624dbb25c81d1fd104c"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:fast:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assembleSingle.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "e8a2dfec0904cbac044a4b9dff18c21741b3e6fe1c59a22563536d5563435dfb"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::embed.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "dd4a9ee5399f0fa371154bb9572051545cf88cbbe732686ebe3616cf484d6484"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::accumulate.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "56ed8de8c1797ee9e3589fbf66bbe877a7a38a28e5eeaffe8d706226cb64efbe"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::output.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "3bf7fbffef84fd6ad8dad464dfc4152b86d5149074bf7096bae76c974603088b"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:contract.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "7a9026ae6c1ddbd03f38d964f2908dae5807939188e740872006ee1b1adbf0b2"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:tri:incoming:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt32x32x64w8:ct32x32:contract.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "44890e67688c4501178117008af1afd8490206379a31b77b16c925e24fe0096b"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "2adffaed32bba012ac259164892a7c489301aa6e0ace3d4021e7091953f6d2a5"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "7a7879d8ba345efb945fc673de7c29dd55b46940dcdf693f6c9e4c85fab0fa86"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "525210d813bfed4a5a5e11f8092ec223b28a2b1e28f8c5bb5951ed2e0941764c"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "83c28a1c06404976595fb0ed712908fdd26c811448428ddaec4efd1d180bda62"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "5e66c41bd5b521a2be2ee5a361c0b701be014bf43d58570c833aa79bd0b55ac6"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "442408575df36aff0cd876a779f2388fce76f1ecb151e1e6d85139fba015b4c7"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:fast:false:c64::track:pair-transition:2:f32:f32.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "b834b81ab0b4b74a26a458834ff713895761bf66dc048efdf975541b89e6f5fe"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:opm:project:2x4:d:banfalse:lrbfalse.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "408fdbf782b6d038952f3abcbc4d6eba033c74cc8293da54dbd65154d280fba0"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:opm:counts:2x4:d:banfalse:lrbfalse.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "9540b2f1847cdeb97da5accc0066ce7159a0e4a8fad3c19ea193fccdf61d581d"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:opm:contract:2x4:d:banfalse:lrbfalse.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "d3ad74e78a8a03d1932f94ac4c73ec68e01ee39de6732b4c3eb4de1dc5a52f63"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:msa:keyMask:8x8.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "1838fa040e11863c04201294353c92b048f12741b473630c9babd64ba844b7c6"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:fast:false:msa:attentionLogits:8x8.unrolled.wgsl",
+      "usesF16": false,
+      "sha256": "f59021470d72adae1a7acaa1852f8b3e1d593ee006aa960b38571231aea95c9d"
+    }
+  ],
+  "outputs": {
+    "cycle-0.tap.trunk_in_single": {
+      "file": "cycle-0.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "e134c85acae69453933e8d7bfdf52e6798296d79447740bf341ec9f1f0f31643"
+    },
+    "cycle-0.tap.z_init_generic": {
+      "file": "cycle-0.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "8d3db7239d6bf5501ac479a906ab7033eb59363c7d28920225d8b3611261565b"
+    },
+    "cycle-0.tap.z_after_template": {
+      "file": "cycle-0.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "5a012751b5ed07100fdf40423d52a3772f13e3642b8c1759636b74187a2cd24d"
+    },
+    "cycle-0.tap.template_term": {
+      "file": "cycle-0.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "c578acdb93c4706050ea475babcdffca5d8e8b95cd9e0731048788fadf8346c8"
+    },
+    "cycle-0.tap.msa_activations": {
+      "file": "cycle-0.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e"
+    },
+    "cycle-0.tap.z_after_msa": {
+      "file": "cycle-0.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "4cc52c20a87386557968b30b06fa5cd28ba64a3ff88f3416a590e45da56d9fbf"
+    },
+    "cycle-0.trunk-output-single": {
+      "file": "cycle-0.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "c1a37c3b26063f99fa0899bd3d3d10e70aee67fbedec93c3fb91057285d0a654"
+    },
+    "cycle-0.tap.trunk_out_pair": {
+      "file": "cycle-0.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "48af6fcde6915c04a05e8f84e2318cfedbaa2a55652c4a47f3ce6ef9f6315296"
+    },
+    "cycle-1.tap.trunk_in_single": {
+      "file": "cycle-1.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "0b195a54511299d75cb8b7e57a34b2fdadce53c096df526e42ae43d8aaabf5f2"
+    },
+    "cycle-1.tap.z_init_generic": {
+      "file": "cycle-1.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "984e392899cb1ccf2b4bf4fcb4b33c4456812c5a2be8b1318fb834f427495a31"
+    },
+    "cycle-1.tap.z_after_template": {
+      "file": "cycle-1.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "a79b50fa49d2991da8513a089293a8409fdfb5546e6ada558e397f24ec6e0b61"
+    },
+    "cycle-1.tap.msa_activations": {
+      "file": "cycle-1.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e"
+    },
+    "cycle-1.tap.template_term": {
+      "file": "cycle-1.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "c9ae063814c00a58ea78d70f9bfead72dcc0f8bd375e0ea65b4e765b6278e636"
+    },
+    "cycle-1.tap.z_after_msa": {
+      "file": "cycle-1.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "2c2b00ddb202a1f7d627b7760d3d3c429d2e7e1fd683e99189c1d7eb6a3ca2b9"
+    },
+    "cycle-1.trunk-output-single": {
+      "file": "cycle-1.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "d48a832dd7def7a1c11ca9a544a27261a47ff2859f488b59e9206f70d924047e"
+    },
+    "cycle-1.tap.trunk_out_pair": {
+      "file": "cycle-1.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "cde877fc64ae76faff94ee068531878c683ac36dc3b1791076572e449401ddb5"
+    },
+    "cycle-2.tap.trunk_in_single": {
+      "file": "cycle-2.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "515c5ebe85303b784c1cf34fdfcd0436059014b0108aadc7050ef462180100a0"
+    },
+    "cycle-2.tap.z_init_generic": {
+      "file": "cycle-2.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "35e608dad6d800496a6d39c9d34413781b73f7eb59101f881a2fc2546e06e9a5"
+    },
+    "cycle-2.tap.z_after_template": {
+      "file": "cycle-2.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "5b3dbf48bcbc26cce4326840c60dc5d32279e0691eda8fde172be53d01aa3765"
+    },
+    "cycle-2.tap.template_term": {
+      "file": "cycle-2.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "bf24531e660e6339f269b3e2773ba5e7ac10363e83f707d1597c1752917ce4c2"
+    },
+    "cycle-2.tap.msa_activations": {
+      "file": "cycle-2.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e"
+    },
+    "cycle-2.tap.z_after_msa": {
+      "file": "cycle-2.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "94d27fcff190898cfc301cf0b2f710f1f915e663e80ad83b1f130b563c59cf66"
+    },
+    "cycle-2.trunk-output-single": {
+      "file": "cycle-2.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "81c53eac1bd9f8265869852c210a05fd973a0cb1a305aad4f5fbafd4c7716f83"
+    },
+    "cycle-2.tap.trunk_out_pair": {
+      "file": "cycle-2.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "d549da18a7242cf981b2d59836059427cbad1d954890f64e387602f2b19d2ec2"
+    },
+    "cycle-3.tap.trunk_in_single": {
+      "file": "cycle-3.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "e79ec43b8468db983548a9b97db1fae7b9df4a03c619c1aa1cc6f8add6643483"
+    },
+    "cycle-3.tap.z_init_generic": {
+      "file": "cycle-3.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "3192ac1180785cb343a9b4515d62185419215cdf05679397a77909abbc300528"
+    },
+    "cycle-3.tap.z_after_template": {
+      "file": "cycle-3.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "ea246c0cfac4d06500dafdaf7b6cad30a7e83b01db1896179d1e15952b6f0fe3"
+    },
+    "cycle-3.tap.msa_activations": {
+      "file": "cycle-3.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e"
+    },
+    "cycle-3.tap.template_term": {
+      "file": "cycle-3.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "401a59c23cc46d24087cd88058dead58abfcdccc11fc341d2e733eae45fd4b21"
+    },
+    "cycle-3.tap.z_after_msa": {
+      "file": "cycle-3.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "54862522a0eee3c49ccf7beca980f008f5f9832a6b5b37eb5aa103b9c6c489ab"
+    },
+    "cycle-3.trunk-output-single": {
+      "file": "cycle-3.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "dd0546915ab817ba8ae29e034d48a68251b0e9e57cc074dced018a93de9b36f1"
+    },
+    "cycle-3.tap.trunk_out_pair": {
+      "file": "cycle-3.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "d8fd6bb432f59d46c2cadf63ecf72224bc82e4dbdfde5d6a09e39dc46bc9e871"
+    }
+  }
+}

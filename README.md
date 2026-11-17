@@ -540,6 +540,10 @@ FP32 gives 32/32 relative-gate passes and 14/32 combined passes; absolute failur
 remain under the original gates. The producer's precision omission is fixed and
 its original measurements are preserved. These component controls do not
 establish complete-model agreement.
+The [physical NVIDIA L4 control](reviews/cofold-feature-parity-2026-11-13/trained-trunk-nvidia/README.md)
+now independently reproduces all 32 matched-input FP32 boundaries: 32/32 pass
+the relative limit and 16/32 pass both limits. Complete raw arrays and exact
+consumed source are public; the planned default-precision control remains unmeasured.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

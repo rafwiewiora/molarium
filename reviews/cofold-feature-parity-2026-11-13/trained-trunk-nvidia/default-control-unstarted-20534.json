@@ -1,0 +1,11 @@
+{
+  "jobId": 20534,
+  "checkedAt": "2026-11-17T17:28:21.737311+00:00",
+  "accounting": "20534|NODE_FAIL|0:0|00:00:18|2026-11-17T17:27:50|2026-11-17T17:28:08|psigreen-l4spotnodeset-29",
+  "state": "NODE_FAIL",
+  "payloadStarted": false,
+  "controlsStarted": false,
+  "rawNumericalOutputs": 0,
+  "sourceManifestSha256": "dc0883c69b689a50c1534a498eea1e26ca790c89a1c033569fdbb5fd736ec55a",
+  "scope": "Infrastructure outcome; not a numerical pass or numerical failure. No further automatic recovery."
+}

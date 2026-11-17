@@ -13,6 +13,12 @@ That is evidence for this boundary at controlled inputs, not an explanation of
 the pose disagreement. Preserve each stage's remaining limits and measure the
 next boundary rather than promoting a component pass to full-model parity.
 
+The [NVIDIA trunk measurement](reviews/cofold-feature-parity-2026-11-13/trained-trunk-nvidia/README.md)
+also shows why scheduler status and scientific status must stay separate. The
+browser completed all 32 arrays, then the numerical checker failed its original
+combined gate. Inspect the completed receipt and raw outputs before retrying a
+`FAILED` job; repeating that calculation would have discarded a real result.
+
 ## Preparation, parameter validity and minimized geometry are separate states
 
 An unchanged molecule object does not imply an unchanged atom-index mapping.

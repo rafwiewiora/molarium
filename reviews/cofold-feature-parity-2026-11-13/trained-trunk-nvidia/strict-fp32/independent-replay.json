@@ -1,0 +1,945 @@
+{
+  "schema": "molarium.independent-NVIDIA-trunk-replay.v1",
+  "finishedAt": "2026-11-17T17:46:44.482348+00:00",
+  "scope": "One four-cycle fixed-input OpenBind-0 STARD4 FP32 trunk fixture. Raw-array replay only; no neural calls. No denoising, confidence, production quantization, pose-accuracy or full-model parity verdict.",
+  "jobId": 20535,
+  "transport": {
+    "schema": "molarium.checked-raw-trunk-stream.v1",
+    "checkedAt": "2026-11-17T17:46:09.981531+00:00",
+    "identity": {
+      "project/project-id": "psivant-prod",
+      "instance/name": "psigreen-login-001",
+      "instance/id": "3894148826269628555",
+      "instance/zone": "projects/734263838611/zones/us-central1-c"
+    },
+    "job": 20535,
+    "sourceManifestSha256": "024f3b83d87add3e72de6917fe3af387e4bea720623eff7d5f4ff2715267fd40",
+    "receiptSha256": "c4c2a6044bee0644865184d93870155a19048a8ee7352b959ff16db0de071b3f",
+    "files": 32,
+    "rawBytes": 645593088
+  },
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "summary": {
+    "boundaries": 32,
+    "allFinite": true,
+    "relativeGatePasses": 32,
+    "combinedGatePasses": 16,
+    "worstRelativeRms": 1.5807453957677502e-06,
+    "worstMaxAbsolute": 0.109375,
+    "passesAllDeclaredGates": false
+  },
+  "records": [
+    {
+      "seam": "cycle-0.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.928649346874318,
+      "relativeRms": 5.058314781319433e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true,
+      "rawSha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e",
+      "nativeSha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8",
+      "largestErrorEntry": {
+        "index": 13720,
+        "nativeValue": -130.42750549316406,
+        "nvidiaValue": -130.42752075195312,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 1.0
+      }
+    },
+    {
+      "seam": "cycle-0.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.626109183442356,
+      "relativeRms": 2.0755704887091343e-07,
+      "maxAbs": 0.0002288818359375,
+      "passes": true,
+      "rawSha256": "c578acdb93c4706050ea475babcdffca5d8e8b95cd9e0731048788fadf8346c8",
+      "nativeSha256": "bc1fa12e27b041cba65890aba760f1d2382545653fd0989a5d00787ddc9fa4f3",
+      "largestErrorEntry": {
+        "index": 1404764,
+        "nativeValue": 224.8881072998047,
+        "nvidiaValue": 224.88787841796875,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 15.0
+      }
+    },
+    {
+      "seam": "cycle-0.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.379994049578716,
+      "relativeRms": 4.232087709740241e-07,
+      "maxAbs": 9.918212890625e-05,
+      "passes": true,
+      "rawSha256": "e134c85acae69453933e8d7bfdf52e6798296d79447740bf341ec9f1f0f31643",
+      "nativeSha256": "22530b3d7f703a6c1497afc0d3892df2edccb48b6f719b177de3436850ac1b51",
+      "largestErrorEntry": {
+        "index": 78867,
+        "nativeValue": 87.58284759521484,
+        "nvidiaValue": 87.58274841308594,
+        "nativeFloat32Spacing": 7.62939453125e-06,
+        "errorInSpacingUnits": 13.0
+      }
+    },
+    {
+      "seam": "cycle-0.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 101.75904312263395,
+      "relativeRms": 1.2043503796887343e-06,
+      "maxAbs": 0.009765625,
+      "passes": false,
+      "rawSha256": "48af6fcde6915c04a05e8f84e2318cfedbaa2a55652c4a47f3ce6ef9f6315296",
+      "nativeSha256": "d18ecc7869a1d6debbd6f2ae4eb10505d49060ff31aa4db1ed2b1f2f83a69074",
+      "largestErrorEntry": {
+        "index": 1131929,
+        "nativeValue": -9182.2734375,
+        "nvidiaValue": -9182.263671875,
+        "nativeFloat32Spacing": 0.0009765625,
+        "errorInSpacingUnits": 10.0
+      }
+    },
+    {
+      "seam": "cycle-0.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 134.33447545105966,
+      "relativeRms": 2.055058832271732e-07,
+      "maxAbs": 0.001708984375,
+      "passes": false,
+      "rawSha256": "4cc52c20a87386557968b30b06fa5cd28ba64a3ff88f3416a590e45da56d9fbf",
+      "nativeSha256": "75b2eb6bdc7f804b2e290f2bfc5cbec070087b481f4b63e785eb3fe37b4380b8",
+      "largestErrorEntry": {
+        "index": 3609948,
+        "nativeValue": 2465.29931640625,
+        "nvidiaValue": 2465.301025390625,
+        "nativeFloat32Spacing": 0.000244140625,
+        "errorInSpacingUnits": 7.0
+      }
+    },
+    {
+      "seam": "cycle-0.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 47.53410054377275,
+      "relativeRms": 1.1804885778530305e-07,
+      "maxAbs": 0.000244140625,
+      "passes": true,
+      "rawSha256": "5a012751b5ed07100fdf40423d52a3772f13e3642b8c1759636b74187a2cd24d",
+      "nativeSha256": "43ee7be6ab93d71cffd3fe961b957c744d8cfe7e0519dd06f505f5f75ab1e8a3",
+      "largestErrorEntry": {
+        "index": 1404764,
+        "nativeValue": 412.89617919921875,
+        "nvidiaValue": 412.89593505859375,
+        "nativeFloat32Spacing": 3.0517578125e-05,
+        "errorInSpacingUnits": 8.0
+      }
+    },
+    {
+      "seam": "cycle-0.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 22.743715514171257,
+      "relativeRms": 5.4320906199638086e-08,
+      "maxAbs": 4.57763671875e-05,
+      "passes": true,
+      "rawSha256": "8d3db7239d6bf5501ac479a906ab7033eb59363c7d28920225d8b3611261565b",
+      "nativeSha256": "d6d1e2d95b7c371bf8fda1a9339ccd756ed1fedbb37427f417599687c896c6d9",
+      "largestErrorEntry": {
+        "index": 64092,
+        "nativeValue": 187.6445770263672,
+        "nvidiaValue": 187.64462280273438,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 3.0
+      }
+    },
+    {
+      "seam": "cycle-0.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 12575.20623949584,
+      "relativeRms": 2.84301738517739e-07,
+      "maxAbs": 0.09375,
+      "passes": false,
+      "rawSha256": "c1a37c3b26063f99fa0899bd3d3d10e70aee67fbedec93c3fb91057285d0a654",
+      "nativeSha256": "8c11481fdb96d06d1520400fcf8aeff978bde802f2a64435dbc238017a49d8cb",
+      "largestErrorEntry": {
+        "index": 16680,
+        "nativeValue": -120906.6796875,
+        "nvidiaValue": -120906.5859375,
+        "nativeFloat32Spacing": 0.0078125,
+        "errorInSpacingUnits": 12.0
+      }
+    },
+    {
+      "seam": "cycle-1.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.928649346874318,
+      "relativeRms": 5.058314781319433e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true,
+      "rawSha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e",
+      "nativeSha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8",
+      "largestErrorEntry": {
+        "index": 13720,
+        "nativeValue": -130.42750549316406,
+        "nvidiaValue": -130.42752075195312,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 1.0
+      }
+    },
+    {
+      "seam": "cycle-1.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.506585206490286,
+      "relativeRms": 2.274085716256146e-07,
+      "maxAbs": 0.0002288818359375,
+      "passes": true,
+      "rawSha256": "c9ae063814c00a58ea78d70f9bfead72dcc0f8bd375e0ea65b4e765b6278e636",
+      "nativeSha256": "42f04f4d9957b3190a2b04dfdd97a9d81125baa82de1eec5adb5da2954fa36fe",
+      "largestErrorEntry": {
+        "index": 3295580,
+        "nativeValue": 226.7180938720703,
+        "nvidiaValue": 226.71832275390625,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 15.0
+      }
+    },
+    {
+      "seam": "cycle-1.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.32544204347218,
+      "relativeRms": 3.8203188435177897e-07,
+      "maxAbs": 0.00012969970703125,
+      "passes": true,
+      "rawSha256": "0b195a54511299d75cb8b7e57a34b2fdadce53c096df526e42ae43d8aaabf5f2",
+      "nativeSha256": "d1100d420cfa78d1f5b52ccfc5e3fd19fef684741659e6403afbc137c4cf9728",
+      "largestErrorEntry": {
+        "index": 87157,
+        "nativeValue": 127.53760528564453,
+        "nvidiaValue": 127.5374755859375,
+        "nativeFloat32Spacing": 7.62939453125e-06,
+        "errorInSpacingUnits": 17.0
+      }
+    },
+    {
+      "seam": "cycle-1.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 108.21477347133951,
+      "relativeRms": 8.897679277913715e-07,
+      "maxAbs": 0.00537109375,
+      "passes": false,
+      "rawSha256": "cde877fc64ae76faff94ee068531878c683ac36dc3b1791076572e449401ddb5",
+      "nativeSha256": "b184646c7da4e8da0a905eec537204fce0a37b57932bc654c2972200f1964417",
+      "largestErrorEntry": {
+        "index": 1407257,
+        "nativeValue": -7653.3564453125,
+        "nvidiaValue": -7653.36181640625,
+        "nativeFloat32Spacing": 0.00048828125,
+        "errorInSpacingUnits": 11.0
+      }
+    },
+    {
+      "seam": "cycle-1.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 152.1615072708731,
+      "relativeRms": 9.046229089523114e-07,
+      "maxAbs": 0.0064697265625,
+      "passes": false,
+      "rawSha256": "2c2b00ddb202a1f7d627b7760d3d3c429d2e7e1fd683e99189c1d7eb6a3ca2b9",
+      "nativeSha256": "84a29f0bfe1bcfd5cd9ab23da9fbcdae0ae0b1d45d8477d0bb0bb4759be9a3c1",
+      "largestErrorEntry": {
+        "index": 1316828,
+        "nativeValue": 1363.3114013671875,
+        "nvidiaValue": 1363.31787109375,
+        "nativeFloat32Spacing": 0.0001220703125,
+        "errorInSpacingUnits": 53.0
+      }
+    },
+    {
+      "seam": "cycle-1.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 54.76042026274921,
+      "relativeRms": 8.966343101388091e-07,
+      "maxAbs": 0.001132965087890625,
+      "passes": false,
+      "rawSha256": "a79b50fa49d2991da8513a089293a8409fdfb5546e6ada558e397f24ec6e0b61",
+      "nativeSha256": "81a01efedc16718e4bdc823f4e82686d340a29d2f5bdb98e480f6eb6557d093a",
+      "largestErrorEntry": {
+        "index": 6251016,
+        "nativeValue": -31.678512573242188,
+        "nvidiaValue": -31.677379608154297,
+        "nativeFloat32Spacing": 1.9073486328125e-06,
+        "errorInSpacingUnits": 594.0
+      }
+    },
+    {
+      "seam": "cycle-1.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 30.82205416161988,
+      "relativeRms": 1.5807453957677502e-06,
+      "maxAbs": 0.0011234283447265625,
+      "passes": false,
+      "rawSha256": "984e392899cb1ccf2b4bf4fcb4b33c4456812c5a2be8b1318fb834f427495a31",
+      "nativeSha256": "a54895c63bc94e86b711da661bf698047182ff1cbf68011c7bcf8c53baf0de25",
+      "largestErrorEntry": {
+        "index": 6251016,
+        "nativeValue": -16.06185531616211,
+        "nvidiaValue": -16.060731887817383,
+        "nativeFloat32Spacing": 1.9073486328125e-06,
+        "errorInSpacingUnits": 589.0
+      }
+    },
+    {
+      "seam": "cycle-1.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14196.394594586454,
+      "relativeRms": 2.672954773083733e-07,
+      "maxAbs": 0.109375,
+      "passes": false,
+      "rawSha256": "d48a832dd7def7a1c11ca9a544a27261a47ff2859f488b59e9206f70d924047e",
+      "nativeSha256": "4ea20d3f5484c6ee6ea5384a543971ee8385c711379f711b4bfb8cdd1d9e4d3a",
+      "largestErrorEntry": {
+        "index": 5939,
+        "nativeValue": 118887.5,
+        "nvidiaValue": 118887.609375,
+        "nativeFloat32Spacing": 0.0078125,
+        "errorInSpacingUnits": 14.0
+      }
+    },
+    {
+      "seam": "cycle-2.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.928649346874318,
+      "relativeRms": 5.058314781319433e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true,
+      "rawSha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e",
+      "nativeSha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8",
+      "largestErrorEntry": {
+        "index": 13720,
+        "nativeValue": -130.42750549316406,
+        "nvidiaValue": -130.42752075195312,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 1.0
+      }
+    },
+    {
+      "seam": "cycle-2.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.315173353211936,
+      "relativeRms": 2.177718214847364e-07,
+      "maxAbs": 0.000213623046875,
+      "passes": true,
+      "rawSha256": "bf24531e660e6339f269b3e2773ba5e7ac10363e83f707d1597c1752917ce4c2",
+      "nativeSha256": "c4a8600d69e6fa0a5f8561f1e9005275e299eb6d8e83cafbbfc7650d657e7b7b",
+      "largestErrorEntry": {
+        "index": 699228,
+        "nativeValue": 225.07720947265625,
+        "nvidiaValue": 225.07699584960938,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 14.0
+      }
+    },
+    {
+      "seam": "cycle-2.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.359461059789165,
+      "relativeRms": 3.7808905890410173e-07,
+      "maxAbs": 0.0001220703125,
+      "passes": true,
+      "rawSha256": "515c5ebe85303b784c1cf34fdfcd0436059014b0108aadc7050ef462180100a0",
+      "nativeSha256": "68f39d2c1455e18c776c8c5995a6c9f0d121479205a79a5ad56bb6a5373bcb65",
+      "largestErrorEntry": {
+        "index": 86642,
+        "nativeValue": 127.19528198242188,
+        "nvidiaValue": 127.19540405273438,
+        "nativeFloat32Spacing": 7.62939453125e-06,
+        "errorInSpacingUnits": 16.0
+      }
+    },
+    {
+      "seam": "cycle-2.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 111.26999215253919,
+      "relativeRms": 7.096557232969334e-07,
+      "maxAbs": 0.0068359375,
+      "passes": false,
+      "rawSha256": "d549da18a7242cf981b2d59836059427cbad1d954890f64e387602f2b19d2ec2",
+      "nativeSha256": "e08d18bea85114e962e5177fb351e9487df27702da11788088f1adb17d973a86",
+      "largestErrorEntry": {
+        "index": 3365145,
+        "nativeValue": -7411.9833984375,
+        "nvidiaValue": -7411.990234375,
+        "nativeFloat32Spacing": 0.00048828125,
+        "errorInSpacingUnits": 14.0
+      }
+    },
+    {
+      "seam": "cycle-2.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 159.94019969315661,
+      "relativeRms": 7.729060840166838e-07,
+      "maxAbs": 0.007080078125,
+      "passes": false,
+      "rawSha256": "94d27fcff190898cfc301cf0b2f710f1f915e663e80ad83b1f130b563c59cf66",
+      "nativeSha256": "de6c93ff3c33086310fc046d32225795391d75b7c6f34c62c36390aa3f5a4ad9",
+      "largestErrorEntry": {
+        "index": 6545500,
+        "nativeValue": 1801.390625,
+        "nvidiaValue": 1801.383544921875,
+        "nativeFloat32Spacing": 0.0001220703125,
+        "errorInSpacingUnits": 58.0
+      }
+    },
+    {
+      "seam": "cycle-2.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 53.59889121846344,
+      "relativeRms": 6.575521573293829e-07,
+      "maxAbs": 0.001251220703125,
+      "passes": false,
+      "rawSha256": "5b3dbf48bcbc26cce4326840c60dc5d32279e0691eda8fde172be53d01aa3765",
+      "nativeSha256": "acc27c561cbbd846ff32d3619c63eb31911d03580db923ec86d0aa03e2f8e69b",
+      "largestErrorEntry": {
+        "index": 6349020,
+        "nativeValue": 487.01708984375,
+        "nvidiaValue": 487.0183410644531,
+        "nativeFloat32Spacing": 3.0517578125e-05,
+        "errorInSpacingUnits": 41.0
+      }
+    },
+    {
+      "seam": "cycle-2.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 29.880262517598805,
+      "relativeRms": 1.1635429749319622e-06,
+      "maxAbs": 0.001220703125,
+      "passes": false,
+      "rawSha256": "35e608dad6d800496a6d39c9d34413781b73f7eb59101f881a2fc2546e06e9a5",
+      "nativeSha256": "742a0c4a0e1247d90a21734be54491a8a30c3ce65405686f3e585406e4a7e22d",
+      "largestErrorEntry": {
+        "index": 6349020,
+        "nativeValue": 262.94598388671875,
+        "nvidiaValue": 262.94720458984375,
+        "nativeFloat32Spacing": 3.0517578125e-05,
+        "errorInSpacingUnits": 40.0
+      }
+    },
+    {
+      "seam": "cycle-2.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14411.638646445257,
+      "relativeRms": 2.7442907993795203e-07,
+      "maxAbs": 0.109375,
+      "passes": false,
+      "rawSha256": "81c53eac1bd9f8265869852c210a05fd973a0cb1a305aad4f5fbafd4c7716f83",
+      "nativeSha256": "355dd2ec92c8aa8816be57200d54c38bab9803255b5b7895c13360289a2920e8",
+      "largestErrorEntry": {
+        "index": 59804,
+        "nativeValue": -139615.328125,
+        "nvidiaValue": -139615.21875,
+        "nativeFloat32Spacing": 0.015625,
+        "errorInSpacingUnits": 7.0
+      }
+    },
+    {
+      "seam": "cycle-3.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.928649346874318,
+      "relativeRms": 5.058314781319433e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true,
+      "rawSha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e",
+      "nativeSha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8",
+      "largestErrorEntry": {
+        "index": 13720,
+        "nativeValue": -130.42750549316406,
+        "nvidiaValue": -130.42752075195312,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 1.0
+      }
+    },
+    {
+      "seam": "cycle-3.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.274425248424055,
+      "relativeRms": 2.142198080985397e-07,
+      "maxAbs": 0.0002288818359375,
+      "passes": true,
+      "rawSha256": "401a59c23cc46d24087cd88058dead58abfcdccc11fc341d2e733eae45fd4b21",
+      "nativeSha256": "ba81063fadb919cb189891f9b949cacc804e08faab6dd0339c7e14ea67467e2b",
+      "largestErrorEntry": {
+        "index": 2823900,
+        "nativeValue": 221.8352813720703,
+        "nvidiaValue": 221.83551025390625,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 15.0
+      }
+    },
+    {
+      "seam": "cycle-3.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.35504059521073,
+      "relativeRms": 3.7710761025109676e-07,
+      "maxAbs": 0.0001678466796875,
+      "passes": true,
+      "rawSha256": "e79ec43b8468db983548a9b97db1fae7b9df4a03c619c1aa1cc6f8add6643483",
+      "nativeSha256": "7141a54c15bd1a8bc79034677f75e0b6e8592cff224eb3928975bb1ecc15e742",
+      "largestErrorEntry": {
+        "index": 87203,
+        "nativeValue": -140.609619140625,
+        "nvidiaValue": -140.6097869873047,
+        "nativeFloat32Spacing": 1.52587890625e-05,
+        "errorInSpacingUnits": 11.0
+      }
+    },
+    {
+      "seam": "cycle-3.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 112.32374675948523,
+      "relativeRms": 9.629367882193796e-07,
+      "maxAbs": 0.0087890625,
+      "passes": false,
+      "rawSha256": "d8fd6bb432f59d46c2cadf63ecf72224bc82e4dbdfde5d6a09e39dc46bc9e871",
+      "nativeSha256": "43f3563bb44c7a691d633af34f1c368b6c7465f56c6482427689d3cd308d7a03",
+      "largestErrorEntry": {
+        "index": 3365208,
+        "nativeValue": -5060.50927734375,
+        "nvidiaValue": -5060.51806640625,
+        "nativeFloat32Spacing": 0.00048828125,
+        "errorInSpacingUnits": 18.0
+      }
+    },
+    {
+      "seam": "cycle-3.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 170.11804245263338,
+      "relativeRms": 6.484038798621188e-07,
+      "maxAbs": 0.0069580078125,
+      "passes": false,
+      "rawSha256": "54862522a0eee3c49ccf7beca980f008f5f9832a6b5b37eb5aa103b9c6c489ab",
+      "nativeSha256": "1448c20da7c86ea52851980608caddfcad9a22bc5f81838a24177080b17fc650",
+      "largestErrorEntry": {
+        "index": 1449180,
+        "nativeValue": 1688.6798095703125,
+        "nvidiaValue": 1688.686767578125,
+        "nativeFloat32Spacing": 0.0001220703125,
+        "errorInSpacingUnits": 57.0
+      }
+    },
+    {
+      "seam": "cycle-3.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 53.13991541759342,
+      "relativeRms": 4.956246792489864e-07,
+      "maxAbs": 0.0008544921875,
+      "passes": true,
+      "rawSha256": "ea246c0cfac4d06500dafdaf7b6cad30a7e83b01db1896179d1e15952b6f0fe3",
+      "nativeSha256": "f98c652b3edcc57a316b135ee8ae481f3c0c44d30c4ce34a633c6c19aa432039",
+      "largestErrorEntry": {
+        "index": 6533340,
+        "nativeValue": 479.36444091796875,
+        "nvidiaValue": 479.36529541015625,
+        "nativeFloat32Spacing": 3.0517578125e-05,
+        "errorInSpacingUnits": 28.0
+      }
+    },
+    {
+      "seam": "cycle-3.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 29.468760430354287,
+      "relativeRms": 8.724505230811011e-07,
+      "maxAbs": 0.0008544921875,
+      "passes": true,
+      "rawSha256": "3192ac1180785cb343a9b4515d62185419215cdf05679397a77909abbc300528",
+      "nativeSha256": "c58bb4a54e538d7f00a44dcb5eecc722f39087320b70b338b2870e83794933ff",
+      "largestErrorEntry": {
+        "index": 6533340,
+        "nativeValue": 256.4260559082031,
+        "nvidiaValue": 256.4269104003906,
+        "nativeFloat32Spacing": 3.0517578125e-05,
+        "errorInSpacingUnits": 28.0
+      }
+    },
+    {
+      "seam": "cycle-3.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14486.522420675466,
+      "relativeRms": 2.8146058662321295e-07,
+      "maxAbs": 0.109375,
+      "passes": false,
+      "rawSha256": "dd0546915ab817ba8ae29e034d48a68251b0e9e57cc074dced018a93de9b36f1",
+      "nativeSha256": "b62025ba2b9bffbd21ada0968eab82907c6527e466f49d7e7dab5fdb5cbf16d5",
+      "largestErrorEntry": {
+        "index": 56616,
+        "nativeValue": -140025.109375,
+        "nvidiaValue": -140025.0,
+        "nativeFloat32Spacing": 0.015625,
+        "errorInSpacingUnits": 7.0
+      }
+    }
+  ],
+  "crossDeviceAppleVsNvidia": [
+    {
+      "seam": "cycle-0.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.928649371449227,
+      "relativeRms": 4.976481923847391e-10,
+      "maxAbs": 9.5367431640625e-07,
+      "nvidiaSha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e",
+      "appleSha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    {
+      "seam": "cycle-0.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.626109965791667,
+      "relativeRms": 1.6504426530146402e-07,
+      "maxAbs": 0.0002593994140625,
+      "nvidiaSha256": "c578acdb93c4706050ea475babcdffca5d8e8b95cd9e0731048788fadf8346c8",
+      "appleSha256": "047ceff940500b9df9acf9b65666158abbd1a746c2b9384b9d9cec70f728732a"
+    },
+    {
+      "seam": "cycle-0.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.379992487039587,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "nvidiaSha256": "e134c85acae69453933e8d7bfdf52e6798296d79447740bf341ec9f1f0f31643",
+      "appleSha256": "e134c85acae69453933e8d7bfdf52e6798296d79447740bf341ec9f1f0f31643"
+    },
+    {
+      "seam": "cycle-0.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 101.7590604316675,
+      "relativeRms": 1.1359231952629565e-06,
+      "maxAbs": 0.005859375,
+      "nvidiaSha256": "48af6fcde6915c04a05e8f84e2318cfedbaa2a55652c4a47f3ce6ef9f6315296",
+      "appleSha256": "1acfbff7d1021fba5d1ecf5afbe279407634a74cc1b9f804e44e3401df9c3964"
+    },
+    {
+      "seam": "cycle-0.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 134.33448331226262,
+      "relativeRms": 1.7715216065135091e-07,
+      "maxAbs": 0.0009765625,
+      "nvidiaSha256": "4cc52c20a87386557968b30b06fa5cd28ba64a3ff88f3416a590e45da56d9fbf",
+      "appleSha256": "8ff52130abd508e65ff08a7fc2c839f8082d1fcc3f8b78ee970d0f4c8d26e023"
+    },
+    {
+      "seam": "cycle-0.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 47.53410116177737,
+      "relativeRms": 9.173261366903504e-08,
+      "maxAbs": 0.000244140625,
+      "nvidiaSha256": "5a012751b5ed07100fdf40423d52a3772f13e3642b8c1759636b74187a2cd24d",
+      "appleSha256": "84730382b06f84aea591f5652185bc6bb119ea3cb2b8425ad1b94dadeb788bca"
+    },
+    {
+      "seam": "cycle-0.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 22.743715371372154,
+      "relativeRms": 5.5997926316606515e-08,
+      "maxAbs": 3.0517578125e-05,
+      "nvidiaSha256": "8d3db7239d6bf5501ac479a906ab7033eb59363c7d28920225d8b3611261565b",
+      "appleSha256": "27f9adc33c4eb200a3143829b87c1c9b871396a33a8d6a03793ff30385aa1e22"
+    },
+    {
+      "seam": "cycle-0.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 12575.204673312266,
+      "relativeRms": 1.34843429047865e-07,
+      "maxAbs": 0.0390625,
+      "nvidiaSha256": "c1a37c3b26063f99fa0899bd3d3d10e70aee67fbedec93c3fb91057285d0a654",
+      "appleSha256": "602d7bc46f4271dbc6a1433a771d236a836c54e3e377821cfb2992c7fba567a7"
+    },
+    {
+      "seam": "cycle-1.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.928649371449227,
+      "relativeRms": 4.976481923847391e-10,
+      "maxAbs": 9.5367431640625e-07,
+      "nvidiaSha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e",
+      "appleSha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    {
+      "seam": "cycle-1.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.50658558082283,
+      "relativeRms": 2.1657224272409426e-07,
+      "maxAbs": 0.000244140625,
+      "nvidiaSha256": "c9ae063814c00a58ea78d70f9bfead72dcc0f8bd375e0ea65b4e765b6278e636",
+      "appleSha256": "c7e61f696c2c49ad331990b86473a897ce587a8d86c377d3880e9c8020c48b47"
+    },
+    {
+      "seam": "cycle-1.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.325441858091565,
+      "relativeRms": 2.3686400841375818e-07,
+      "maxAbs": 6.103515625e-05,
+      "nvidiaSha256": "0b195a54511299d75cb8b7e57a34b2fdadce53c096df526e42ae43d8aaabf5f2",
+      "appleSha256": "3b0072808452088b3081383dece8b408bb64fd7d546989ebef108ff601f95192"
+    },
+    {
+      "seam": "cycle-1.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 108.21478299597159,
+      "relativeRms": 1.5989376578129146e-06,
+      "maxAbs": 0.0115966796875,
+      "nvidiaSha256": "cde877fc64ae76faff94ee068531878c683ac36dc3b1791076572e449401ddb5",
+      "appleSha256": "e7d638832539f412fc5af2c9c257e3469c85fa602a7fece0f59c19766fd86a37"
+    },
+    {
+      "seam": "cycle-1.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 152.1615268510997,
+      "relativeRms": 8.699622189446769e-07,
+      "maxAbs": 0.0057373046875,
+      "nvidiaSha256": "2c2b00ddb202a1f7d627b7760d3d3c429d2e7e1fd683e99189c1d7eb6a3ca2b9",
+      "appleSha256": "b8f4caca7f1ec06ee8f451934c38c491fc3a744089f60fb3a9a02231e3a7f41f"
+    },
+    {
+      "seam": "cycle-1.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 54.76041789624642,
+      "relativeRms": 8.571981453052569e-07,
+      "maxAbs": 0.0012483596801757812,
+      "nvidiaSha256": "a79b50fa49d2991da8513a089293a8409fdfb5546e6ada558e397f24ec6e0b61",
+      "appleSha256": "5e07cb58a9e476b880b299e0df461bdba4b61573e139330e55fd67afa0b86f82"
+    },
+    {
+      "seam": "cycle-1.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 30.82205133805699,
+      "relativeRms": 1.5127061858901654e-06,
+      "maxAbs": 0.0012483596801757812,
+      "nvidiaSha256": "984e392899cb1ccf2b4bf4fcb4b33c4456812c5a2be8b1318fb834f427495a31",
+      "appleSha256": "bbac12d383506c025736e44f456b95badedbf9972c95995856e1f79c812f57db"
+    },
+    {
+      "seam": "cycle-1.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14196.395247493962,
+      "relativeRms": 1.7724808405054406e-07,
+      "maxAbs": 0.0546875,
+      "nvidiaSha256": "d48a832dd7def7a1c11ca9a544a27261a47ff2859f488b59e9206f70d924047e",
+      "appleSha256": "66a3c33d344749cd980871c840851054d5b0dacb69ea824f1d76245153a60886"
+    },
+    {
+      "seam": "cycle-2.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.928649371449227,
+      "relativeRms": 4.976481923847391e-10,
+      "maxAbs": 9.5367431640625e-07,
+      "nvidiaSha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e",
+      "appleSha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    {
+      "seam": "cycle-2.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.315173923661103,
+      "relativeRms": 2.3913686062449283e-07,
+      "maxAbs": 0.000274658203125,
+      "nvidiaSha256": "bf24531e660e6339f269b3e2773ba5e7ac10363e83f707d1597c1752917ce4c2",
+      "appleSha256": "1e85aba3c46e6fe0ef325c8e2ecc27cfe11edf53ef29dbb07b58a163de566668"
+    },
+    {
+      "seam": "cycle-2.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.35946124358114,
+      "relativeRms": 2.680468046016355e-07,
+      "maxAbs": 8.392333984375e-05,
+      "nvidiaSha256": "515c5ebe85303b784c1cf34fdfcd0436059014b0108aadc7050ef462180100a0",
+      "appleSha256": "0707b47468f5313ca6444a79f8e2d5cc5b090ad69084ee036c40f811fc61f9ff"
+    },
+    {
+      "seam": "cycle-2.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 111.27000907278972,
+      "relativeRms": 1.4218989075013337e-06,
+      "maxAbs": 0.01123046875,
+      "nvidiaSha256": "d549da18a7242cf981b2d59836059427cbad1d954890f64e387602f2b19d2ec2",
+      "appleSha256": "8dd7cfaa798b098aa09bb1800cb5a25b5ee22594baa5001405a8004beecdec53"
+    },
+    {
+      "seam": "cycle-2.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 159.94023444550038,
+      "relativeRms": 1.4962870775806133e-06,
+      "maxAbs": 0.016357421875,
+      "nvidiaSha256": "94d27fcff190898cfc301cf0b2f710f1f915e663e80ad83b1f130b563c59cf66",
+      "appleSha256": "bf3f255a50242aab801e854215b0e35eddee413b070a2038ab163d7d72e49997"
+    },
+    {
+      "seam": "cycle-2.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 53.598889472981575,
+      "relativeRms": 1.2896538015877794e-06,
+      "maxAbs": 0.0037841796875,
+      "nvidiaSha256": "5b3dbf48bcbc26cce4326840c60dc5d32279e0691eda8fde172be53d01aa3765",
+      "appleSha256": "cd1fbfd3ee5c74f6f7c05d2de3912581e801a2cffd9b37e7aae2fd4f91bd61f8"
+    },
+    {
+      "seam": "cycle-2.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 29.8802602167435,
+      "relativeRms": 2.3042418244556635e-06,
+      "maxAbs": 0.0037689208984375,
+      "nvidiaSha256": "35e608dad6d800496a6d39c9d34413781b73f7eb59101f881a2fc2546e06e9a5",
+      "appleSha256": "aa86a4b3082e39debcd6c8ba2723cb8fbcf544eeba0eed91bc75080febd07e81"
+    },
+    {
+      "seam": "cycle-2.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14411.638929353201,
+      "relativeRms": 1.755824222979033e-07,
+      "maxAbs": 0.078125,
+      "nvidiaSha256": "81c53eac1bd9f8265869852c210a05fd973a0cb1a305aad4f5fbafd4c7716f83",
+      "appleSha256": "7e56455a38890124e0eb398f554409666a01ec07e4f4607944c631ffeb63ee0d"
+    },
+    {
+      "seam": "cycle-3.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.928649371449227,
+      "relativeRms": 4.976481923847391e-10,
+      "maxAbs": 9.5367431640625e-07,
+      "nvidiaSha256": "1292c9d1f709c08ecd3aa33edab90893058d199b3eba32b9b692250524eaeb1e",
+      "appleSha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    {
+      "seam": "cycle-3.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.27442569886692,
+      "relativeRms": 2.3084309534948907e-07,
+      "maxAbs": 0.000244140625,
+      "nvidiaSha256": "401a59c23cc46d24087cd88058dead58abfcdccc11fc341d2e733eae45fd4b21",
+      "appleSha256": "cae8b96fdecd7f48308c067232ff99fe49d8e96ff5f7785bac6783a5082a3817"
+    },
+    {
+      "seam": "cycle-3.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.355041417189685,
+      "relativeRms": 2.4882652376980125e-07,
+      "maxAbs": 9.5367431640625e-05,
+      "nvidiaSha256": "e79ec43b8468db983548a9b97db1fae7b9df4a03c619c1aa1cc6f8add6643483",
+      "appleSha256": "d36d8e52368523d1c424993b983fbc45cab1a2fa17b247745999c89640fa9e0b"
+    },
+    {
+      "seam": "cycle-3.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 112.32380007634261,
+      "relativeRms": 2.956938497177276e-06,
+      "maxAbs": 0.03167724609375,
+      "nvidiaSha256": "d8fd6bb432f59d46c2cadf63ecf72224bc82e4dbdfde5d6a09e39dc46bc9e871",
+      "appleSha256": "f1d3ee23970a9e4785b3b3423060e56fd2f6f644a7c423381173f15d8e4d9d73"
+    },
+    {
+      "seam": "cycle-3.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 170.11810612062783,
+      "relativeRms": 1.7849841406202891e-06,
+      "maxAbs": 0.0323486328125,
+      "nvidiaSha256": "54862522a0eee3c49ccf7beca980f008f5f9832a6b5b37eb5aa103b9c6c489ab",
+      "appleSha256": "72ac1f4494b3af5d08bb2aa77603b7d14b8dc674156f4796d46ebb1f0e0eaee1"
+    },
+    {
+      "seam": "cycle-3.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 53.13991316007597,
+      "relativeRms": 1.1242365708867855e-06,
+      "maxAbs": 0.001983642578125,
+      "nvidiaSha256": "ea246c0cfac4d06500dafdaf7b6cad30a7e83b01db1896179d1e15952b6f0fe3",
+      "appleSha256": "cd7b7dc36cd840641b621d1a35c46d86ed9f446f4b642495a4336421a0dc306f"
+    },
+    {
+      "seam": "cycle-3.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 29.468757792831475,
+      "relativeRms": 2.017024739130292e-06,
+      "maxAbs": 0.001983642578125,
+      "nvidiaSha256": "3192ac1180785cb343a9b4515d62185419215cdf05679397a77909abbc300528",
+      "appleSha256": "cb5cd7dfb16557950d824e0c16d00677187f91a46761d3b03e68ab455563ebdd"
+    },
+    {
+      "seam": "cycle-3.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14486.523372848475,
+      "relativeRms": 2.932626567973929e-07,
+      "maxAbs": 0.15625,
+      "nvidiaSha256": "dd0546915ab817ba8ae29e034d48a68251b0e9e57cc074dced018a93de9b36f1",
+      "appleSha256": "03afb5d52e854005663db281b9ddb892ead344ac0d66b55bb7b95651034ff0da"
+    }
+  ],
+  "crossDeviceInterpretation": "Descriptive errors at identical saved inputs/weights; device-selected generated shader paths differ, so this is not an isolated compiler comparison. No additional acceptance tolerance is assigned.",
+  "producerMetricsReproduce": true,
+  "rawBytesVerified": 645593088,
+  "newModelCalls": 0,
+  "localRawCopiesWritten": 0,
+  "shaderAudit": {
+    "nvidiaShaders": 96,
+    "nvidiaF16Shaders": 0,
+    "appleShaders": 56
+  }
+}

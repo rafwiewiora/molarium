@@ -1,0 +1,95 @@
+{
+  "schema": "molarium.NVIDIA-raw-release-parts.v1",
+  "status": "complete",
+  "startedAt": "2026-11-17T18:10:49.201243+00:00",
+  "releaseId": 448040291,
+  "archiveBytes": 647319566,
+  "archiveSha256": "44656a2ba5bedffe32159265960d980d1c191e00b792fc655fb5d1d3cea6af82",
+  "parts": [
+    {
+      "file": "nvidia-strict-trunk-20535-20261117.part-01.bin",
+      "offset": 0,
+      "bytes": 83886080,
+      "sha256": "9daba6578e546b6d3b115ac9eae2c39448cc2bc0f4314d5ebfbd977150a7c2cf",
+      "assetId": 760105424,
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/nvidia-strict-trunk-20535-20261117.part-01.bin",
+      "serverDigest": "sha256:9daba6578e546b6d3b115ac9eae2c39448cc2bc0f4314d5ebfbd977150a7c2cf",
+      "status": "verified"
+    },
+    {
+      "file": "nvidia-strict-trunk-20535-20261117.part-02.bin",
+      "offset": 83886080,
+      "bytes": 83886080,
+      "sha256": "70a0494cff7b2596fdc337678e426bac80d49fd77389819d49cd5186e9af4b77",
+      "assetId": 760106182,
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/nvidia-strict-trunk-20535-20261117.part-02.bin",
+      "serverDigest": "sha256:70a0494cff7b2596fdc337678e426bac80d49fd77389819d49cd5186e9af4b77",
+      "status": "verified"
+    },
+    {
+      "file": "nvidia-strict-trunk-20535-20261117.part-03.bin",
+      "offset": 167772160,
+      "bytes": 83886080,
+      "sha256": "4a9e1944fbe3fe45b0591ec12c86ffa4f219421bfe3bf9702bc9085209f59801",
+      "assetId": 760106848,
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/nvidia-strict-trunk-20535-20261117.part-03.bin",
+      "serverDigest": "sha256:4a9e1944fbe3fe45b0591ec12c86ffa4f219421bfe3bf9702bc9085209f59801",
+      "status": "verified"
+    },
+    {
+      "file": "nvidia-strict-trunk-20535-20261117.part-04.bin",
+      "offset": 251658240,
+      "bytes": 83886080,
+      "sha256": "ab348a003c5eed43d7eae06a12d400bcf855915ec1a081f135a4572e9509e5e0",
+      "assetId": 760107474,
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/nvidia-strict-trunk-20535-20261117.part-04.bin",
+      "serverDigest": "sha256:ab348a003c5eed43d7eae06a12d400bcf855915ec1a081f135a4572e9509e5e0",
+      "status": "verified"
+    },
+    {
+      "file": "nvidia-strict-trunk-20535-20261117.part-05.bin",
+      "offset": 335544320,
+      "bytes": 83886080,
+      "sha256": "5230df0e62f4b4661a6555dcf5b5aa5044a1e20f12bdf6a85461f16648714136",
+      "assetId": 760108227,
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/nvidia-strict-trunk-20535-20261117.part-05.bin",
+      "serverDigest": "sha256:5230df0e62f4b4661a6555dcf5b5aa5044a1e20f12bdf6a85461f16648714136",
+      "status": "verified"
+    },
+    {
+      "file": "nvidia-strict-trunk-20535-20261117.part-06.bin",
+      "offset": 419430400,
+      "bytes": 83886080,
+      "sha256": "96ae85694e93e64429159bfef00a6a160d134a83602dbba2e807e89948a600ff",
+      "assetId": 760109040,
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/nvidia-strict-trunk-20535-20261117.part-06.bin",
+      "serverDigest": "sha256:96ae85694e93e64429159bfef00a6a160d134a83602dbba2e807e89948a600ff",
+      "status": "verified"
+    },
+    {
+      "file": "nvidia-strict-trunk-20535-20261117.part-07.bin",
+      "offset": 503316480,
+      "bytes": 83886080,
+      "sha256": "501c69febf93b9dabfc3dcb74838784a58504b8420339cef9f42bcb76d2721f5",
+      "assetId": 760109745,
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/nvidia-strict-trunk-20535-20261117.part-07.bin",
+      "serverDigest": "sha256:501c69febf93b9dabfc3dcb74838784a58504b8420339cef9f42bcb76d2721f5",
+      "status": "verified"
+    },
+    {
+      "file": "nvidia-strict-trunk-20535-20261117.part-08.bin",
+      "offset": 587202560,
+      "bytes": 60117006,
+      "sha256": "564a858c7d8d9b2850ac3351ef6a91074f09ff6ae9fd855ee7b4d3b0c0f5caaa",
+      "assetId": 760110699,
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/nvidia-strict-trunk-20535-20261117.part-08.bin",
+      "serverDigest": "sha256:564a858c7d8d9b2850ac3351ef6a91074f09ff6ae9fd855ee7b4d3b0c0f5caaa",
+      "status": "verified"
+    }
+  ],
+  "newModelCalls": 0,
+  "maximumLocalPartBytes": 83886080,
+  "lastCompletedAt": "2026-11-17T18:12:49.621430+00:00",
+  "finishedAt": "2026-11-17T18:12:49.622014+00:00",
+  "concatenatedTransferredArchiveSha256": "44656a2ba5bedffe32159265960d980d1c191e00b792fc655fb5d1d3cea6af82"
+}

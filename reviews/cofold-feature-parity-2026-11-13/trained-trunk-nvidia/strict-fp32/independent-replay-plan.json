@@ -1,0 +1,19 @@
+{
+  "recordedAt": "2026-11-17T17:46:04.185849+00:00",
+  "jobId": 20535,
+  "outputReceiptSha256": "c4c2a6044bee0644865184d93870155a19048a8ee7352b959ff16db0de071b3f",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "sourceManifestSha256": "024f3b83d87add3e72de6917fe3af387e4bea720623eff7d5f4ff2715267fd40",
+  "remoteTransportSha256": "9389d4e84ae1aecc45bc29dfa13883406fb728f42d3e55bd18d6c5934460ab23",
+  "localReplaySha256": "84eb9274efc329f33945f0ffa51d39338423bb3b12e01487beb96157fc6a03fd",
+  "expectedFiles": 32,
+  "expectedRawBytes": 645593088,
+  "newModelCalls": 0,
+  "localRawCopiesWritten": 0,
+  "referenceGates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "purpose": "Independently recompute native and cross-Apple errors from every original raw NVIDIA array without disk-sized duplicate or neural replay."
+}
