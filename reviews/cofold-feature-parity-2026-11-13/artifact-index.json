@@ -68,8 +68,8 @@
     },
     {
       "file": "gpu-capability-2026-11-16/README.md",
-      "bytes": 10552,
-      "sha256": "3343220b11c1ec95f1aeaf8ba77967b6401ae738e623b0ed8d814e3fa9c1aab9"
+      "bytes": 12492,
+      "sha256": "d4650931bf8747ae7bd48e055661870b7ed97a5220498b71e9839a14225ebae9"
     },
     {
       "file": "gpu-capability-2026-11-16/chrome-logging-wrapper.sh",
@@ -908,8 +908,8 @@
     },
     {
       "file": "gpu-capability-2026-11-16/device-discovery-attempt001/submission.json",
-      "bytes": 12872,
-      "sha256": "49397d224df325eb9d243ffe0f49496f563f624d542f6f37d462c7e64f960813"
+      "bytes": 8742,
+      "sha256": "14361c77dcad8103fc56dbe1820be459d52f1f6c4cc3d8add3d50c312b3d1f2c"
     },
     {
       "file": "gpu-capability-2026-11-16/device-discovery-attempt001/vulkan_devices.py",
@@ -1100,6 +1100,71 @@
       "file": "gpu-capability-2026-11-16/observed-20206/terminal-results.tar.gz",
       "bytes": 28752,
       "sha256": "9c844f1e7580b769b13f178e5d898d67e573e4acdd91182d8de6ffa6f3e71204"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-attempt001/terminal-capacity-loss.json",
+      "bytes": 3933,
+      "sha256": "56c694720cee78498e059f81d7f9e284d01c7256f47ab91b5a91f19aa8f5504c"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/chrome-wrapper.sh",
+      "bytes": 472,
+      "sha256": "d83935fa804672e1d466b06c0a18e9b2667f97c64d2c9dc131b275144c364e1b"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/collect_driver_libraries.py",
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/container.sh",
+      "bytes": 218,
+      "sha256": "3077582737b3eb60bf2268fb8103e668428ea709de1fc097454a38b568022c64"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/gpu.sh",
+      "bytes": 3538,
+      "sha256": "565be051747c66e408ee76bd12573eabf6f796a02ebc8c9ee105572acbd946f8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/preflight-abort.json",
+      "bytes": 600,
+      "sha256": "e8bd296a5d785c26c49e1f81e3925a310edf096ab0060a870fdd2f3ac610e7db"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/probe-adaptation.json",
+      "bytes": 1850,
+      "sha256": "27c5dbd8e90e35d69ea8733a2fc9cb255da110ae1829a81a7eb66094c3d8159e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/probe.mjs",
+      "bytes": 4510,
+      "sha256": "41c85b6c0bd7845cdaa44df496cc5f22c129b5ddb1ccb9794e0ebf2b58d1e08b"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/recovery-controller.py",
+      "bytes": 10284,
+      "sha256": "925b68a39c59e6a2610a24cde05d5f2357234d233c33840d512a1a5b9a5db5bd"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/source-manifest.json",
+      "bytes": 630,
+      "sha256": "1af42b5bea4500493215274907b492442927cb6f97166f443beafbc39bbe84f0"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/source-sha256.txt",
+      "bytes": 578,
+      "sha256": "41355f5cf25174405506f68d3f6677c0e1cde6f4cacdcc5823b5334b2859462f"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/submission.json",
+      "bytes": 258537,
+      "sha256": "aa2ffdd0fa9acb3b9064c93a5878f831a8e2d597f1005559c594261567bfe9c5"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/device-discovery-retry-attempt002/vulkan_devices.py",
+      "bytes": 3747,
+      "sha256": "13476c5fa373a39519906417a44dd33d93e573270a78b0546fb31b4eb708e9ad"
     }
   ]
 }

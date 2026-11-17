@@ -165,3 +165,34 @@ The [submission controller](device-discovery-attempt001/submission-controller.py
 first verifies the previous terminal failures, production identity, source pins
 and absence of an active duplicate. It does not create a standalone VM or an
 automatic replacement loop. At submission the diagnostic was pending.
+
+## Capacity loss before payload and existing-node retry
+
+Job **20230** ended in `NODE_FAIL` from 01:18:16 to 01:18:33 UTC, before any
+task payload, batch step, log or capability measurement. The
+[terminal node record](device-discovery-attempt001/terminal-capacity-loss.json)
+identifies `ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS`; no model or Vulkan
+probe ran. This is a capacity failure, not a browser or numerical result.
+
+One [source-identical retry](device-discovery-retry-attempt002/submission.json),
+**20285**, was submitted at 01:31:40 UTC with the same resource limits, normal
+priority, no requeue and unchanged 20 November deadline. It excludes the
+17 nodes that were unbooted or unready at submission, leaving 90 already
+booted nodes eligible through the same regular/L4 Spot queues. Existing jobs
+are untouched; this task waits for a genuine scheduler allocation. It does not
+create a standalone replacement VM or change cluster configuration. Source
+manifest `1af42b5b…` and all seven diagnostic source hashes remain identical.
+
+The [retry controller](device-discovery-retry-attempt002/recovery-controller.py)
+checks the terminal parent, empty logs, absent payload markers, immutable
+sources, live cluster identity and absence of an active duplicate. An earlier
+[preflight stopped before staging or submission](device-discovery-retry-attempt002/preflight-abort.json)
+because the failed node's current reason changed. The successful controller
+uses the preserved authoritative failure for history and a fresh ready-node
+inventory for eligibility. No calculation was repeated.
+
+Public submission receipts now omit unrelated scheduler queue rows, which were
+accidentally included with the diagnostic context. Each redacted copy records
+the private original's hash and retains the relevant duplicate-check summary,
+source pins and actual Molarium allocation. Original scientific outputs and
+Molarium terminal logs are preserved.
