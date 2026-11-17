@@ -1,0 +1,26 @@
+{
+  "originalHarnessSha256": "ca089051615c0a285ab1962047ca79e689e51aa891fba11ff64cdf819bb87e52",
+  "replacements": [
+    {
+      "from": "  await waitFor(()=>browser.evaluate(`document.readyState==='complete'`),20000,'trunk fixture');",
+      "to": "  const context=()=>browser.evaluate(`({href:location.href,baseURI:document.baseURI,title:document.title,readyState:document.readyState,userAgent:navigator.userAgent})`);\n  result.startupContextBefore=await context();\n  await waitFor(()=>browser.evaluate(`location.href===${JSON.stringify(browser.appUrl)}&&document.title==='Stock-trained trunk comparison'&&document.readyState==='complete'`),20000,'exact loaded trunk fixture page');\n  result.startupContextReady=await context();\n  const fixtureProbe=await browser.evaluate(`(async()=>{const r=await fetch('/fixture/receipt.json');return{status:r.status,receipt:await r.json()};})()`);\n  if(fixtureProbe.status!==200||fixtureProbe.receipt.schema!=='molarium.trained-trunk-fixture.v1')throw Error('Wrong actual fixture endpoint');"
+    },
+    {
+      "from": "      const weights=await trunkWeights(store),trunk=new Af3TrunkGpu(device,{",
+      "to": "      const shaderAudit=[];\n      const originalCreateShaderModule=device.createShaderModule.bind(device);\n      device.createShaderModule=descriptor=>{\n        const code=String(descriptor.code),withoutComments=code.replace(/\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*/g,'');\n        const usesF16=/\\bf16\\b/.test(withoutComments);\n        shaderAudit.push({label:descriptor.label??null,usesF16,code});\n        if(usesF16)throw Error('Strict FP32 control encountered an f16 shader');\n        return originalCreateShaderModule(descriptor);\n      };\n      const weights=await trunkWeights(store),trunk=new Af3TrunkGpu(device,{"
+    },
+    {
+      "from": "stagedPrecision:'f32',weightPrecision:'f32',accumulatePrecision:'f32',pairWeightPrecision:'f32'",
+      "to": "stagedPrecision:'f32',weightPrecision:'f32',accumulatePrecision:'f32',pairWeightPrecision:'f32',pairMatrixKernels:false"
+    },
+    {
+      "from": "window.trunkControl={status:'complete',records,adapter:info,userAgent:navigator.userAgent,features:[...device.features]};",
+      "to": "window.trunkControl={status:'complete',records,adapter:info,userAgent:navigator.userAgent,features:[...device.features],precisionControl:{pairMatrixKernels:false,requireNoF16Shaders:true},shaderAudit:await Promise.all(shaderAudit.map(async({code,...m})=>({...m,sha256:await digest(new TextEncoder().encode(code))})))};"
+    },
+    {
+      "from": "  await browser.evaluate(`(()=>{",
+      "to": "  await browser.evaluate(String.raw`(()=>{"
+    }
+  ],
+  "scope": "Readiness correction, existing strict pair precision switch, observed f16-source rejection; unchanged native fixtures and numerical gates."
+}

@@ -1,0 +1,52 @@
+{
+  "scope": "Exact public readiness fix plus task-local paths and browser-target GPU-information warmup. No numerical kernel, fixture, precision or acceptance change. Both controls still require actual physical NVIDIA adapters.",
+  "trunkPublicSourceSha256": "9f67f23ffe0b446b17aa248d3dff71b34d3ba1ea8da0adc71fa9504c3c47d4b4",
+  "trunkReplacements": [
+    {
+      "from": "from './web-bundle-dependencies.mjs'",
+      "to": "from '/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo/scripts/web-bundle-dependencies.mjs'"
+    },
+    {
+      "from": "from './headless-chrome.mjs'",
+      "to": "from '/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo/scripts/headless-chrome.mjs'"
+    },
+    {
+      "from": "const root = resolve(import.meta.dirname, '..');",
+      "to": "const root = resolve('/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo');"
+    },
+    {
+      "from": "import {createHash, randomUUID} from 'node:crypto';",
+      "to": "import {createHash, randomUUID} from 'node:crypto';\nimport {warmNvidiaBrowser} from './warm-browser.mjs';"
+    },
+    {
+      "from": "  const fixtureProbe=await browser.evaluate(",
+      "to": "  await warmNvidiaBrowser();\n  const fixtureProbe=await browser.evaluate("
+    }
+  ],
+  "transitionOriginalSha256": "02f0422e39d4ef52dfd664acec1cb5c1fcb6ee90ff832407326d247db2c8d783",
+  "trunkOutputSha256": "e141416006e3f8f5b7921352eb2c7065f39b3b274abfd0d40bea41098a0a44ce",
+  "transitionOutputSha256": "d58026d1b0d0756610364392459e34e2d16a9843cdf167ec8557ed90f9cf1caa",
+  "sharedHelperChanged": false,
+  "transitionReplacements": [
+    {
+      "from": "from'./headless-chrome.mjs'",
+      "to": "from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs'"
+    },
+    {
+      "from": "from'./web-bundle-dependencies.mjs'",
+      "to": "from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/web-bundle-dependencies.mjs'"
+    },
+    {
+      "from": "const root=resolve(import.meta.dirname,'..'),",
+      "to": "const root=resolve('/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001'),"
+    },
+    {
+      "from": "import {startMolariumBrowser,waitFor}from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs';",
+      "to": "import {startMolariumBrowser,waitFor}from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs';\nimport {warmNvidiaBrowser} from './warm-browser.mjs';"
+    },
+    {
+      "from": "),20000,'diagnostic navigation');",
+      "to": "),20000,'diagnostic navigation');\n await warmNvidiaBrowser();"
+    }
+  ]
+}

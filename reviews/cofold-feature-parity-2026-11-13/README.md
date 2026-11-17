@@ -46,8 +46,10 @@ completed successfully with integer probe 7 and zero model calls. The [separate 
 preserve the pre-payload Spot loss and the demonstrated absolute-symlink mount
 failure. Both corrected payloads now open the existing fixture in the actual
 container before submission, without regenerating it. Subsequent T4 setup attempts
-stopped at hardware/identity gates before numerical work. Current L4-only jobs
-20400 and 20402 retain those gates and saved inputs; no NVIDIA numerical pass is claimed.
+stopped at hardware/identity gates before numerical work. Those L4-only jobs (20400 and 20402) then lost their Spot nodes before payload.
+Source-identical replacements 20534 and 20535 use the verified regular L4 pool
+at normal priority, preserving the gates and saved inputs; no NVIDIA numerical
+pass is claimed.
 
 The [physical-Apple four-cycle trunk controls](trained-trunk-apple/README.md)
 capture all 32 fixed-input boundaries. The original requested-FP32 configuration

@@ -1,0 +1,12 @@
+{
+  "finding": "TRUNK-PAGE-01",
+  "originalHarnessSha256": "ca089051615c0a285ab1962047ca79e689e51aa891fba11ff64cdf819bb87e52",
+  "fixedHarnessSha256": "9f67f23ffe0b446b17aa248d3dff71b34d3ba1ea8da0adc71fa9504c3c47d4b4",
+  "onlyChange": {
+    "from": "  await waitFor(()=>browser.evaluate(`document.readyState==='complete'`),20000,'trunk fixture');",
+    "to": "  const context=()=>browser.evaluate(`({href:location.href,baseURI:document.baseURI,title:document.title,readyState:document.readyState,userAgent:navigator.userAgent})`);\n  result.startupContextBefore=await context();\n  await waitFor(()=>browser.evaluate(`location.href===${JSON.stringify(browser.appUrl)}&&document.title==='Stock-trained trunk comparison'&&document.readyState==='complete'`),20000,'exact loaded trunk fixture page');\n  result.startupContextReady=await context();\n  const fixtureProbe=await browser.evaluate(`(async()=>{const r=await fetch('/fixture/receipt.json');return{status:r.status,receipt:await r.json()};})()`);\n  if(fixtureProbe.status!==200||fixtureProbe.receipt.schema!=='molarium.trained-trunk-fixture.v1')throw Error('Wrong actual fixture endpoint');"
+  },
+  "numericalPathChanged": false,
+  "sharedHeadlessHelperChanged": false,
+  "observedProof": "measurement-receipt.json startupContextBefore/Ready and all32capturedboundaries"
+}

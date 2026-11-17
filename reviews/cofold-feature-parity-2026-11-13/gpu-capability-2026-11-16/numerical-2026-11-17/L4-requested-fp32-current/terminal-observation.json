@@ -1,0 +1,118 @@
+{
+  "checkedAt": "2026-11-17T04:50:04.773673+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "task": {
+    "job": 20400,
+    "name": "L4-requested-fp32",
+    "root": "/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt004",
+    "sourcePin": "dc0883c69b689a50c1534a498eea1e26ca790c89a1c033569fdbb5fd736ec55a"
+  },
+  "accounting": "20400|NODE_FAIL|0:0|00:00:15|2026-11-17T04:48:59|2026-11-17T04:49:14|psigreen-l4spotnodeset-25",
+  "state": "NODE_FAIL",
+  "terminal": true,
+  "started": false,
+  "controlsStarted": false,
+  "inventory": {
+    "before-submission-fixture-preflight.json": {
+      "bytes": 15104,
+      "sha256": "ddb7dc561f86386eacb21621067c867bd9fd79f788bc0caddfaf2d92c7fcf4a1"
+    },
+    "before-submission-fixture-preflight.log": {
+      "bytes": 145,
+      "sha256": "610e8099b5dc971334eebd9741812d7d7f40cdd1e81fc3fec727338c9f6e9bdc"
+    },
+    "chrome-wrapper.sh": {
+      "bytes": 472,
+      "sha256": "d83935fa804672e1d466b06c0a18e9b2667f97c64d2c9dc131b275144c364e1b"
+    },
+    "collect_driver_libraries.py": {
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    "container-controls.sh": {
+      "bytes": 1431,
+      "sha256": "13939c2feac76abf19bd690f4da6c7e82323e77745cb58a4a22696c2e7235375"
+    },
+    "container-fixture-preflight.mjs": {
+      "bytes": 1431,
+      "sha256": "e5b9eb787c78857bedb74b2eccf98cf358e27273d7ca1f998b83146b63a9cbaa"
+    },
+    "container-image-receipt.json": {
+      "bytes": 224,
+      "sha256": "89eab1801bbb2946e9a08c92198e11dd7363dd527405b7b8b1e0087caa162169"
+    },
+    "container.sh": {
+      "bytes": 218,
+      "sha256": "3077582737b3eb60bf2268fb8103e668428ea709de1fc097454a38b568022c64"
+    },
+    "fixture-mount-plan.json": {
+      "bytes": 13822,
+      "sha256": "658695663a3a48fc5826fa4ee48cb0f93216bbb8a128cdbdbc4fc778bfd1bcee"
+    },
+    "gpu.sh": {
+      "bytes": 2709,
+      "sha256": "4b04e4a5535cf8dc72cd7f57fc5bbbcdc5cd58ea8ab79d2578416e2059e84cd1"
+    },
+    "probe-adaptation.json": {
+      "bytes": 1850,
+      "sha256": "27c5dbd8e90e35d69ea8733a2fc9cb255da110ae1829a81a7eb66094c3d8159e"
+    },
+    "probe.mjs": {
+      "bytes": 4510,
+      "sha256": "41c85b6c0bd7845cdaa44df496cc5f22c129b5ddb1ccb9794e0ebf2b58d1e08b"
+    },
+    "runner-adaptations.json": {
+      "bytes": 2785,
+      "sha256": "8ab6a008de2c7b0264cb128b0f43173e3108efb534da937aff87bd86152efaa7"
+    },
+    "runtime-capability.sh": {
+      "bytes": 3538,
+      "sha256": "565be051747c66e408ee76bd12573eabf6f796a02ebc8c9ee105572acbd946f8"
+    },
+    "source-manifest.json": {
+      "bytes": 1585,
+      "sha256": "dc0883c69b689a50c1534a498eea1e26ca790c89a1c033569fdbb5fd736ec55a"
+    },
+    "source-sha256.txt": {
+      "bytes": 1463,
+      "sha256": "6b8070b04514f16de0f5023c9647418cd4e9338eea9d9c635f0fbe985ad43db3"
+    },
+    "submission.json": {
+      "bytes": 5496,
+      "sha256": "2cf40d5c062516211e14fdc8323d6e655b0e1f83c0f4129980a9a4ebe9e1b924"
+    },
+    "transition.browser.mjs": {
+      "bytes": 9482,
+      "sha256": "d58026d1b0d0756610364392459e34e2d16a9843cdf167ec8557ed90f9cf1caa"
+    },
+    "trunk-readiness-fix.json": {
+      "bytes": 1328,
+      "sha256": "61da204be309fcad61156bb866b3746b06933f0bb3474d0f3c99cb8ed765308b"
+    },
+    "trunk.browser.mjs": {
+      "bytes": 10904,
+      "sha256": "e141416006e3f8f5b7921352eb2c7065f39b3b274abfd0d40bea41098a0a44ce"
+    },
+    "verified-regular-L4-eligibility-20261117.json": {
+      "bytes": 3575,
+      "sha256": "6c278c5d6d63ee7c25d3bbf6a4a323eca0426d8bfcaea99a217e6d4d83f246b3"
+    },
+    "verify_sources.py": {
+      "bytes": 3793,
+      "sha256": "6374f066ecfa3986faf81a0ed0b75f5bf40c71d67a5b756ed5d6b36abfc0d43e"
+    },
+    "vulkan_devices.py": {
+      "bytes": 3747,
+      "sha256": "13476c5fa373a39519906417a44dd33d93e573270a78b0546fb31b4eb708e9ad"
+    },
+    "warm-browser.mjs": {
+      "bytes": 953,
+      "sha256": "b3d6133ae01e0ab0950feccf6a815559f5ba9be13dc9fea285ec3f71dd74334f"
+    }
+  }
+}

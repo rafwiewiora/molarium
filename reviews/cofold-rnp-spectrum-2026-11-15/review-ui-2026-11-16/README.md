@@ -187,3 +187,19 @@ python reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/verify-saved-
 CI additionally regenerates all 96 exports from the original final prediction
 archive before running this saved-receipt check. No neural inference or browser
 sweep is repeated by the verifier.
+
+
+## Full ten-sample gate: original startup failure and identical retry
+
+At source `f09ed1b6d47e988861f4ac74ffcba39a35cbe0d8`, CI run
+44016665941 first timed out discovering its Chrome page, before the closed-storage
+assertions ran (job 133816230980). One failed-job-only retry used the identical
+source, shared helper, timeouts and gates. Job **133824840775** then passed all
+browser checks, finishing at **2026-11-17T05:03:00Z**. The cause of the original
+startup timeout remains unproven; the successful retry does not identify it.
+[The original failure](ci-browser-f09ed1b/original-failure.log),
+[actual retry outcome](ci-browser-f09ed1b/retry-outcome.json), and
+[successful retry log](ci-browser-f09ed1b/retry-success.log) preserve both outcomes.
+No native computation, inference output, helper or acceptance gate was changed.
+The evidence ZIP is also attached to the
+[trained-trunk evidence release](https://github.com/rafwiewiora/molarium/releases/tag/cofold-trained-trunk-2026-11-17).

@@ -1,0 +1,19 @@
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	﻿2026-11-17T04:28:09.0208373Z ##[group]Run bun scripts/cofold-storage.browser.mjs
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:09.0208789Z ^[[36;1mbun scripts/cofold-storage.browser.mjs^[[0m
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:09.0232803Z shell: /usr/bin/bash -e {0}
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:09.0233102Z env:
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:09.0233435Z   CHROME_PATH: /opt/hostedtoolcache/setup-chrome/chrome/stable/x64/chrome
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:09.0233721Z ##[endgroup]
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2498159Z 12 |       const value = await check();
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2507399Z 13 |       if (value) return value;
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2508011Z 14 |     } catch { /* retry while the browser or page starts */ }
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2508467Z 15 |     await delay(80);
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2508760Z 16 |   }
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2509092Z 17 |   throw new Error(`Timed out waiting for ${label}`);
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2509450Z                  ^
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2509737Z error: Timed out waiting for Chrome page
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2510230Z       at waitFor (/home/runner/work/molarium/molarium/scripts/headless-chrome.mjs:17:13)
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2511048Z       at async startMolariumBrowser (/home/runner/work/molarium/molarium/scripts/headless-chrome.mjs:101:24)
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2511579Z 
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2511752Z Bun v1.3.14 (Linux x64)
+Browser integration	Check closed IndexedDB recovery and checkpoint loss without repeated inference	2026-11-17T04:28:24.2568601Z ##[error]Process completed with exit code 1.
