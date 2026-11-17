@@ -8,6 +8,8 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 
 ## Structure prediction evidence and release gates
 
+- [x] Remove the custom-domain analytics injection attempt through the user-controlled provider setting and verify the unchanged canonical saved-pose workflow/network guard; preserve the original CSP-blocked attempt and both outcomes ([DN-01](reviews/COFOLD_REVIEW_PRODUCTION_NETWORK_2026-11-17.md)).
+
 - [x] Complete the frozen 48-system, ten-seed pristine LocalFold study: independently replay all 480 predictions, publish 3/6/10-sample results and timing boundaries, and preserve the native-positive selection limits ([final report](reviews/cofold-rnp-spectrum-2026-11-15/README.md)).
 - [x] Export every final prediction into 96 graph/PDB/alignment-checked Foldarium libraries, with separate experimental-reference cards and empty human decisions; complete actual six-sample UI QA on all 48 systems.
 - [x] Finish the source-pinned all-48 ten-sample browser sweep and publish its complete export/persistence/reopening receipts ([UI coverage](reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/README.md)).

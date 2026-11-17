@@ -1,0 +1,61 @@
+{
+  "status": "pass",
+  "checkedAt": "2026-11-17T05:53:56.809Z",
+  "baseUrl": "https://molarium.org",
+  "manifestSha256": "4436188712da67548310cff5034a3db43fd306828fffcccd4d8c172453d63a04",
+  "codeVersion": "8a6c5843b4c20b2fb18ad66bbce3f05d9313171ebffad82e09702c2af386a212",
+  "preMergeCodeVersion": "4bcb1f2eab5fe9e80480e704065ece4ea04416c9b549975f8d55da39e7cc7bc2",
+  "sourceHead": "5ddf1d2add2eda26cde40cd16fd3fee20c15847c",
+  "records": [
+    {
+      "path": "vendor/foldarium/library-review.html",
+      "deployedPath": "vendor/foldarium/library-review",
+      "bytes": 2516,
+      "sha256": "6f4d0c8158dbd40775c2512b7db4dc94e7128b3da4e4a3ac9030d423dce60040",
+      "sourceSha256": "e9ab08afbd7a7987f4c77f3481e00addf96218301dea620e66bb132082f43203",
+      "exactVersionedSourceMatch": true
+    },
+    {
+      "path": "vendor/foldarium/library-review.js",
+      "deployedPath": "vendor/foldarium/library-review.js?v=8a6c5843b4c20b2fb18ad66bbce3f05d9313171ebffad82e09702c2af386a212",
+      "bytes": 13682,
+      "sha256": "98d25df2bb7a63205f1485968c4b19a2bfdf8fea28de61a4ba3c648f163efa88",
+      "sourceSha256": "a5e7f664b0317076541cc17c5fa295f8923d3dcccbdffeeca70f93f6acc76180",
+      "exactVersionedSourceMatch": true
+    },
+    {
+      "path": "vendor/foldarium/library-store.js",
+      "deployedPath": "vendor/foldarium/library-store.js?v=8a6c5843b4c20b2fb18ad66bbce3f05d9313171ebffad82e09702c2af386a212",
+      "bytes": 5591,
+      "sha256": "0e1fc9edecb914538d60c2f4989fc2f07c0a8eff939bf34a52bcef17881e4b93",
+      "sourceSha256": "a378bbca2420acb17be4ba44c45689ad1b57b2de450630945e74acc6ec848f9b",
+      "exactVersionedSourceMatch": true
+    },
+    {
+      "path": "vendor/foldarium/library-format.js",
+      "deployedPath": "vendor/foldarium/library-format.js?v=8a6c5843b4c20b2fb18ad66bbce3f05d9313171ebffad82e09702c2af386a212",
+      "bytes": 2930,
+      "sha256": "cd0e34fdffba257984e30b9a50e57b13d64d15e1515a22baef51b4b3f88562d3",
+      "sourceSha256": "cd0e34fdffba257984e30b9a50e57b13d64d15e1515a22baef51b4b3f88562d3",
+      "exactVersionedSourceMatch": true
+    },
+    {
+      "path": "vendor/foldarium/library-alignment.js",
+      "deployedPath": "vendor/foldarium/library-alignment.js?v=8a6c5843b4c20b2fb18ad66bbce3f05d9313171ebffad82e09702c2af386a212",
+      "bytes": 2994,
+      "sha256": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65",
+      "sourceSha256": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65",
+      "exactVersionedSourceMatch": true
+    },
+    {
+      "path": "vendor/foldarium/library-chemistry.js",
+      "deployedPath": "vendor/foldarium/library-chemistry.js?v=8a6c5843b4c20b2fb18ad66bbce3f05d9313171ebffad82e09702c2af386a212",
+      "bytes": 1247,
+      "sha256": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd",
+      "sourceSha256": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd",
+      "exactVersionedSourceMatch": true
+    }
+  ],
+  "newNeuralForwards": 0,
+  "scope": "Exact canonical deployed bytes for six reviewer HTML/modules, including build version transformations. Does not assert all website assets or any model validation."
+}

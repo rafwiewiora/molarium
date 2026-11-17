@@ -1,0 +1,15 @@
+{
+  "schema": "molarium.merge-CI-identical-retry-outcome.v1",
+  "runId": 44024048190,
+  "headSha": "5ddf1d2add2eda26cde40cd16fd3fee20c15847c",
+  "originalJobId": 133840017658,
+  "retryJobId": 133842334051,
+  "retryConclusion": "success",
+  "retryCompletedAt": "2026-11-17T05:43:20Z",
+  "runAttempt": 2,
+  "sourceHelperTimeoutsAndGatesChanged": false,
+  "maximumIdenticalRetries": 1,
+  "originalCause": "Unproven Chrome page discovery timeout before assertions",
+  "newNativeCalls": 0,
+  "recordedAt": "2026-11-17T05:47:31.422930+00:00"
+}

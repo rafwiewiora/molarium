@@ -1,0 +1,27 @@
+{
+  "id": 133842334051,
+  "run_id": 44024048190,
+  "workflow_name": "CI",
+  "head_branch": "main",
+  "run_url": "https://api.github.com/repos/rafwiewiora/molarium/actions/runs/44024048190",
+  "run_attempt": 2,
+  "node_id": "CR_kwDOT98IBc8AAAAfKZ_xYw",
+  "head_sha": "5ddf1d2add2eda26cde40cd16fd3fee20c15847c",
+  "url": "https://api.github.com/repos/rafwiewiora/molarium/actions/jobs/133842334051",
+  "html_url": "https://github.com/rafwiewiora/molarium/actions/runs/44024048190/job/133842334051",
+  "status": "queued",
+  "conclusion": null,
+  "created_at": "2026-11-17T05:31:59Z",
+  "started_at": "2026-11-17T05:31:59Z",
+  "completed_at": null,
+  "name": "Browser integration",
+  "steps": [],
+  "check_run_url": "https://api.github.com/repos/rafwiewiora/molarium/check-runs/133842334051",
+  "labels": [
+    "ubuntu-latest"
+  ],
+  "runner_id": null,
+  "runner_name": null,
+  "runner_group_id": null,
+  "runner_group_name": null
+}

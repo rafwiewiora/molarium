@@ -1,0 +1,37 @@
+{
+  "status": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: Reviewer must not upload data or make unrelated remote requests\n\n'failed' !== 'pass'\n",
+  "state": {
+    "message": "UI test only: earlier request unfinished · imported. Selections are saved as you review.",
+    "summary": "1 compounds · 9 completed poses · 1 failed/interrupted attempts · 0 preferred poses",
+    "headers": [
+      "Boltz-2 · original LocalFold · pose 2Seed 1 · Stock LocalFold · physical apple WebGPU · ligand pLDDT — · ipTM 0.940 · inference timing unavailable · protein Cα RMSD vs first prediction 0.00 Å",
+      "Boltz-2 · original LocalFold · pose 3Seed 2 · Stock LocalFold · physical apple WebGPU · ligand pLDDT — · ipTM 0.890 · inference timing unavailable · protein Cα RMSD vs first prediction 3.18 Å",
+      "Boltz-2 · original LocalFold · pose 4Seed 3 · Stock LocalFold · physical apple WebGPU · ligand pLDDT — · ipTM 0.960 · inference timing unavailable · protein Cα RMSD vs first prediction 3.16 Å",
+      "Boltz-2 · original LocalFold · pose 5Seed 4 · Stock LocalFold · physical apple WebGPU · ligand pLDDT — · ipTM 0.950 · inference timing unavailable · protein Cα RMSD vs first prediction 2.77 Å"
+    ],
+    "errors": [],
+    "plugins": [
+      [
+        5446,
+        16,
+        381
+      ],
+      [
+        5446,
+        16,
+        378
+      ],
+      [
+        5446,
+        16,
+        389
+      ],
+      [
+        5446,
+        16,
+        346
+      ]
+    ]
+  }
+}

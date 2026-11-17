@@ -1,0 +1,10 @@
+{
+  "startedAt": "2026-11-17T05:30:10.417281+00:00",
+  "target": "https://molarium.org/vendor/foldarium/library-review",
+  "sourceHead": "5ddf1d2add2eda26cde40cd16fd3fee20c15847c",
+  "samplesPerCase": 10,
+  "nativeCalls": 0,
+  "plannedModelCalls": 0,
+  "timeoutSeconds": 540,
+  "purpose": "Verify actual canonical reviewer persistence, exports and every page on one complete final ten-sample case; all48 local UI receipts retained separately."
+}

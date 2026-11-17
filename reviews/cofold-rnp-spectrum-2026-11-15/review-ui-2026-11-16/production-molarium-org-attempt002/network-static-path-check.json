@@ -1,0 +1,152 @@
+{
+  "status": "pass",
+  "scope": "Every captured page request during this one production saved-pose workflow targets the reviewer or a known deployed-manifest static file. Not a general privacy guarantee.",
+  "capturedRequests": 22,
+  "records": [
+    {
+      "path": "docking/validation/pose-viewer/vendor/molstar-5.11.0.css",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-review.css",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/assets/foldarium-mark.svg",
+      "method": "GET",
+      "queryKeys": []
+    },
+    {
+      "path": "docking/validation/pose-viewer/vendor/molstar-5.11.0.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-review.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-store.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-format.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-alignment.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-chemistry.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/assets/foldarium-mark.svg",
+      "method": "GET",
+      "queryKeys": []
+    },
+    {
+      "path": "vendor/foldarium/library-store.js",
+      "method": "GET",
+      "queryKeys": []
+    },
+    {
+      "path": "vendor/foldarium/library-review",
+      "method": "GET",
+      "queryKeys": [
+        "run"
+      ]
+    },
+    {
+      "path": "docking/validation/pose-viewer/vendor/molstar-5.11.0.css",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-review.css",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/assets/foldarium-mark.svg",
+      "method": "GET",
+      "queryKeys": []
+    },
+    {
+      "path": "docking/validation/pose-viewer/vendor/molstar-5.11.0.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-review.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-store.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-format.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-alignment.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-chemistry.js",
+      "method": "GET",
+      "queryKeys": [
+        "v"
+      ]
+    },
+    {
+      "path": "vendor/foldarium/library-store.js",
+      "method": "GET",
+      "queryKeys": []
+    }
+  ],
+  "newNeuralForwards": 0
+}

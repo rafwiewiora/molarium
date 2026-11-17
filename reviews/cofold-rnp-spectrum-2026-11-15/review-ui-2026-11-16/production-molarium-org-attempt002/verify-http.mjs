@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {versionWebCode} from '/Users/bb/repos/marco/tmp/molarium-chemrxiv-v1/scripts/version-web-code.mjs';
+const root='/Users/bb/repos/marco/tmp/molarium-chemrxiv-v1';
+const base='https://molarium.org';
+const sha=data=>createHash('sha256').update(data).digest('hex');
+const get=path=>execFileSync('curl',['--fail','--silent','--show-error','--location','--max-time','40',`${base}/${path}`],{maxBuffer:2*1024*1024});
+const raw=get('local-lab-manifest.json'),manifest=JSON.parse(raw);
+assert.equal(manifest.schema,'molarium.web-release.v1');
+const paths=['vendor/foldarium/library-review.html','vendor/foldarium/library-review.js','vendor/foldarium/library-store.js','vendor/foldarium/library-format.js','vendor/foldarium/library-alignment.js','vendor/foldarium/library-chemistry.js'];
+const codeFiles=new Set(manifest.files.filter(e=>/\.(?:html|mjs|js|css)$/.test(e.path)).map(e=>e.path));
+const records=[];
+for(const path of paths){
+ const entry=manifest.files.find(e=>e.path===path);assert(entry,`Missing manifest path: ${path}`);
+ const local=await readFile(`${root}/${path}`);
+ const expected=Buffer.from(versionWebCode(local.toString('utf8'),path,codeFiles,manifest.codeVersion));
+ const deployedPath=path.replace(/\.html$/,'')+(path.endsWith('.html')?'':`?v=${manifest.codeVersion}`);
+ const actual=get(deployedPath);
+ assert.equal(actual.length,entry.bytes,path);assert.equal(sha(actual),entry.sha256,path);
+ assert.deepEqual(actual,expected,`Deployed bytes differ from current source transformed by release versioning: ${path}`);
+ records.push({path,deployedPath,bytes:actual.length,sha256:sha(actual),sourceSha256:sha(local),exactVersionedSourceMatch:true});
+}
+const previous=JSON.parse(await readFile(new URL('./pre-merge-baseline.json',import.meta.url)));
+assert.notEqual(manifest.codeVersion,previous.codeVersion,'Expected the new production release, not the recorded old release');
+const result={status:'pass',checkedAt:new Date().toISOString(),baseUrl:base,manifestSha256:sha(raw),codeVersion:manifest.codeVersion,preMergeCodeVersion:previous.codeVersion,sourceHead:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),records,newNeuralForwards:0,scope:'Exact canonical deployed bytes for six reviewer HTML/modules, including build version transformations. Does not assert all website assets or any model validation.'};
+await writeFile(new URL('./deployed-manifest.json',import.meta.url),raw,{flag:'wx'});
+await writeFile(new URL('./http-source-check.json',import.meta.url),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify(result));

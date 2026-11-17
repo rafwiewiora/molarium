@@ -1,0 +1,10 @@
+{
+  "schema": "molarium.analytics-remediation-check.v1",
+  "userReportedDisabled": true,
+  "recordedAt": "2026-11-17T05:52:41.355764+00:00",
+  "accountSettingIndependentlyObserved": false,
+  "verification": "Run same empty-page browser diagnostic to observe actual production behavior after user-confirmed configuration change.",
+  "sourceIdenticalToOriginal": true,
+  "sourceSha256": "968a8bc71148cf01bb5c9152188349a8b3145f9a4d09d9c19636bf45c07e2142",
+  "newNeuralForwards": 0
+}

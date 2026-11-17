@@ -203,3 +203,16 @@ startup timeout remains unproven; the successful retry does not identify it.
 No native computation, inference output, helper or acceptance gate was changed.
 The evidence ZIP is also attached to the
 [trained-trunk evidence release](https://github.com/rafwiewiora/molarium/releases/tag/cofold-trained-trunk-2026-11-17).
+
+
+## Canonical production network finding
+
+The first ten-sample workflow on molarium.org reached the final network guard
+after its UI assertions, then failed on an additional Cloudflare analytics-script
+origin. No non-read-only requests were observed; script execution or molecular
+data transmission is not established. [DN-01](../../COFOLD_REVIEW_PRODUCTION_NETWORK_2026-11-17.md)
+preserves the exact original failure and independent CSP-block diagnostic.
+After the user-reported analytics setting change, the [fresh production follow-up](production-molarium-org-attempt002/remediation-outcome.json)
+passed unchanged assertions on one final ten-sample case, with all six pages and
+no extra-origin requests. The original failed attempt is retained; this is not
+a new all-48 production sweep or a general privacy guarantee.

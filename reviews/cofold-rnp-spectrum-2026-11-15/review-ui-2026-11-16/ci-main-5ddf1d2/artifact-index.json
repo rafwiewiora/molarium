@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "file": "failure-receipt.json",
+      "bytes": 879,
+      "sha256": "ddeb4c8e0bc3f9a4585dbb504cb0ade8a2975f026cab29a738c2997499ffef48"
+    },
+    {
+      "file": "failure.log",
+      "bytes": 27810,
+      "sha256": "a59648a9a576bf1225ca83606ccc8fe44568e656e4c7ee7068c9cc148f45d7ab"
+    },
+    {
+      "file": "job.json",
+      "bytes": 4999,
+      "sha256": "c2d3652c50afa0c0c8212c41a1c90887f0fa53b378c62ddce7d721edb7e0b573"
+    },
+    {
+      "file": "original-run.json",
+      "bytes": 14013,
+      "sha256": "663ae300af9e7f75553d317b8aea7a42bee825d8f807158de940669238ca35d1"
+    },
+    {
+      "file": "retry-current-job.json",
+      "bytes": 929,
+      "sha256": "75c6f4948d646efe86000db1c2453402047b9c001a263221c8ad902f7398dbce"
+    },
+    {
+      "file": "retry-job.json",
+      "bytes": 4999,
+      "sha256": "7f299aa08f867c412ee1674d6de9b6974a455638c77375ee28f1bfc424395ae9"
+    },
+    {
+      "file": "retry-outcome.json",
+      "bytes": 538,
+      "sha256": "43bddce3f622bfaf0a708c8efc2f7ae29099b916c0652158b0a3b37c21cafa93"
+    },
+    {
+      "file": "retry-request.json",
+      "bytes": 482,
+      "sha256": "713df1681d74f57830d9e69801ce72e955efbf92ee69e3b343d5488478052f16"
+    },
+    {
+      "file": "retry-run.json",
+      "bytes": 12767,
+      "sha256": "7736374c9e1d53ac6739963933d845a633e17083e96d90b66a60f9ffa5bbffec"
+    },
+    {
+      "file": "retry-success.log",
+      "bytes": 124254,
+      "sha256": "4aaaeb5819753b485ca3fa2b265b82f144632f0b1e387a5046c9dd39711b648d"
+    }
+  ]
+}

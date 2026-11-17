@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "file": "plan.json",
+      "bytes": 480,
+      "sha256": "4d4ebc123b6aab0497d77457d8febcf6ae1f4fe6fd33c8f18876f88e7ae61906"
+    },
+    {
+      "file": "result.json",
+      "bytes": 3103,
+      "sha256": "46997256568c13c795eb3ddb04fd64f2d7db7d1bb4c08740eb96231044db73bc"
+    },
+    {
+      "file": "run.mjs",
+      "bytes": 2801,
+      "sha256": "968a8bc71148cf01bb5c9152188349a8b3145f9a4d09d9c19636bf45c07e2142"
+    }
+  ]
+}

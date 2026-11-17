@@ -1,0 +1,31 @@
+{
+  "source": "/Users/bb/repos/marco/tmp/molarium-chemrxiv-v1/scripts/stock-cofold-review.browser.mjs",
+  "sourceSha256": "8546cb1a85790348e5cbc1c124287a856bf5c74190102a668685f4f898ec73ad",
+  "adapterSha256": "ea0fad945e6cfd623b59509ff672490b979d924a0cf2d662d4b37392c09d0fb3",
+  "changes": [
+    {
+      "before": "from './headless-chrome.mjs'",
+      "after": "from \"/Users/bb/repos/marco/tmp/molarium-chemrxiv-v1/scripts/headless-chrome.mjs\""
+    },
+    {
+      "before": "const root=resolve(import.meta.dirname,'..');",
+      "after": "const root=resolve(\"/Users/bb/repos/marco/tmp/molarium-chemrxiv-v1\");"
+    },
+    {
+      "before": "const b=await startMolariumBrowser({root,appPath:'vendor/foldarium/library-review.html',width:1500,height:1100});",
+      "after": "const b=await startMolariumBrowser({root,appPath:'vendor/foldarium/library-review.html',url:\"https://molarium.org/vendor/foldarium/library-review\",width:1500,height:1100});"
+    },
+    {
+      "before": "\ntry {\n",
+      "after": "\ntry {\nconst networkRequests=[];\nawait b.client.call('Network.enable');\nb.client.socket.addEventListener('message',event=>{const message=JSON.parse(event.data);if(message.method!=='Network.requestWillBeSent')return;const request=message.params.request,u=new URL(request.url);if(!['http:','https:'].includes(u.protocol))return;\nconst queryAllowed=[...u.searchParams].every(([key,value])=>(key==='v'&&/^[0-9a-f]{64}$/.test(value))||(key==='run'&&/^[0-9a-f-]{36}$/.test(value)));\nnetworkRequests.push({method:request.method,url:u.origin+u.pathname,queryKeys:[...u.searchParams.keys()],queryAllowed,type:message.params.type});});\n\n"
+    },
+    {
+      "before": "  const result={status:'pass',",
+      "after": "  const networkCheck={scope:'Page network events during file import, review, local persistence and export. URLs exclude query values; no payload/body is captured.',requests:networkRequests,nonReadOnlyRequests:networkRequests.filter(r=>!['GET','HEAD','OPTIONS'].includes(r.method)),unexpectedOrigins:networkRequests.filter(r=>!['https://molarium.org','https://assets.molarium.org'].includes(new URL(r.url).origin)),unexpectedQueryKeys:networkRequests.filter(r=>!r.queryAllowed),newNeuralForwards:0};\nnetworkCheck.status=networkCheck.nonReadOnlyRequests.length===0&&networkCheck.unexpectedOrigins.length===0&&networkCheck.unexpectedQueryKeys.length===0?'pass':'failed';\nawait writeFile(new URL('./network-check.json',import.meta.url),JSON.stringify(networkCheck,null,2)+'\\n',{flag:'wx'});assert.equal(networkCheck.status,'pass','Reviewer must not upload data or make unrelated remote requests');\n  const result={status:'pass',"
+    }
+  ],
+  "exactSourceRestoredByReversingChanges": true,
+  "scope": "Same existing source actions/assertions, only canonical URL/path substitutions and observational network checks. Ten-sample final saved library. No inference/provider call.",
+  "target": "https://molarium.org/vendor/foldarium/library-review",
+  "sourceHead": "ab2ad85e75760ab3197bd887ec44d3bdb6f48bce"
+}

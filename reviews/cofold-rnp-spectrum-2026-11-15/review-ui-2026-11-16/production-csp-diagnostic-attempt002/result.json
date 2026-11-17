@@ -1,0 +1,82 @@
+{
+  "schema": "molarium.canonical-beacon-diagnostic.v1",
+  "startedAt": "2026-11-17T05:52:46.318Z",
+  "finishedAt": "2026-11-17T05:52:48.719Z",
+  "helperSha256": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13",
+  "scope": "One empty production reviewer-page reload. Records whether extra script requests were blocked by CSP; no library imported, model call, query values, request/response bodies or analytics payloads captured. Account setting state is unobserved.",
+  "scripts": [
+    "https://molarium.org/docking/validation/pose-viewer/vendor/molstar-5.11.0.js",
+    "https://molarium.org/vendor/foldarium/library-review.js"
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-review",
+      "type": "Document",
+      "responseStatus": 200,
+      "contentSecurityPolicy": "default-src 'self'; base-uri 'none'; connect-src 'self' https://assets.molarium.org https://files.rcsb.org https://api.colabfold.com https://huggingface.co https://*.hf.co https://*.xethub.hf.co; font-src 'self'; form-action 'none'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data: blob:; manifest-src 'self'; media-src 'self' blob:; object-src 'none'; script-src 'self' https://assets.molarium.org blob: 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:"
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/docking/validation/pose-viewer/vendor/molstar-5.11.0.css",
+      "type": "Stylesheet",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-review.css",
+      "type": "Stylesheet",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/assets/foldarium-mark.svg",
+      "type": "Image",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/docking/validation/pose-viewer/vendor/molstar-5.11.0.js",
+      "type": "Script",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-review.js",
+      "type": "Script",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-store.js",
+      "type": "Script",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-format.js",
+      "type": "Script",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-alignment.js",
+      "type": "Script",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/library-chemistry.js",
+      "type": "Script",
+      "responseStatus": 200
+    },
+    {
+      "method": "GET",
+      "url": "https://molarium.org/vendor/foldarium/assets/foldarium-mark.svg",
+      "type": "Other",
+      "responseStatus": 200
+    }
+  ],
+  "extraOriginRequests": [],
+  "newNeuralForwards": 0
+}
