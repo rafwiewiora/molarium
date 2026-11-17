@@ -1,0 +1,26 @@
+{
+  "schema": "molarium.rnp-source-extraction.v1",
+  "kind": "native",
+  "status": "complete",
+  "slurmJobId": "19286",
+  "startedAt": "2026-11-15T06:54:56.162211+00:00",
+  "poolSha256": "c13804b56b1da0d1d877002d835858aa859e75e80168b0c9a5a75c96a02e314a",
+  "scriptSha256": "fdb40dcf4a8ded8226af2482ced15d716a6f599db1c5561929d47f0edfb3ecef",
+  "source": {
+    "id": "a5b5029c-1813-4e3c-844b-317e088f496e",
+    "key": "prediction_files.tar.gz",
+    "size": 39542625062,
+    "checksum": "md5:67df7db937fb28e9cf6056fcd39f9878",
+    "links": {
+      "self": "https://zenodo.org/api/records/18366081/files/prediction_files.tar.gz/content"
+    }
+  },
+  "neuralForwards": 0,
+  "selectedFiles": 3210,
+  "selectedBytes": 618030781,
+  "compressedSourceSha256": "0ad9d823821072805d13b0f35cb3d92274f867c241b5a34776d5822891909022",
+  "compressedSourceBytes": 39542625062,
+  "officialArchiveChecksumVerified": true,
+  "finishedAt": "2026-11-15T09:01:09.453514+00:00",
+  "inventorySha256": "d5ba63394c74113e39356aa4a9411f219766653b1afc694076ebdcd8241e347e"
+}

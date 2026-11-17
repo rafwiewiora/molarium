@@ -1,0 +1,2 @@
+name, uuid, driver_version
+Tesla T4, GPU-860e2f5b-86b8-136f-9d1e-33e51ea60239, 550.90.07

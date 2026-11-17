@@ -1,0 +1,23 @@
+{
+  "schema": "molarium.rnp-msa-extraction.v1",
+  "status": "complete",
+  "poolSha256": "c13804b56b1da0d1d877002d835858aa859e75e80168b0c9a5a75c96a02e314a",
+  "source": {
+    "id": "a91b6b9d-8d6d-4fbb-9857-2d6598684b36",
+    "key": "msa_files.tar.gz",
+    "size": 46256082990,
+    "checksum": "md5:acdec002bc3dc0bf94ac5aa0cd2427fb",
+    "links": {
+      "self": "https://zenodo.org/api/records/18366081/files/msa_files.tar.gz/content"
+    }
+  },
+  "slurmJobId": "19612",
+  "neuralForwards": 0,
+  "startedAt": "2026-11-15T21:08:34.298010+00:00",
+  "selectedFiles": 147,
+  "compressedSourceBytes": 46256082990,
+  "compressedSourceSha256": "c63961aff7b0c87054580b6c7232e753de089ac7832ece9b392800851cf6f9e7",
+  "officialArchiveChecksumVerified": true,
+  "finishedAt": "2026-11-15T22:14:47.644223+00:00",
+  "inventorySha256": "0c86b116cabebfd154c89c5b0670b20d1f6fcaa77ac1661189e849731b9204f8"
+}

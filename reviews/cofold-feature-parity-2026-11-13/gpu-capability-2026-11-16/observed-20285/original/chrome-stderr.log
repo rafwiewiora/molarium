@@ -1,0 +1,535 @@
+[2934:2934:1117/014455.825905:VERBOSE1:chrome/app/chrome_crash_reporter_client.cc:218] GetCollectStatsConsent(): is_official_chrome_build is false so returning false
+[2934:2934:1117/014456.460134:VERBOSE1:chrome/app/chrome_crash_reporter_client.cc:218] GetCollectStatsConsent(): is_official_chrome_build is false so returning false
+[2976:2976:1117/014457.263337:VERBOSE1:chrome/common/media/cdm_registration.cc:214] Registering bundled Widevine 4.10.3112.0
+[2975:2975:1117/014457.263334:VERBOSE1:chrome/common/media/cdm_registration.cc:214] Registering bundled Widevine 4.10.3112.0
+[2934:2934:1117/014457.335103:VERBOSE1:components/policy/core/common/config_dir_policy_loader.cc:120] Skipping mandatory platform policies because no policy file was found at: /etc/opt/chrome_for_testing/policies/managed
+[2934:2934:1117/014457.335141:VERBOSE1:components/policy/core/common/config_dir_policy_loader.cc:120] Skipping recommended platform policies because no policy file was found at: /etc/opt/chrome_for_testing/policies/recommended
+[2934:2934:1117/014457.415520:VERBOSE1:components/policy/core/common/policy_service_impl.cc:626] Taking initial snapshot of POLICY_DOMAIN_CHROME policies
+[2975:2975:1117/014457.496876:INFO:third_party/webrtc/rtc_base/cpu_info.cc:77] Available number of cores: 4
+[2976:2976:1117/014457.496876:INFO:third_party/webrtc/rtc_base/cpu_info.cc:77] Available number of cores: 4
+[2976:2976:1117/014457.523902:VERBOSE1:content/zygote/zygote_main_linux.cc:202] ZygoteMain: initializing 0 fork delegates
+[2975:2975:1117/014457.523896:VERBOSE1:content/zygote/zygote_main_linux.cc:202] ZygoteMain: initializing 0 fork delegates
+[2934:2934:1117/014457.678974:VERBOSE1:components/variations/service/variations_field_trial_creator.cc:608] Applying FieldTrialTestingConfig
+[2934:2934:1117/014457.750708:VERBOSE1:components/variations/service/variations_field_trial_creator.cc:407] VariationsSetupComplete
+[2934:2984:1117/014458.059100:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2934:2984:1117/014458.068160:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2934:1117/014458.162424:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for browser/global.
+[2934:2934:1117/014458.162476:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for browser/*.
+[2934:2984:1117/014458.351372:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2934:2984:1117/014458.354653:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2934:2984:1117/014458.354684:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2934:2984:1117/014458.406669:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2934:1117/014458.426151:VERBOSE1:chrome/browser/media/webrtc/webrtc_event_log_manager.cc:126] WebRTC remote-bound event logging enabled.
+[2934:2984:1117/014458.442399:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2934:1117/014458.483533:VERBOSE1:components/proxy_config/pref_proxy_config_tracker_impl.cc:510] 0x13e4022a1680: set chrome proxy config service to 0x13e4023205a0
+[2934:2934:1117/014458.734735:VERBOSE1:chrome/common/media/cdm_registration.cc:214] Registering bundled Widevine 4.10.3112.0
+[2934:2988:1117/014458.745891:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2988:1117/014458.745952:WARNING:dbus/object_proxy.cc:439] Failed to connect to NameOwnerChanged signal for object: /org/freedesktop/portal/desktop
+[2934:2988:1117/014458.746028:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2988:1117/014458.746062:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2996:1117/014458.749322:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/component_crx_cache/metadata.json": No such file or directory (2)
+[3000:3000:1117/014459.063961:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for gpu-process/global.
+[Vulkan Loader] WARNING:        Vulkan Loader: unsafe searching is enabled
+[2934:2984:1117/014459.214324:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2980:1117/014459.280432:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Optimization Guide On DeviceModels Manifest
+[3004:3004:1117/014459.290091:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for utility.net..workService/global.
+[3004:3004:1117/014459.290165:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for utility.netwo..etworkService/*.
+[3004:3004:1117/014459.290375:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for utility.netw..tworkService/main.
+[2934:2934:1117/014459.292412:VERBOSE1:components/enterprise/browser/controller/chrome_browser_cloud_management_controller.cc:213] Cloud management controller initialization aborted as CBCM is not enabled. Please use the `--enable-chrome-browser-cloud-management` command line flag to enable it if you are not using the official Google Chrome build.
+[2934:2934:1117/014459.449245:VERBOSE1:components/policy/core/common/cloud/user_cloud_policy_store.cc:186] [policy_type=google/chrome/user] Initiating immediate policy load from disk
+[2934:2934:1117/014459.449322:VERBOSE1:components/policy/core/common/cloud/user_cloud_policy_store.cc:304] [policy_type=google/chrome/user] No policy found on disk
+[2934:2934:1117/014459.449333:VERBOSE1:components/policy/core/common/cloud/user_cloud_policy_store.cc:186] [policy_type=google/extension-install-cloud-policy/chrome/user] Initiating immediate policy load from disk
+[2934:2934:1117/014459.449343:VERBOSE1:components/policy/core/common/cloud/user_cloud_policy_store.cc:304] [policy_type=google/extension-install-cloud-policy/chrome/user] No policy found on disk
+[2934:2934:1117/014459.451776:VERBOSE1:components/policy/core/common/policy_service_impl.cc:626] Taking initial snapshot of POLICY_DOMAIN_CHROME policies
+[3000:3000:1117/014459.641772:WARNING:media/gpu/vaapi/vaapi_wrapper.cc:1652] drmGetDevices2() has not found any devices
+[3022:3022:1117/014459.677509:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for utility.sto..rageService/global.
+[3022:3022:1117/014459.677769:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for utility.stora..torageService/*.
+[2934:2984:1117/014459.677900:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[3022:3022:1117/014459.678161:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for utility.stor..orageService/main.
+[2934:2980:1117/014459.679749:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Web Applications/Logs": No such file or directory (2)
+[3000:3000:1117/014459.649642:VERBOSE1:media/gpu/vaapi/vaapi_wrapper.cc:1747] GetHandle(): Either VADisplayStateSingleton::PreSandboxInitialization() hasn't been called or that method failed to find a suitable render node
+[2934:2934:1117/014459.685838:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:355] MutablePO2TS::MutablePO2TS
+[2934:2934:1117/014459.692088:VERBOSE1:components/proxy_config/pref_proxy_config_tracker_impl.cc:510] 0x13e402930b40: set chrome proxy config service to 0x13e402948780
+[2934:2983:1117/014459.703307:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Code Cache/js": No such file or directory (2)
+[2934:2983:1117/014459.703336:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Code Cache/webui_js": No such file or directory (2)
+[2934:2983:1117/014459.703348:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Code Cache/wasm": No such file or directory (2)
+[3004:3014:1117/014459.706338:VERBOSE1:net/disk_cache/simple/simple_index_file.cc:624] Simple Cache Index is being restored from disk.
+[3004:3014:1117/014459.706364:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Shared Dictionary/cache/index-dir/the-real-index": No such file or directory (2)
+[3004:3009:1117/014459.720107:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Cache/No_Vary_Search/snapshot-new.baf": No such file or directory (2)
+[3004:3009:1117/014459.720173:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Cache/No_Vary_Search/journal.baj": No such file or directory (2)
+[2934:2934:1117/014459.728023:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.728064:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.728172:VERBOSE1:components/proxy_config/pref_proxy_config_tracker_impl.cc:510] 0x13e4029de580: set chrome proxy config service to 0x13e4029494a0
+[2934:2934:1117/014459.728210:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[3000:3000:1117/014459.763750:WARNING:sandbox/policy/linux/sandbox_linux.cc:405] InitializeSandbox() called with multiple threads in process gpu-process.
+[3000:3000:1117/014459.765716:VERBOSE1:components/viz/service/main/viz_main_impl.cc:87] VizNullHypothesis is disabled (not a warning)
+[2934:2934:1117/014459.782353:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.782372:VERBOSE1:components/actor/core/aggregated_journal.cc:173] [ActorTool]: GlicActorPolicyChecker::ComputeActOnWebCapability: outcome=kNo reasons=kAccountCapabilityIneligible 
+[2934:2934:1117/014459.783255:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.783263:VERBOSE1:components/actor/core/aggregated_journal.cc:173] [ActorTool]: GlicActorPolicyChecker::ComputeActOnWebCapability: outcome=kNo reasons=kAccountCapabilityIneligible 
+[2934:2934:1117/014459.783305:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.789065:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.789092:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.789123:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.789131:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.789168:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014459.793676:VERBOSE1:google_apis/gaia/gaia_auth_util.cc:53] Canonicalized @gmail.com to @gmail.com
+[2934:2934:1117/014459.793689:VERBOSE1:google_apis/gaia/gaia_auth_util.cc:53] Canonicalized @gmail.com to @gmail.com
+[2934:2934:1117/014459.944495:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:145] AccountReconcilor::AccountReconcilor
+[2934:2934:1117/014459.944518:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:168] AccountReconcilor::Initialize
+[2934:2934:1117/014459.944523:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:221] AccountReconcilor::RegisterWithContentSettings
+[2934:2934:1117/014459.944529:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:244] AccountReconcilor::RegisterWithIdentityManager
+[2934:2934:1117/014500.003065:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2980:1117/014500.175292:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Dictionaries/en-US-10-2.bdic": No such file or directory (2)
+[2934:2934:1117/014500.378500:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014500.423597:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014500.592996:VERBOSE1:extensions/browser/extension_registrar.cc:584] AddComponentExtension Chromium PDF Viewer
+[2934:2934:1117/014500.593026:VERBOSE1:extensions/browser/extension_registrar.cc:586] Component extension Chromium PDF Viewer (mhjfbmdgcfjbbpaeojofohoefgiehjai) installing/upgrading from '' to 1
+[2934:2934:1117/014500.611606:VERBOSE1:extensions/browser/extension_registrar.cc:584] AddComponentExtension Gemini in Chrome
+[2934:2934:1117/014500.611624:VERBOSE1:extensions/browser/extension_registrar.cc:586] Component extension Gemini in Chrome (admccjkmockfdflocgggjfgdacdodkdf) installing/upgrading from '' to 1.2
+[2934:2934:1117/014500.820237:VERBOSE1:extensions/browser/extension_registrar.cc:584] AddComponentExtension Contextual Tasks
+[2934:2934:1117/014500.820258:VERBOSE1:extensions/browser/extension_registrar.cc:586] Component extension Contextual Tasks (glbjnfimcajjenihimblfaponejbkoph) installing/upgrading from '' to 1.0
+[2934:2934:1117/014500.821559:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2983:1117/014500.861203:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Policy/User Policy": No such file or directory (2)
+[2934:2983:1117/014500.861238:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Policy/Signing Key": No such file or directory (2)
+[2934:2983:1117/014500.861248:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Policy/User Extension Install Policy": No such file or directory (2)
+[2934:2983:1117/014500.861257:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Policy/User Extension Install Signing Key": No such file or directory (2)
+[2934:2934:1117/014500.861260:VERBOSE1:chrome/browser/profiles/profile_manager.cc:1399] AddKeepAlive(Default, kRemoteDebugging). keep_alives=[kWaitingForFirstBrowserWindow (1), kRemoteDebugging (1)]
+[2934:2983:1117/014500.861429:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Widevine Content Decryption Module
+[2934:2993:1117/014500.861545:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Subresource Filter Rules
+
+DevTools listening on ws://127.0.0.1:52910/devtools/browser/3d8389d8-a4bf-476e-8e8f-a86f5c5c8756
+[2934:2983:1117/014500.865256:VERBOSE1:components/component_updater/component_installer.cc:332] Preinstalled component found for Widevine Content Decryption Module at /workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt002/tools/chrome-linux64/WidevineCdm with version 4.10.3112.0.
+[2934:2934:1117/014500.890489:VERBOSE1:components/component_updater/installer_policies/on_device_head_suggest_component_installer.cc:60] On Device Head Component will fetch model for locale: ENUS500000
+[2934:2980:1117/014500.890577:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for OnDeviceHeadSuggest
+[2934:2934:1117/014500.890577:VERBOSE1:chrome/browser/component_updater/trust_token_key_commitments_component_installer.cc:22] Registering Trust Token Key Commitments component.
+[2934:2983:1117/014500.890607:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Optimization Hints
+[2934:2934:1117/014500.890637:VERBOSE1:chrome/browser/component_updater/first_party_sets_component_installer.cc:40] Registering Related Website Sets component.
+[2934:2993:1117/014500.890663:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Related Website Sets
+[2934:2996:1117/014500.890671:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Trust Token Key Commitments
+[2934:2934:1117/014500.890664:VERBOSE1:chrome/browser/component_updater/privacy_sandbox_attestations_component_installer.cc:182] Registering Privacy Sandbox Attestations component
+[2934:2934:1117/014500.890700:VERBOSE1:components/component_updater/installer_policies/actor_safety_lists_component_installer.cc:134] Registering Actor Safety Lists Component.
+[2934:2994:1117/014500.890722:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Privacy Sandbox Attestations
+[2934:2995:1117/014500.890749:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Actor Safety Lists
+[2934:2934:1117/014500.890775:VERBOSE1:chrome/browser/component_updater/indigo_component_installer.cc:132] Registering Indigo component.
+[2934:2934:1117/014500.890797:VERBOSE1:chrome/browser/component_updater/file_type_policies_component_installer.cc:127] Registering File Type Policies component.
+[2934:2997:1117/014500.890918:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Certificate Error Assistant
+[2934:3045:1117/014500.891153:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for File Type Policies
+[2934:3046:1117/014500.891164:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Indigo
+[2934:3047:1117/014500.891217:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for CRLSet
+[2934:2934:1117/014500.891331:VERBOSE1:chrome/browser/component_updater/hyphenation_component_installer.cc:154] Registering Hyphenation component.
+[2934:2980:1117/014500.891511:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for MEI Preload
+[2934:2996:1117/014500.891575:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for PKI Metadata
+[2934:2993:1117/014500.891589:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Safety Tips
+[2934:2983:1117/014500.891628:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Crowd Deny
+[2934:2934:1117/014500.891633:VERBOSE1:chrome/browser/component_updater/dictation_connector_component_installer.cc:187] Registering Dictation Connector component.
+[2934:3051:1117/014500.891649:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Hyphenation
+[2934:2995:1117/014500.891680:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Dictation Connector
+[2934:3048:1117/014500.891763:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Origin Trials
+[2934:2993:1117/014500.892809:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Zxcvbn Data Dictionaries
+[2934:3051:1117/014500.912127:VERBOSE1:components/component_updater/component_installer.cc:332] Preinstalled component found for Hyphenation at /workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt002/tools/chrome-linux64/hyphen-data with version 1.0.0.0.
+[2934:2980:1117/014500.928801:VERBOSE1:components/component_updater/component_installer.cc:332] Preinstalled component found for MEI Preload at /workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt002/tools/chrome-linux64/MEIPreload with version 1.0.7.1652906823.
+[2934:2934:1117/014500.938377:VERBOSE1:chrome/browser/component_updater/translate_kit_component_installer.cc:211] Registering TranslateKit component.
+[2934:2934:1117/014500.938470:VERBOSE1:chrome/browser/component_updater/wasm_tts_engine_component_installer.cc:306] Registering WASM TTS Engine component.
+[2934:2934:1117/014500.938495:VERBOSE1:chrome/browser/component_updater/captcha_provider_component_installer.cc:175] Registering Captcha Provider component.
+[2934:2980:1117/014500.938491:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Amount Extraction Heuristic Regexes
+[2934:2983:1117/014500.938527:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for WASM TTS Engine
+[2934:2993:1117/014500.938550:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for Captcha Providers
+[2934:2934:1117/014500.938584:VERBOSE1:chrome/browser/component_updater/aim_eligibility_component_installer.cc:177] Uninstalling AIM Eligibility component.
+[2934:2980:1117/014500.944823:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for SODA Library
+[2934:2983:1117/014500.944859:VERBOSE1:components/component_updater/component_installer.cc:513] StartRegistration for SODA en-US Models
+[2934:2934:1117/014500.956061:VERBOSE1:chrome/browser/profiles/profile_manager.cc:1399] AddKeepAlive(Default, kBrowserWindow). keep_alives=[kWaitingForFirstBrowserWindow (1), kBrowserWindow (1), kRemoteDebugging (1)]
+[2934:2934:1117/014500.956078:VERBOSE1:chrome/browser/profiles/profile_manager.cc:1481] ClearFirstBrowserWindowKeepAlive(Default). keep_alives=[kBrowserWindow (1), kRemoteDebugging (1)]
+[2934:2934:1117/014500.966285:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014500.966327:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.107258:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.107298:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.107411:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.107420:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.107642:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.107673:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.107763:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+
+(process:2934): dconf-CRITICAL **: 01:45:01.153: unable to create directory '/run/user/1706645947/dconf': Read-only file system.  dconf will not work properly.
+
+(process:2934): dconf-CRITICAL **: 01:45:01.154: unable to create directory '/run/user/1706645947/dconf': Read-only file system.  dconf will not work properly.
+
+(process:2934): dconf-CRITICAL **: 01:45:01.154: unable to create directory '/run/user/1706645947/dconf': Read-only file system.  dconf will not work properly.
+[2934:2934:1117/014501.386800:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[3059:3059:1117/014501.622940:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/global.
+[3059:3059:1117/014501.623097:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/*.
+[2934:2934:1117/014501.723235:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.727435:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.786505:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.842146:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.842206:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[3068:3068:1117/014501.884872:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/global.
+[3068:3068:1117/014501.885042:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/*.
+[3069:3069:1117/014501.886501:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/global.
+[3069:3069:1117/014501.886678:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/*.
+[2934:2934:1117/014501.907692:VERBOSE1:chrome/browser/enterprise/data_protection/data_protection_navigation_observer.cc:278] enterprise.data_protection: same document navigation: 0
+[2934:2934:1117/014501.907740:VERBOSE1:chrome/browser/enterprise/data_protection/data_protection_navigation_observer.cc:280] enterprise.data_protection: URL to scan: http://127.0.0.1:35975/
+[2934:2934:1117/014501.911210:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014501.915496:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[3004:3008:1117/014501.916104:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: http://127.0.0.1:35975/
+[2934:2934:1117/014501.924281:WARNING:ui/aura/window.cc:1499] StackChildLayerRelativeTo called with unmanaged layer(s). child=WebContentsViewAura child_managed=0 target=WebContentsViewAura target_managed=0
+[2934:2934:1117/014501.924327:WARNING:ui/aura/window.cc:1499] StackChildLayerRelativeTo called with unmanaged layer(s). child=WebContentsViewAura child_managed=0 target=WebContentsViewAura target_managed=0
+[2934:2934:1117/014501.926486:VERBOSE1:chrome/browser/ui/views/omnibox/omnibox_popup_closer.cc:72] Closing omnibox popup with reason: kRevertAll
+[2934:2934:1117/014502.025181:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.051018:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2984:1117/014502.051156:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[3004:3008:1117/014502.100762:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.107685:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.108721:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.112426:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.112455:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[2934:2934:1117/014502.132979:WARNING:device/bluetooth/dbus/bluez_dbus_manager.cc:209] Floss manager service not available, cannot set Floss enable/disable.
+[2934:2934:1117/014502.133053:VERBOSE1:chrome/browser/lifetime/session_end_listener_linux.cc:97] Failed to connect to org.freedesktop.login1.Manager.PrepareForShutdown
+[2934:2934:1117/014502.133066:VERBOSE1:chrome/browser/lifetime/session_end_listener_linux.cc:165] Failed to connect to org.gnome.SessionManager.SessionOver
+[2934:2934:1117/014502.133101:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2934:1117/014502.133108:VERBOSE1:ui/base/idle/idle_linux.cc:130] org.freedesktop.ScreenSaver D-Bus service does not exist
+[2934:2984:1117/014502.133246:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2934:1117/014502.133738:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2934:1117/014502.146811:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Optimization Guide On DeviceModels Manifest
+[2934:2934:1117/014502.146857:VERBOSE1:components/component_updater/component_updater_service.cc:185] CrxUpdateService starting up. First update attempt will take place in 60 s seconds. Next update attempt will take place in 18000 s seconds. 
+[2934:2934:1117/014502.149695:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2984:1117/014502.149836:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2934:1117/014502.164018:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Subresource Filter Rules
+[2934:2934:1117/014502.166271:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Widevine Content Decryption Module
+[2934:2934:1117/014502.166304:VERBOSE1:components/component_updater/component_installer.cc:622] Component ready, version 4.10.3112.0 in /workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt002/tools/chrome-linux64/WidevineCdm
+[2934:2934:1117/014502.166327:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for OnDeviceHeadSuggest
+[2934:2934:1117/014502.166341:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Trust Token Key Commitments
+[2934:2934:1117/014502.166354:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Related Website Sets
+[2934:2980:1117/014502.166349:VERBOSE1:chrome/browser/component_updater/widevine_cdm_component_installer.cc:395] Updating hint file with Widevine CDM 4.10.3112.0
+[2934:2934:1117/014502.166365:VERBOSE1:chrome/browser/component_updater/first_party_sets_component_installer.cc:45] Received Related Website Sets
+[2934:2934:1117/014502.166393:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Optimization Hints
+[2934:2934:1117/014502.166410:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Actor Safety Lists
+[2934:2934:1117/014502.166432:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Privacy Sandbox Attestations
+[2934:2934:1117/014502.166454:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Certificate Error Assistant
+[2934:2934:1117/014502.166466:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for File Type Policies
+[2934:2934:1117/014502.166476:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Indigo
+[2934:2934:1117/014502.166489:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for CRLSet
+[2934:2934:1117/014502.166501:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Safety Tips
+[2934:2934:1117/014502.166510:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for PKI Metadata
+[2934:2934:1117/014502.166519:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Crowd Deny
+[2934:2934:1117/014502.166531:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Dictation Connector
+[2934:2934:1117/014502.166550:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Origin Trials
+[2934:2934:1117/014502.166559:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Zxcvbn Data Dictionaries
+[2934:2934:1117/014502.166772:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Hyphenation
+[2934:2934:1117/014502.166917:VERBOSE1:components/component_updater/component_installer.cc:622] Component ready, version 1.0.0.0 in /workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt002/tools/chrome-linux64/hyphen-data
+[2934:2934:1117/014502.166928:VERBOSE1:chrome/browser/component_updater/hyphenation_component_installer.cc:114] Hyphenation Component ready, version 1.0.0.0 in /workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt002/tools/chrome-linux64/hyphen-data
+[2934:2934:1117/014502.166947:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for MEI Preload
+[2934:2934:1117/014502.166956:VERBOSE1:components/component_updater/component_installer.cc:622] Component ready, version 1.0.7.1652906823 in /workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt002/tools/chrome-linux64/MEIPreload
+[2934:2934:1117/014502.166983:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Amount Extraction Heuristic Regexes
+[2934:2934:1117/014502.166997:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for Captcha Providers
+[2934:2934:1117/014502.167007:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for WASM TTS Engine
+[2934:2934:1117/014502.167039:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for SODA Library
+[2934:2934:1117/014502.168119:VERBOSE1:components/component_updater/component_installer.cc:584] FinishRegistration for SODA en-US Models
+[3004:3008:1117/014502.170510:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: http://clients2.google.com/time/1/current?cup2key=ML-DSA-44-10:dSGZggHE3NCo-86EJXGGkglO5u94RrX6eGIJbR8MI5c&cup2hreq=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+[3004:3008:1117/014502.174936:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: https://redirector.gvt1.com/edgedl/chrome/dict/en-us-10-2.bdic
+[3004:3008:1117/014502.209618:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/async/folae?async=_fmt:pb&udm=50&client_locale=en-US&client_country=ZZ
+[2934:2934:1117/014502.212739:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2980:1117/014502.212887:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/EncryptedBookmarks": No such file or directory (2)
+[2934:2980:1117/014502.212952:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/EncryptedAccountBookmarks": No such file or directory (2)
+[2934:2934:1117/014502.213088:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.216071:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2934:1117/014502.216088:VERBOSE1:ui/base/idle/idle_linux.cc:130] org.cinnamon.ScreenSaver D-Bus service does not exist
+[2934:2984:1117/014502.216091:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2934:2984:1117/014502.216137:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2934:2984:1117/014502.216166:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2934:1117/014502.217606:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2983:1117/014502.233094:VERBOSE1:components/signin/public/webdata/token_service_table.cc:259] Loaded tokens: result = 3 ; number of tokens loaded = 0
+[3004:3008:1117/014502.233224:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.235816:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.235850:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.236930:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.236963:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3093:3093:1117/014502.283519:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/global.
+[3093:3093:1117/014502.283711:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/*.
+[2934:2980:1117/014502.290670:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/SessionStorage-journal": No such file or directory (2)
+[2934:2980:1117/014502.290902:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/SessionStorage-wal": No such file or directory (2)
+[2934:2980:1117/014502.291105:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/SessionStorage": No such file or directory (2)
+[2934:2934:1117/014502.295029:WARNING:dbus/property.cc:94] Failed to connect to PropertiesChangedsignal.
+[2934:2934:1117/014502.295055:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/DisplayDevice: unknown error type: 
+[2934:2934:1117/014502.295064:WARNING:dbus/property.cc:174] GetAll request failed for: org.freedesktop.UPower.Device
+[2934:2934:1117/014502.295089:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2934:1117/014502.295097:VERBOSE1:ui/base/idle/idle_linux.cc:130] org.gnome.ScreenSaver D-Bus service does not exist
+[2934:2984:1117/014502.295205:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2934:1117/014502.309565:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:262] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[2934:2980:1117/014502.309584:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Web Applications/Logs": No such file or directory (2)
+[2934:2934:1117/014502.309602:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:243] All locks acquired for SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[2934:2934:1117/014502.310524:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:550] AccountReconcilor::OnAccountsInCookieUpdated: CookieJar 0 accounts, Reconcilor's state is 0, Error was 
+[2934:2934:1117/014502.310652:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:394] AccountReconcilor::StartReconcile: token service *not* ready yet.
+[2934:2934:1117/014502.316284:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:658] MutablePO2TS::OnWebDataServiceRequestDone. Result type: 5
+[2934:2934:1117/014502.316299:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:720] MutablePO2TS::LoadAllCredentialsIntoMemory; 0 credential(s).
+[2934:2934:1117/014502.316507:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316533:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316559:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316571:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316582:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316594:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316606:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316623:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316648:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316702:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316715:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316727:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316776:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:550] AccountReconcilor::OnAccountsInCookieUpdated: CookieJar 0 accounts, Reconcilor's state is 1, Error was 
+[2934:2934:1117/014502.316787:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:644] AccountReconcilor::LoadValidAccountsFromTokenService: Chrome 0 accounts
+[2934:2934:1117/014502.316806:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:786] AccountReconcilor::CalculateIfMultiloginReconcileIsDone: Error was 
+[2934:2934:1117/014502.316823:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:680] AccountReconcilor::StartReconcileIfChromeAccountsChanged
+[2934:2934:1117/014502.316852:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.316859:VERBOSE1:google_apis/gaia/gaia_auth_util.cc:53] Canonicalized @gmail.com to @gmail.com
+[2934:2934:1117/014502.316863:VERBOSE1:google_apis/gaia/gaia_auth_util.cc:53] Canonicalized @gmail.com to @gmail.com
+[2934:2934:1117/014502.318380:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.323700:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:309] AccountReconcilor::OnEndBatchOfRefreshTokenStateChanges. Reconcilor state: 0
+[2934:2934:1117/014502.323732:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:550] AccountReconcilor::OnAccountsInCookieUpdated: CookieJar 0 accounts, Reconcilor's state is 1, Error was 
+[2934:2934:1117/014502.323739:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:644] AccountReconcilor::LoadValidAccountsFromTokenService: Chrome 0 accounts
+[2934:2934:1117/014502.323746:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:786] AccountReconcilor::CalculateIfMultiloginReconcileIsDone: Error was 
+[2934:2934:1117/014502.323750:VERBOSE1:components/signin/core/browser/account_reconcilor.cc:680] AccountReconcilor::StartReconcileIfChromeAccountsChanged
+[2934:2934:1117/014502.343410:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Session.TotalDuration
+[2934:2934:1117/014502.343424:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Commerce.PriceDrops.ActiveTabNavigationComplete.IsProductDetailPage
+[2934:2934:1117/014502.343429:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing Autofill_PolledCreditCardSuggestions
+[2934:2934:1117/014502.343432:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing IOS.ParcelTracking.Tracked.AutoTrack
+[2934:2934:1117/014502.343436:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Omnibox.SuggestionUsed.ClientSummarizedResultType
+[2934:2934:1117/014502.343442:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing MetadataWriter
+[2934:2934:1117/014502.343445:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Blink.FedCm.AccountsDialogShown
+[2934:2934:1117/014502.343448:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Blink.FedCm.Status.RequestIdToken
+[2934:2934:1117/014502.343452:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Blink.FedCm.CancelReason
+[2934:2934:1117/014502.343456:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Blink.FedCm.IsSignInUser
+[2934:2934:1117/014502.343459:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Sync.DeviceCount2
+[2934:2934:1117/014502.343462:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Sync.DeviceCount2.Phone
+[2934:2934:1117/014502.343465:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Sync.DeviceCount2.Desktop
+[2934:2934:1117/014502.343468:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Sync.DeviceCount2.Tablet
+[2934:2934:1117/014502.343476:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing MobileBookmarkManagerOpen
+[2934:2934:1117/014502.343479:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing NewTabPage.MostVisited.Clicked
+[2934:2934:1117/014502.343482:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing TabGroup.Created.OpenInNewTab
+[2934:2934:1117/014502.343485:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing Android.HistoryPage.OpenItem
+[2934:2934:1117/014502.343488:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing MobileMenuRecentTabs
+[2934:2934:1117/014502.343491:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing PasswordManager.ManagePasswordsReferrer
+[2934:2934:1117/014502.343494:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing PasswordManager.ProfileStore.TotalAccountsHiRes3.WithScheme.Https
+[2934:2934:1117/014502.343498:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing PasswordManager.FillingAssistance
+[2934:2934:1117/014502.343501:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing PasswordManager.SavedPasswordIsGenerated
+[2934:2934:1117/014502.343504:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing PasswordManager.SaveUIDismissalReason
+[2934:2934:1117/014502.343508:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing PasswordManager.SaveUIDismissalReason
+[2934:2934:1117/014502.343511:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing IOS.CredentialExtension.IsEnabled.Startup
+[2934:2934:1117/014502.343516:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Session.TotalDuration
+[2934:2934:1117/014502.343519:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing SafeBrowsing.Settings.EnhancedProtectionClicked
+[2934:2934:1117/014502.343522:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing MagicStack.Clank.NewTabPage.Module.TopImpressionV2
+[2934:2934:1117/014502.343526:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing NewTabPage.SearchBox.Lens
+[2934:2934:1117/014502.343532:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing MobileOmniboxLens
+[2934:2934:1117/014502.343535:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing TasksSurface.FakeBox.Lens
+[2934:2934:1117/014502.343538:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing Notifications.Tips.Lens
+[2934:2934:1117/014502.343541:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing Notifications.Scheduler.NotificationLifeCycleEvent.Tips
+[2934:2934:1117/014502.343545:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing PasswordManager.AccountStore.TotalAccountsHiRes3.ByType.Overall
+[2934:2934:1117/014502.343550:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing PasswordManager.ProfileStore.TotalAccountsHiRes3.ByType.Overall
+[2934:2934:1117/014502.343554:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing MagicStack.Clank.NewTabPage.Module.TopImpressionV2
+[2934:2934:1117/014502.343557:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:61] Segmentation platform started observing TabGroups.Sync.TabGroup.Created.GroupCreateOrigin
+[2934:2934:1117/014502.343560:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing MobileNTPShown
+[2934:2934:1117/014502.343563:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing Suggestions.ContextMenu.PinItem
+[2934:2934:1117/014502.343566:VERBOSE1:components/segmentation_platform/internal/signals/signal_filter_processor.cc:54] Segmentation platform started observing MobileMenuRecentTabs
+[2934:2934:1117/014502.352408:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2934:1117/014502.352426:VERBOSE1:ui/base/idle/idle_linux.cc:130] org.mate.ScreenSaver D-Bus service does not exist
+[2934:2984:1117/014502.352543:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2934:2983:1117/014502.354186:VERBOSE1:net/disk_cache/simple/simple_index_file.cc:624] Simple Cache Index is being restored from disk.
+[2934:2983:1117/014502.354205:VERBOSE1:base/files/file_util_posix.cc:560] Cannot stat "/tmp/molarium-history-browser-ko50Ax/Default/Service Worker/ScriptCache/index-dir/the-real-index": No such file or directory (2)
+[2934:2934:1117/014502.360143:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:286] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by SynchronizeInstalledApps@chrome/browser/web_applications/externally_managed_app_manager.cc:186
+[2934:2934:1117/014502.360162:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:318] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for ScheduleAllFixes@chrome/browser/web_applications/generated_icon_fix_manager.cc:79
+[2934:2934:1117/014502.360172:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:243] All locks acquired for ScheduleAllFixes@chrome/browser/web_applications/generated_icon_fix_manager.cc:79
+[2934:2934:1117/014502.388005:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.352] Geolocation: DEBUG: location_provider_manager.cc:103 LocationProviderManager::LocationProviderManager: provider_manager_mode_ is initialized to kNetworkOnly
+[2934:2934:1117/014502.388063:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.352] Geolocation: DEBUG: geolocation_provider_impl.cc:400 Start provider: high_accuracy=0
+[2934:2934:1117/014502.388116:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.352] Geolocation: DEBUG: network_location_provider.cc:192 Start provider: high_accuracy=0
+[2934:2934:1117/014502.388161:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.352] Geolocation: DEBUG: wifi_data_provider_common.cc:98 Schedule next scan: interval=0ms
+[2934:2934:1117/014502.388174:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.352] Geolocation: DEBUG: network_location_provider.cc:146 New Wi-Fi data is available: is_wifi_data_complete_=0 delayed=0
+[2934:2934:1117/014502.388272:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2934:2934:1117/014502.388289:VERBOSE1:ui/base/idle/idle_linux.cc:130] org.xfce.ScreenSaver D-Bus service does not exist
+[2934:2934:1117/014502.388297:WARNING:ui/base/idle/idle_linux.cc:111] None of the known D-Bus ScreenSaver services could be used.
+[2934:2984:1117/014502.388798:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2934:2934:1117/014502.397429:VERBOSE1:content/browser/back_forward_cache/back_forward_cache_impl.cc:876] BackForwardCacheImpl::GetCurrentBackForwardCacheEligibility:  : No: HTTP status is not OK, scheme is not HTTP or HTTPS
+[2934:2934:1117/014502.419555:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.419677:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.420950:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.427692:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:286] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by ScheduleAllFixes@chrome/browser/web_applications/generated_icon_fix_manager.cc:79
+[2934:2934:1117/014502.427712:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:318] Acquiring <PartitionedLockId>{id: 0x31, partition: 0} for OnSyncBridgeReady@chrome/browser/web_applications/web_app_provider.cc:556
+[2934:2934:1117/014502.427722:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:243] All locks acquired for OnSyncBridgeReady@chrome/browser/web_applications/web_app_provider.cc:556
+[2934:2934:1117/014502.429861:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.NetworkManager.GetDevices: object_path= /org/freedesktop/NetworkManager: unknown error type: 
+[2934:2934:1117/014502.429876:WARNING:services/device/geolocation/wifi_data_provider_linux.cc:171] Failed to get the device list
+[3004:3008:1117/014502.434428:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: https://www.google.com/async/folae?async=_fmt:pb&udm=50&client_locale=en-US&client_country=ZZ
+[3004:3008:1117/014502.434945:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json?cup2key=ML-DSA-44-16:PEd2pMxmz0ccCeSOC5uXax92e4VS1ajS9PsaBrBI2RY&cup2hreq=eaeb5e6e04c65b98b58123d2eaee24850d630897ded260dfabba3456f6b669ab
+[2934:2934:1117/014502.434990:VERBOSE1:chrome/browser/web_applications/locks/partitioned_lock_manager.cc:286] Releasing <PartitionedLockId>{id: 0x31, partition: 0} requested by OnSyncBridgeReady@chrome/browser/web_applications/web_app_provider.cc:556
+[2934:2934:1117/014502.470136:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.429] Geolocation: DEBUG: wifi_data_provider_common.cc:98 Schedule next scan: interval=9922ms
+[2934:2934:1117/014502.470172:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.429] Geolocation: DEBUG: wifi_data_provider_common.cc:88 Scanned: update_available=0 is_first_scan_complete_=0
+[2934:2934:1117/014502.470188:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.429] Geolocation: DEBUG: network_location_provider.cc:146 New Wi-Fi data is available: is_wifi_data_complete_=1 delayed=1
+[2934:2934:1117/014502.470199:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.429] Geolocation: DEBUG: network_location_provider.cc:243 Request position: is_new_data_available_=1 is_wifi_data_complete_=1
+[2934:2934:1117/014502.470226:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.429] Geolocation: DEBUG: position_cache_impl.cc:100 Get last used network position
+[2934:2934:1117/014502.479555:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.470] Geolocation: DEBUG: geolocation_provider_impl.cc:391 Stop provider.
+[2934:2934:1117/014502.479598:VERBOSE1:components/device_event_log/device_event_log_impl.cc:214] [01:45:02.470] Geolocation: DEBUG: network_location_provider.cc:217 Stop provider
+[3059:3059:1117/014502.485407:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           (none)
+  frame:                  0x74c02031c78
+  URL:                    
+  context_type:           WEBUI
+  effective extension id: (none)
+  effective context type: WEBUI
+[3059:3059:1117/014502.486173:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           (none)
+  frame:                  (nil)
+  URL:                    
+  context_type:           UNSPECIFIED
+  effective extension id: (none)
+  effective context type: UNSPECIFIED
+[3059:3059:1117/014502.487201:VERBOSE1:extensions/renderer/dispatcher.cc:490] Num tracked contexts: 1
+[3004:3008:1117/014502.498197:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.501264:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/http/quic_spdy_session.cc:1770] QPACK headers sent compressed: 341 uncompressed:478
+[3106:3106:1117/014502.506056:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/global.
+[3106:3106:1117/014502.506186:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/*.
+[3004:3008:1117/014502.508610:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: https://rr2---sn-p5qddn7k.gvt1.com/edgedl/chrome/dict/en-us-10-2.bdic?cms_redirect=yes&met=1794879902,&mh=N5&mip=fda3:e722:ac3:10:15:5a0:a00:4d&mm=28&mn=sn-p5qddn7k&ms=nvh&mt=1794879269&mv=D&mvi=2&pl=0&rmhost=rr5---sn-p5qddn7k.gvt1.com&rms=nvh,nvh&shardbypass=sd&smhost=rr5---sn-p5qddn7z.gvt1.com
+[3107:3107:1117/014502.510887:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/global.
+[3107:3107:1117/014502.511020:VERBOSE1:base/allocator/scheduler_loop_quarantine_config.cc:199] No entry found for renderer/*.
+[3004:3008:1117/014502.513703:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.517792:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/http/quic_spdy_session.cc:1777] QPACK headers received compressed: 29 uncompressed:845
+[2934:2934:1117/014502.520378:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[3068:3068:1117/014502.525872:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           (none)
+  frame:                  0x331402032518
+  URL:                    
+  context_type:           WEB_PAGE
+  effective extension id: (none)
+  effective context type: WEB_PAGE
+[3068:3068:1117/014502.527838:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           (none)
+  frame:                  (nil)
+  URL:                    
+  context_type:           UNSPECIFIED
+  effective extension id: (none)
+  effective context type: UNSPECIFIED
+[3068:3068:1117/014502.528034:VERBOSE1:extensions/renderer/dispatcher.cc:490] Num tracked contexts: 1
+[3004:3008:1117/014502.540201:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.540238:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.540299:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.540548:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.540590:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.540640:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.540656:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.542119:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.542723:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/http/quic_spdy_session.cc:1770] QPACK headers sent compressed: 414 uncompressed:583
+[2934:2934:1117/014502.550629:VERBOSE1:components/segmentation_platform/internal/selection/segment_result_provider.cc:136] GetSegmentResult: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER ignoring DB score, executing model.
+[2934:2934:1117/014502.550644:VERBOSE1:components/segmentation_platform/internal/selection/segment_result_provider.cc:277] ExecuteModelAndGetScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER server segment info not available
+[2934:2934:1117/014502.550650:VERBOSE1:components/segmentation_platform/internal/selection/segment_result_provider.cc:210] OnGotModelScore: segment=OPTIMIZATION_TARGET_SEGMENTATION_DEVICE_SWITCHER failed to get database model score, trying default model.
+[2934:2934:1117/014502.563213:VERBOSE1:components/update_client/request_sender.cc:340] Request completed from url: https://update.googleapis.com/service/update2/json?cup2key=ML-DSA-44-16:PEd2pMxmz0ccCeSOC5uXax92e4VS1ajS9PsaBrBI2RY&cup2hreq=eaeb5e6e04c65b98b58123d2eaee24850d630897ded260dfabba3456f6b669ab
+[2934:2934:1117/014502.564434:VERBOSE1:components/component_updater/component_updater_service.cc:529] Update completed with error 0
+[3004:3008:1117/014502.564836:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json?cup2key=ML-DSA-44-16:3nQcL_1GaQAG2H_kHLcQdU7V7ixNh1e2HrHSBNx1qC8&cup2hreq=8c0882854ecec5ddaa868a80345386d9c0be66526c603e829f4cfc08bad7e829
+[3004:3008:1117/014502.567773:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/http/quic_spdy_session.cc:1777] QPACK headers received compressed: 14 uncompressed:582
+[3004:3008:1117/014502.568251:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: https://rr4---sn-vgqskn6y.gvt1.com/edgedl/chrome/dict/en-us-10-2.bdic?met=1794879902,&mh=N5&pl=20&rms=nvh,nvh&shardbypass=sd&redirect_counter=1&rm=sn-p5qeey7l&rrc=104&req_id=55272ce55abaf866&cms_redirect=yes&cmsv=e&ipbypass=yes&mip=35.184.243.230&mm=28&mn=sn-vgqskn6y&ms=nvh&mt=1794879622&mv=m&mvi=4&smhost=rr4---sn-vgqskn6r.gvt1.com
+[3004:3008:1117/014502.571171:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3059:3059:1117/014502.573195:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           (none)
+  frame:                  0x74c02151b08
+  URL:                    
+  context_type:           WEBUI
+  effective extension id: (none)
+  effective context type: WEBUI
+[3059:3059:1117/014502.573433:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           (none)
+  frame:                  (nil)
+  URL:                    
+  context_type:           UNSPECIFIED
+  effective extension id: (none)
+  effective context type: UNSPECIFIED
+[3059:3059:1117/014502.574243:VERBOSE1:extensions/renderer/dispatcher.cc:490] Num tracked contexts: 2
+[2934:2934:1117/014502.579989:VERBOSE1:components/update_client/request_sender.cc:340] Request completed from url: https://update.googleapis.com/service/update2/json?cup2key=ML-DSA-44-16:3nQcL_1GaQAG2H_kHLcQdU7V7ixNh1e2HrHSBNx1qC8&cup2hreq=8c0882854ecec5ddaa868a80345386d9c0be66526c603e829f4cfc08bad7e829
+[2934:2934:1117/014502.580307:VERBOSE1:components/component_updater/component_updater_service.cc:529] Update completed with error 0
+[3004:3008:1117/014502.580724:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: https://update.googleapis.com/service/update2/json?cup2key=ML-DSA-44-16:KSLfHWD00i3i4sitBkj0c3n3NJLrn9R4dVilS9q0r0w&cup2hreq=d443b6f978fb2a4e11a4023afa44ee16fbd4c450c371ebc500153ce608514ed7
+[3004:3008:1117/014502.598910:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.598952:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.599007:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.599272:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.599308:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.599354:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.599367:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.600435:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/tls_handshaker.cc:109] TlsClient: Continuing handshake
+[3004:3008:1117/014502.601117:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/http/quic_spdy_session.cc:1770] QPACK headers sent compressed: 440 uncompressed:620
+[3059:3059:1117/014502.612979:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/lit/v3_0/lit.rollup.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.613840:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/load_time_data.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.613926:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.613998:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/cr.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.614066:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://webui-toolbar.top-chrome/strings.m.js\" skips prefix match because of non-special URL scheme"
+[3004:3008:1117/014502.630311:VERBOSE1:net/third_party/quiche/src/quiche/quic/core/http/quic_spdy_session.cc:1777] QPACK headers received compressed: 20 uncompressed:535
+[2934:2934:1117/014502.642043:VERBOSE1:components/update_client/request_sender.cc:340] Request completed from url: https://update.googleapis.com/service/update2/json?cup2key=ML-DSA-44-16:KSLfHWD00i3i4sitBkj0c3n3NJLrn9R4dVilS9q0r0w&cup2hreq=d443b6f978fb2a4e11a4023afa44ee16fbd4c450c371ebc500153ce608514ed7
+[2934:2934:1117/014502.645805:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.646308:VERBOSE1:components/component_updater/component_updater_service.cc:529] Update completed with error 0
+[3059:3059:1117/014502.658485:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://omnibox-popup.top-chrome/shared.rollup.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.658638:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/load_time_data.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.658706:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/lit/v3_0/lit.rollup.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.658773:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.658827:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/string16.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.658882:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/url/mojom/url.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.658930:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/time.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.658980:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/cr.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.659038:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://omnibox-popup.top-chrome/strings.m.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.659085:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/cr_components/color_change_listener/color_change_listener.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.676958:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/assert.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.677189:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/assert.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.677296:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/promise_resolver.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.677457:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/load_time_data.js\" skips prefix match because of non-special URL scheme"
+[3004:3008:1117/014502.683459:VERBOSE1:net/base/network_delegate.cc:38] NetworkDelegate::NotifyBeforeURLRequest: http://127.0.0.1:35975/favicon.ico
+[3059:3059:1117/014502.700423:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/assert.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.700820:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.700968:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/big_buffer.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.701042:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/string16.mojom-converters.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.701113:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/string16_converter.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.701276:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.701361:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/url/mojom/url.mojom-converters.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.701461:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/url/mojom/url_converter.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.701612:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/load_time_data.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.701761:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/assert.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.701865:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/promise_resolver.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.702786:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.702927:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/time.mojom-converters.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.702980:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/time_converters.js\" skips prefix match because of non-special URL scheme"
+[3106:3130:1117/014502.723887:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           admccjkmockfdflocgggjfgdacdodkdf
+  frame:                  (nil)
+  URL:                    
+  context_type:           BLESSED_EXTENSION
+  effective extension id: admccjkmockfdflocgggjfgdacdodkdf
+  effective context type: BLESSED_EXTENSION
+[3106:3130:1117/014502.724824:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           (none)
+  frame:                  (nil)
+  URL:                    
+  context_type:           UNSPECIFIED
+  effective extension id: (none)
+  effective context type: UNSPECIFIED
+[3107:3129:1117/014502.725142:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           glbjnfimcajjenihimblfaponejbkoph
+  frame:                  (nil)
+  URL:                    
+  context_type:           BLESSED_EXTENSION
+  effective extension id: glbjnfimcajjenihimblfaponejbkoph
+  effective context type: BLESSED_EXTENSION
+[3107:3129:1117/014502.725961:VERBOSE1:extensions/renderer/script_context.cc:150] Created context:
+  extension id:           (none)
+  frame:                  (nil)
+  URL:                    
+  context_type:           UNSPECIFIED
+  effective extension id: (none)
+  effective context type: UNSPECIFIED
+[3059:3059:1117/014502.898044:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/load_time_data.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.898183:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/lit/v3_0/lit.rollup.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.898246:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.898307:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/string16.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.898371:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/url/mojom/url.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.898438:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/mojom/base/time.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.898497:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/js/cr.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.898553:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://omnibox-popup.top-chrome/strings.m.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.898626:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/cr_components/color_change_listener/color_change_listener.mojom-webui.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.912494:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.912710:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.913322:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.913792:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[3059:3059:1117/014502.915545:VERBOSE1:third_party/blink/renderer/core/script/modulator_impl_base.cc:142] "Import Map: \"chrome://resources/mojo/mojo/public/js/bindings.js\" skips prefix match because of non-special URL scheme"
+[2934:2934:1117/014502.940385:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.940681:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2934:1117/014502.951319:VERBOSE1:components/signin/internal/identity_manager/mutable_profile_oauth2_token_service_delegate.cc:461] MutablePO2TS::RefreshTokenIsAvailable
+[2934:2992:1117/014503.175659:VERBOSE1:chrome/browser/shutdown_signal_handlers_posix.cc:143] Handling shutdown for signal 15.

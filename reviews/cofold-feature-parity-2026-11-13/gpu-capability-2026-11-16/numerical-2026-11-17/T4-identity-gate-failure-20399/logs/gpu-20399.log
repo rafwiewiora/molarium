@@ -1,0 +1,21 @@
+chrome-wrapper.sh: OK
+collect_driver_libraries.py: OK
+container-controls.sh: OK
+container.sh: OK
+gpu.sh: OK
+probe-adaptation.json: OK
+probe.mjs: OK
+runner-adaptations.json: OK
+runtime-capability.sh: OK
+transition.browser.mjs: OK
+trunk-readiness-fix.json: OK
+trunk.browser.mjs: OK
+verify_sources.py: OK
+vulkan_devices.py: OK
+warm-browser.mjs: OK
+fixture-mount-plan.json: OK
+container-fixture-preflight.mjs: OK
+Traceback (most recent call last):
+  File "verify_sources.py", line 6, in <module>
+    assert identity['project/project-id']=='psivant-prod'and identity['instance/zone'].endswith('/us-central1-c')
+AssertionError

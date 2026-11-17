@@ -1,0 +1,49 @@
+{
+  "schema": "molarium.finite-capability-diagnostic-submission.v1",
+  "jobId": 20230,
+  "submittedAt": "2026-11-17T01:01:37.970216+00:00",
+  "owner": "rafal",
+  "root": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt001",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "cluster": "psigreen",
+  "controller": "psigreen-controller",
+  "parentTerminalStates": "20206|FAILED|1:0|00:01:15|2026-11-17T00:53:28|2026-11-17T00:54:43|psigreen-l4spotnodeset-26\n20207|CANCELLED|0:0|00:00:00|None|2026-11-17T00:54:43|None assigned\n",
+  "sourceManifestSha256": "1af42b5bea4500493215274907b492442927cb6f97166f443beafbc39bbe84f0",
+  "partitions": [
+    "gpu",
+    "l4spot"
+  ],
+  "cpu": 4,
+  "memory": "14G",
+  "gpuCount": 1,
+  "timeLimitMinutes": 10,
+  "nice": 0,
+  "qos": "normal",
+  "retentionDeadline": "2026-11-20T22:30:00Z",
+  "requeue": false,
+  "modelCallsPlanned": 0,
+  "newNativeForwards": 0,
+  "numericalGatesChanged": false,
+  "standaloneVmActions": [],
+  "newJobs": 1,
+  "resourceInventoryBefore": "NODELIST|PARTITION|STATE|MEMORY|GRES\npsigreen-gpunodeset-0|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-1|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-2|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-3|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-4|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-5|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-6|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-7|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-8|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-9|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-10|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-11|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-12|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-13|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-14|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-15|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-16|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-17|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-18|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-19|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-20|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-21|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-22|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-23|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-24|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-25|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-26|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-27|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-28|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-29|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-30|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-31|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-32|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-33|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-34|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-35|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-36|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-37|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-38|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-39|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-40|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-41|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-42|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-43|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-44|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-45|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-46|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-47|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-48|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-49|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-50|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-51|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-52|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-53|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-54|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-55|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-56|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-57|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-58|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-59|gpu*|alloc|15504|gpu:1\npsigreen-gpunodeset-60|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-61|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-62|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-63|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-64|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-65|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-66|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-67|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-68|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-69|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-70|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-71|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-72|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-73|gpu*|idle~|15504|gpu:1\npsigreen-gpunodeset-74|gpu*|idle~|15504|gpu:1\npsigreen-l4spotnodeset-0|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-1|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-2|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-3|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-4|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-5|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-6|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-7|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-8|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-9|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-10|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-11|l4spot|down*|15504|gpu:1\npsigreen-l4spotnodeset-12|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-13|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-14|l4spot|alloc*|15504|gpu:1\npsigreen-l4spotnodeset-15|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-16|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-17|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-18|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-19|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-20|l4spot|down#|15504|gpu:1\npsigreen-l4spotnodeset-21|l4spot|down#|15504|gpu:1\npsigreen-l4spotnodeset-22|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-23|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-24|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-25|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-26|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-27|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-28|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-29|l4spot|alloc|15504|gpu:1\npsigreen-l4spotnodeset-30|l4spot|down#|15504|gpu:1\npsigreen-l4spotnodeset-31|l4spot|alloc|15504|gpu:1\n",
+  "diagnosticGap": "EGL supplied vkCreateInstance yet Chrome returned null; previous SystemInfo incorrectly targeted the page. Measure physical-device visibility and actual browser-target diagnostics, then one documented enable-gpu variant. No control retry or replacement loop.",
+  "liveJob": "JobId=20230 JobName=molarium-device-discovery UserId=rafal_wiewiora_psivant_com(1706645947) GroupId=rafal_wiewiora_psivant_com(1706645947) MCS_label=N/A Priority=1 Nice=0 Account=(null) QOS=normal JobState=PENDING Reason=Resources Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:10:00 TimeMin=N/A SubmitTime=2026-11-17T01:01:37 EligibleTime=2026-11-17T01:01:37 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=2026-11-20T22:30:00 SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-17T01:01:37 Scheduler=Main Partition=gpu,l4spot AllocNode:Sid=psigreen-login-001:2471539 ReqNodeList=(null) ExcNodeList=(null) NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=14G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=14G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt001/gpu.sh WorkDir=/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt001 Comment=project:molarium,experiment:nvidia-device-discovery,owner:rafal  StdErr=/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt001/logs/gpu-20230.log StdIn=/dev/null StdOut=/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt001/logs/gpu-20230.log Power= TresPerNode=gres/gpu:1 TresPerTask=cpu:4 \n",
+  "publicRedaction": {
+    "privateOriginalSha256": "49397d224df325eb9d243ffe0f49496f563f624d542f6f37d462c7e64f960813",
+    "removedFields": [
+      "activeQueueBefore"
+    ],
+    "reason": "Unrelated scheduler job rows are outside this study. Original receipt is preserved privately; all Molarium source pins and task allocation evidence remain public."
+  },
+  "duplicateCheckSummary": {
+    "observedRows": 98,
+    "relevantMolariumRows": [],
+    "activeDuplicateDetected": false
+  }
+}

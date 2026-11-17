@@ -1,0 +1,11 @@
+{
+  "requestedAt": "2026-11-17T04:45:21.092147+00:00",
+  "runId": 44016665941,
+  "originalJobId": 133816230980,
+  "headSha": "f09ed1b6d47e988861f4ac74ffcba39a35cbe0d8",
+  "action": "One failed-job-only identical retry after Chrome-page discovery timeout before storage assertions. No helper, source, test, timeouts or gates changed. No native/pose inference repeated.",
+  "originalFailedLogSha256": "b3679d721e91458e861abb42c8bc8a666bcf280fa64f47428f4dcd60b26fb467",
+  "maximumIdenticalRetries": 1,
+  "stdout": "",
+  "stderr": ""
+}

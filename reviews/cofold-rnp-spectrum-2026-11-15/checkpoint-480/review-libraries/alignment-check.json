@@ -1,0 +1,11 @@
+{
+  "status": "pass",
+  "cases": 48,
+  "libraries": 96,
+  "predictionRecords": 960,
+  "uniquePredictions": 480,
+  "experimentalReferences": 48,
+  "maximumProteinAlignmentDifferenceA": 1.7208456881689926e-14,
+  "newNeuralForwards": 0,
+  "copiedDecisions": 0
+}

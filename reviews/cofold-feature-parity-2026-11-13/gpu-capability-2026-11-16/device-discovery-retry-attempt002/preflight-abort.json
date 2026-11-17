@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-17T01:31:35.008954+00:00",
+  "controllerSha256": "774262b37f48e52a66dbc355f18760290b6afd0d74cfaf897885c06a5299bf17",
+  "status": "preflight-aborted-before-staging-or-submission",
+  "reason": "The failed node current reason changed after the preserved capacity-failure observation. Use the recorded authoritative failure for history and current ready-node inventory for eligibility.",
+  "newJobs": 0,
+  "newModelCalls": 0,
+  "recordedFailureSha256": "56c694720cee78498e059f81d7f9e284d01c7256f47ab91b5a91f19aa8f5504c",
+  "successor": "retry-device-discovery-on-booted-nodes002.py"
+}

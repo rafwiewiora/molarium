@@ -1,0 +1,247 @@
+{
+  "status": "complete",
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "runnerSha256": "8e24c2640030578993fc94586c2f78cbefdd3c6ba9fdc17bb1743c3e56c91272",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "startupContextBefore": {
+    "href": "http://127.0.0.1:51139/",
+    "baseURI": "http://127.0.0.1:51139/",
+    "title": "Stock-trained trunk comparison",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "startupContextReady": {
+    "href": "http://127.0.0.1:51139/",
+    "baseURI": "http://127.0.0.1:51139/",
+    "title": "Stock-trained trunk comparison",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "records": [
+    {
+      "cycle": 0,
+      "instrumentedMilliseconds": 5857.369999997318,
+      "timings": {
+        "embedder": 547.054999999702,
+        "template": 129.48499999940395,
+        "msa-stack": 500.429999999702,
+        "pairformer": 2992.369999997318,
+        "distogram": 16.310000002384186
+      }
+    },
+    {
+      "cycle": 1,
+      "instrumentedMilliseconds": 4730.465000003576,
+      "timings": {
+        "embedder": 3.0450000017881393,
+        "template": 52.29500000178814,
+        "msa-stack": 186.23000000417233,
+        "pairformer": 2609.265000000596,
+        "distogram": 18.634999997913837
+      }
+    },
+    {
+      "cycle": 2,
+      "instrumentedMilliseconds": 4831.284999996424,
+      "timings": {
+        "embedder": 3.1150000020861626,
+        "template": 43.940000005066395,
+        "msa-stack": 281.96000000089407,
+        "pairformer": 2639.75,
+        "distogram": 17.390000000596046
+      }
+    },
+    {
+      "cycle": 3,
+      "instrumentedMilliseconds": 4705.019999995828,
+      "timings": {
+        "embedder": 3.274999998509884,
+        "template": 51.00999999791384,
+        "msa-stack": 184.37000000476837,
+        "pairformer": 2691.4049999937415,
+        "distogram": 18.320000000298023
+      }
+    }
+  ],
+  "adapter": {
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "device": "",
+    "description": ""
+  },
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "features": [
+    "core-features-and-limits",
+    "subgroup-size-control",
+    "subgroups",
+    "shader-f16",
+    "timestamp-query"
+  ],
+  "outputs": {
+    "cycle-0.tap.trunk_in_single": {
+      "file": "cycle-0.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "e134c85acae69453933e8d7bfdf52e6798296d79447740bf341ec9f1f0f31643"
+    },
+    "cycle-0.tap.z_init_generic": {
+      "file": "cycle-0.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "27f9adc33c4eb200a3143829b87c1c9b871396a33a8d6a03793ff30385aa1e22"
+    },
+    "cycle-0.tap.z_after_template": {
+      "file": "cycle-0.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "fc483d9a350bd3464093b942d49a1080b6bef1a68338d566b3000db0b2de0910"
+    },
+    "cycle-0.tap.msa_activations": {
+      "file": "cycle-0.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-0.tap.template_term": {
+      "file": "cycle-0.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "94935647f29129effb554cf2fd50f0ef340bfea0999b8191d1589665459babde"
+    },
+    "cycle-0.tap.z_after_msa": {
+      "file": "cycle-0.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "2e3b11cc8c5f5b98eb193411890e9cc441f3963998ecfb7008e8e2d2faba5877"
+    },
+    "cycle-0.trunk-output-single": {
+      "file": "cycle-0.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "d2c48134b69e6efb808db3b2f7da3cb686e7d421f63f3315966b13a6f8f99ce5"
+    },
+    "cycle-0.tap.trunk_out_pair": {
+      "file": "cycle-0.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "063cbb4b93e7bc8aea0fc7711e9c09408e1cebb878dff686fd96f10f27f805a1"
+    },
+    "cycle-1.tap.trunk_in_single": {
+      "file": "cycle-1.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "2cf9e266b5f67a2635e40a692ffbc8fa1760f4f31239259d275c1c5999d15f40"
+    },
+    "cycle-1.tap.z_init_generic": {
+      "file": "cycle-1.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "229cd3dca43f078cc6908a82e993853ebf910613f3a6993d4bad365e6fb0f698"
+    },
+    "cycle-1.tap.z_after_template": {
+      "file": "cycle-1.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "5342f4df839093065283c4cc1103beabc141d8b40b61d30f155b551f81463db5"
+    },
+    "cycle-1.tap.msa_activations": {
+      "file": "cycle-1.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-1.tap.template_term": {
+      "file": "cycle-1.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "382b5bb9be1f90a11adafd9f16c0c3ccb500a73a49c3971b96b48c274afeed53"
+    },
+    "cycle-1.tap.z_after_msa": {
+      "file": "cycle-1.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "167917783b7806d15eb1bcca9c996265b13dd039cdd4758cf2c053025f55e566"
+    },
+    "cycle-1.trunk-output-single": {
+      "file": "cycle-1.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "3df502d0503c8cc15052d4e0b5fa52a056e43ab50143860f46350ac23c119545"
+    },
+    "cycle-1.tap.trunk_out_pair": {
+      "file": "cycle-1.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "28215c6f9c99640463267b7c87b5ccda3e9bbb0f9af78091224414a02ef4a0b4"
+    },
+    "cycle-2.tap.trunk_in_single": {
+      "file": "cycle-2.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "cce27a9ca69ac36754771c21f2f1d6f4cc0288645d3a50dc7209b2576af56432"
+    },
+    "cycle-2.tap.z_init_generic": {
+      "file": "cycle-2.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "2961d01424e67c9d6f81b58c9e3f8ba42a58ad321286504b95114ebbaf4bdac6"
+    },
+    "cycle-2.tap.z_after_template": {
+      "file": "cycle-2.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "9925a60f78956483f4ca20c21acdfe4e768b3419e0016c0d80e9c21535bb4a20"
+    },
+    "cycle-2.tap.msa_activations": {
+      "file": "cycle-2.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-2.tap.template_term": {
+      "file": "cycle-2.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "ef7d5dfa85a3e8d69be2ecf94e593888a928196e2f187f159a398617ed5bc230"
+    },
+    "cycle-2.tap.z_after_msa": {
+      "file": "cycle-2.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "5134ad0406fdb7561a49b49851bcd643177d157fe8638bd7b48904971e221d1c"
+    },
+    "cycle-2.trunk-output-single": {
+      "file": "cycle-2.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "a58ba89eb4f972c0745b666aa4e8ff3a5cd5f1eb782053c586f9cc6b8e438680"
+    },
+    "cycle-2.tap.trunk_out_pair": {
+      "file": "cycle-2.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "6c943f716bcfcf4c919523eea41cd85eb98c9b732659ba4c56dffcd44b76f714"
+    },
+    "cycle-3.tap.trunk_in_single": {
+      "file": "cycle-3.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "bf21bb7188ee70b0b4a89f00ae0cc379478a861c2c43fcd46e6272e6eb81f566"
+    },
+    "cycle-3.tap.z_init_generic": {
+      "file": "cycle-3.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "218aae0fbe8cc17aaf051bfc90592bc52c539247d9d71224df95d87af4e303f2"
+    },
+    "cycle-3.tap.z_after_template": {
+      "file": "cycle-3.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "ffbe35e357cf2b48088835338cec8766da0b3eea6a91aed8e47a79ae70bb53e4"
+    },
+    "cycle-3.tap.template_term": {
+      "file": "cycle-3.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "9f3063d3bed5b42f634b56f6d788ad6e9412333960292332b42e44b8ed67351a"
+    },
+    "cycle-3.tap.msa_activations": {
+      "file": "cycle-3.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-3.tap.z_after_msa": {
+      "file": "cycle-3.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "db8444964c8763714d45de38c79e765e20615e681eb3ba8732b8205c6340cd3c"
+    },
+    "cycle-3.trunk-output-single": {
+      "file": "cycle-3.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "d22fa6915bb1eec7fae8e228b314813f2ca9d02c661aeaf9afbf532cee950e01"
+    },
+    "cycle-3.tap.trunk_out_pair": {
+      "file": "cycle-3.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "6af01ad896e22003ec15be84a34bd116e4a999d65c032e398e0659e41d693282"
+    }
+  }
+}

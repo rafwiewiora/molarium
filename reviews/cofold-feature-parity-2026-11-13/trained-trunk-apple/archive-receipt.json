@@ -1,0 +1,20 @@
+{
+  "schema": "molarium.trained-trunk-public-raw-archive.v1",
+  "archive": "apple-trained-trunk-fp32-20261117.tar.gz",
+  "bytes": 1204453502,
+  "sha256": "b9387cf17b671b993a2b1e8f2eca66f3d3bd057c59ca6f4a439d42a8151c2046",
+  "expandedBytes": 1301703719,
+  "members": 264,
+  "evidenceManifestSha256": "b02b9bf7bee6a5f45a46c12dc7cef7d48c45f3c33b06b350dcb8c8b16b46c764",
+  "streamVerified": true,
+  "repeatedScience": 0,
+  "omissions": [
+    {
+      "file": "fixture/weights.bin",
+      "bytes": 604789504,
+      "sha256": "46df3199346512b29321a7e7dece80b9d701ef695eb24880b217287a812bd709",
+      "reason": "Not needed for offline error replay; original trained weights remain preserved and identified by fixture/weights.json. This bundle supports replay of measured agreement, not a new GPU recomputation without separately obtaining exact weights."
+    }
+  ],
+  "finishedAt": "2026-11-17T03:01:27.518744+00:00"
+}

@@ -1,0 +1,311 @@
+{
+  "schema": "molarium.container-fixture-open-preflight.v1",
+  "status": "verified",
+  "files": 50,
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "planSha256": "658695663a3a48fc5826fa4ee48cb0f93216bbb8a128cdbdbc4fc778bfd1bcee",
+  "records": [
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-0.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "96e8aa4dc62284672ab494db0b21e22dd0c547a56679e32a523917eb883af410"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-3.tap.template_term.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "b392b306f4708aa7c414aa9d73e2513f747e566cf1437e9ac94f04fe19d79e5b"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-1.trunk-output-single.bin",
+      "bytes": 365568,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "25a4b95702af4bfb8dcae9b3bce5ff617ce4faee9ba444cf61f97e6cd7a0c5d4"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-2.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "56e890c66f0566348bc9987cac8000781a7ad502a8cec452b2611362f1e3f21a"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-2.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "796b810c4e01f6c440b88fc618804a17e51ae77a9a84eb2b4898cc71571ec99b"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-2.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "f125cab87305e3337f86072cc6d9036efc56d8c61e09634b2b164b1787574ee6"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-0.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "a9f0d3486a9979f6044cece55b5c39771be456fbb863f4ca2f123f2d7495ac4a"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/receipt.json",
+      "bytes": 11644,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "82fa76345a3254a63fd1a3fc807698d10a9d83c97b49956e49581404a7836f17"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-2.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "0a10e4bf6d4e0ff932512abc2ffeb4c133198dd07db85974f358350720b26f75"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-3.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "89918e1d5a22f22e1add4a2c8269bc2af151866cb51711d789156cb98f056a94"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-0.trunk-output-single.bin",
+      "bytes": 365568,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "0dcf24500739857b8e7e40f4ac1b611bdb71a70b6ee43c61c4d76c82866410ae"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-0.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "328dc573e3e92cb29f59289f4a2ecef81c586976b1bba6270de46ca0866fbaf4"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-1.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "4ecba6b91dfb0989e94de613e3d832ac6ab3b6939637d489d4eb4663c6b5a751"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-3.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "662c1f8c19c5d82ea013cf822bd35d0a889abc6849539f565e11382fde1769ce"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-2.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "187619f35bdc9e1a76c09be1d1f2e07fbca47d1e657ef65f096a8f3ebcd12b8e"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-1.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "23ff3887910cbdf277b0f4208e6c69a79cf5761792ea94dc02dbefda150f8f92"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-2.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "89918e1d5a22f22e1add4a2c8269bc2af151866cb51711d789156cb98f056a94"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-0.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "89918e1d5a22f22e1add4a2c8269bc2af151866cb51711d789156cb98f056a94"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-1.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "89918e1d5a22f22e1add4a2c8269bc2af151866cb51711d789156cb98f056a94"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-3.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "b23f42a83b05304c7cd6ca258f59ec0da53d14076e4a86f447252b5d55687259"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-3.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "325778719ace65a6739eb547fd0d32bfdb22453c61b32da29ee579b4f769b3bf"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/weights.bin",
+      "bytes": 604789504,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "cf64767f5ac9e7cd6d4b5cef997eb783cf715c4d85dea1eebdc0fb982594eaa3"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-2.tap.template_term.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "591e2f02b39b46ca55ee94d1c562d7cd377b1a3911d8ec295f192edab43aece6"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-0.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "35d7d0aa596c7129ea31c47955ed91ae41a0548d9c31f2e550783e2f0cafd22a"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-3.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "53ea57701a90e3530c163385ad8a761b7c6bb42282cb28c1ec76a132e9fb1826"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-0.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "8ffc2ab739f15d6f0f165e2404df0e43c4ec0208311bf3a0c34ad13cc141d782"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/target.bin",
+      "bytes": 425544,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "374708fff7719dd5979ec875d56cd2286f6d3cf7ec317a3b25632aab28ec37bb"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-1.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "dbb36b763cf89e6ea699332cc7bacaa6e1178e4e6001d250bf8eee93c80e0025"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-3.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "d003d2016e702a95fdb4aeaaeee80d06ad1bb2ec79594aeb3ead22ca628778f2"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-1.tap.template_term.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "6c2a78872cbfe9495d6180e9bc2234da611db563eab7cf81e3c465cba2c3abe9"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-3.trunk-output-single.bin",
+      "bytes": 365568,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "64c63b71dadd5bd533cb42934588d0da6e49dfececb999c251608b26ae1e5685"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-1.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "07a8f1667caed450d57f9a59e09be8eccd068ab10a4b4ffcf02213c8a2408732"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-1.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "e09419246f32b55983fc59510d80ed20b84d177c48cc23a56a78a546edb3e048"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/weights.json",
+      "bytes": 58252,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "8e2e7a0aaabbb525bfc42e1c3d2cdb8d08222d9ce78ed8d34fd36843e7d2f302"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-2.trunk-output-single.bin",
+      "bytes": 365568,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "35cfdcce50ec032dfc04f7118c4f0a2800219abefb84cb919e182d48c4f9d220"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/cycle-0.tap.template_term.bin",
+      "bytes": 29001728,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "44feb05b0f7f6ce235cd874ea19854b2faf2e27505b6b19a92544ee450d52f89"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/msa-1/features.json",
+      "bytes": 1746,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "82fa76345a3254a63fd1a3fc807698d10a9d83c97b49956e49581404a7836f17"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/msa-1/features.bin",
+      "bytes": 733992,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "d6b7457685649fc275232fa74c36463e742373dbe41744ced3b2656c52d2eca4"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/msa-2/features.json",
+      "bytes": 1746,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "82fa76345a3254a63fd1a3fc807698d10a9d83c97b49956e49581404a7836f17"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/msa-2/features.bin",
+      "bytes": 733992,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "d6b7457685649fc275232fa74c36463e742373dbe41744ced3b2656c52d2eca4"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/base/features.json",
+      "bytes": 39958,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "82fa76345a3254a63fd1a3fc807698d10a9d83c97b49956e49581404a7836f17"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/base/features.bin",
+      "bytes": 462672,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "cf97adeedb59e05bfd73a2b4c2a8885708c4f4f70c84c64b27120e72ab733b72"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/msa-3/features.json",
+      "bytes": 1746,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "82fa76345a3254a63fd1a3fc807698d10a9d83c97b49956e49581404a7836f17"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/msa-3/features.bin",
+      "bytes": 733992,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "d6b7457685649fc275232fa74c36463e742373dbe41744ced3b2656c52d2eca4"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/msa-0/features.json",
+      "bytes": 1746,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "82fa76345a3254a63fd1a3fc807698d10a9d83c97b49956e49581404a7836f17"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/msa-0/features.bin",
+      "bytes": 733992,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "d6b7457685649fc275232fa74c36463e742373dbe41744ced3b2656c52d2eca4"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/original/fixtures.bin",
+      "bytes": 9934848,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "5a9e9c4bedb0d772c77ddb2f5a6ad46ec737eda76532cd4088f04aaf783411e1"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/original/manifest.json",
+      "bytes": 7863,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "82fa76345a3254a63fd1a3fc807698d10a9d83c97b49956e49581404a7836f17"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/precision/fixtures.bin",
+      "bytes": 27158576,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "5a9e9c4bedb0d772c77ddb2f5a6ad46ec737eda76532cd4088f04aaf783411e1"
+    },
+    {
+      "path": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/fixtures/precision/manifest.json",
+      "bytes": 39658,
+      "openedPrefixBytes": 16,
+      "prefixSha256": "82fa76345a3254a63fd1a3fc807698d10a9d83c97b49956e49581404a7836f17"
+    }
+  ],
+  "newNativeCalls": 0,
+  "newNeuralForwards": 0
+}

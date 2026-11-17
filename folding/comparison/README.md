@@ -1,5 +1,19 @@
 # Browser/native cofolding comparisons
 
+The [larger Runs N’ Poses comparison](../../reviews/cofold-rnp-spectrum-2026-11-15/README.md)
+selects 48 independently verified native-positive systems across the published
+training-similarity spectrum. All **480 predictions** are complete and independently
+replayed. Ten samples give 31/48 geometric hit cases, **26/48 (54.17%)** with a
+<2 Å hit passing limited stereo/clash checks, and **17/48 (35.42%)** with a passing
+hit selected by highest archived ipTM and the fixed lowest-seed tie rule. Rounded
+ties remain explicit. [Original outputs, final tables and sampling/time plots](../../reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/README.md)
+retain every planned denominator. [All 48 cases in portable review libraries](../../reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries/README.md)
+contain the original coordinates and graphs, optional separate references and
+no copied human decisions. Actual six-sample and ten-sample browser QA both
+passed all 48 cases; the final sweep covers 480 predictions, 48 separate
+references and 288 grid pages. The saved full-cohort receipts independently
+replay against the regenerated original exports in CI.
+
 The [stock LocalFold page control](../../reviews/cofold-stock-localfold-2026-11-13/README.md)
 runs the pristine upstream page through its own Fold button, bypassing Molarium's
 SMILES normalization and conformer-seed override. Its launcher and real provided-MSA
@@ -43,7 +57,36 @@ generated reference coordinates still differ. The [first trained target-feature 
 passes at matched inputs/full-FP32 weights; complete model and trajectory parity
 remain unresolved.
 
-The next, **unqualified** stage uses `capture_native_trunk.py` to observe the
+A second [YTHDF2 target-feature control](../../reviews/cofold-feature-parity-2026-11-13/trained-target-ythdf2-cpu/README.md)
+passes in production JavaScript's CPU reference under Bun, with GPU requests
+blocked. Its complete native arrays, matched inputs/weights, consumed source
+closure and measured output replay without neural execution using
+`check_trained_target_cpu.py`. This adds a second component diagnostic, not a
+second browser/WebGPU result or a full-model agreement claim.
+
+The [relative-position comparison](../../reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
+checks the port's unchanged CPU reference against the saved native 139-channel
+arrays on both systems. All 12,630,791 values agree exactly with original browser
+indices and with matched native indices. This checks non-learned relationships,
+not the fused WebGPU projection. Replay with `check_relative_encoding.py`.
+
+`prepare_rnp_publication.py` is a separate data-only reporting phase for the
+frozen 48-case/480-prediction RnP study. It waits on the existing independent
+finalizer, rejects partial results and a changed protocol, and then prepares
+uniform-budget tables, 3/6/10-sample case diagnostics, and separate prediction-only
+and reference-inclusive review files for every preselected case. It checks all
+exported graphs, PDB strings and display alignments. It cannot submit, restart,
+merge or deploy anything; its output remains for review. A finite UTC deadline
+and live finalizer process are required. Tests exercise the actual six-sample
+checkpoint and verify that changing its status label cannot make it final.
+The complete 480-prediction preparation has now succeeded: the original archive
+replay, 3/6/10 diagnostics and all 96 graph/PDB/alignment-checked libraries are
+preserved in the final report. The separate actual ten-sample UI sweep also
+completed all 48 cases; its original receipts and data-only verification remain
+separate from the prediction/accuracy evidence.
+
+The [measured, still-unqualified trunk stage](../../reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple/README.md)
+uses `capture_native_trunk.py` to observe the
 stock four-cycle `run_trunk` at exact frozen feature bytes. It exports trained
 weights, projected embeddings, template/MSA/pairformer boundaries and the
 actual MSA random draws. A module-local observer returns those draws unchanged;
@@ -51,9 +94,16 @@ the official neural computation is retained. The whole-model forward remains
 guarded, so this is not another pose prediction. `make_trained_trunk_fixture.py`
 uses the pinned upstream weight-layout converter, and
 `scripts/cofold-trained-trunk.browser.mjs` runs the production GPU trunk with
-FP32 storage, weights and accumulation. `check_trained_trunk.py` recomputes
+FP32 storage, weights and accumulation, disables independent half-arithmetic
+pair paths and rejects f16 shader sources. The original producer omitted that
+last precision policy; its measurements and correction remain separately
+archived. `check_trained_trunk.py` recomputes
 errors from all 32 required raw seams, rejecting partial transfers or changed
-gates. These tools have **no completed full-trunk parity result yet**.
+gates. Actual Apple measurements captured all 32 seams: the strict control passes
+all relative gates but only 14 combined gates, with absolute failures retained.
+These tools have **no passing complete-trunk parity result yet**. The native
+capture/conversion are complete and must not be repeated to repair browser or
+offline-analysis packaging. The public raw archives support data-only replay.
 
 ```sh
 MOLARIUM_FEATURE_CONTROL=/path/to/completed-feature-control \

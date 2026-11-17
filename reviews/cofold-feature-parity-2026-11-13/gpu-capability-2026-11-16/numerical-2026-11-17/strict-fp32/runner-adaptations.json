@@ -1,0 +1,56 @@
+{
+  "scope": "Distinct strict-FP32 control using existing pairMatrixKernels=false and observed rejection of f16 shaders. No native/pose/conversion repeats. Transition runner source is verified but not executed.",
+  "trunkPublicSourceSha256": "a41ff308172877651e0f8036ee423c6dbdec6dbf581febead9dcc16a08717fe0",
+  "trunkReplacements": [
+    {
+      "from": "from './web-bundle-dependencies.mjs'",
+      "to": "from '/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo/scripts/web-bundle-dependencies.mjs'"
+    },
+    {
+      "from": "from './headless-chrome.mjs'",
+      "to": "from '/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo/scripts/headless-chrome.mjs'"
+    },
+    {
+      "from": "const root = resolve(import.meta.dirname, '..');",
+      "to": "const root = resolve('/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo');"
+    },
+    {
+      "from": "import {createHash, randomUUID} from 'node:crypto';",
+      "to": "import {createHash, randomUUID} from 'node:crypto';\nimport {warmNvidiaBrowser} from './warm-browser.mjs';"
+    },
+    {
+      "from": "  const fixtureProbe=await browser.evaluate(",
+      "to": "  await warmNvidiaBrowser();\n  const fixtureProbe=await browser.evaluate("
+    }
+  ],
+  "transitionOriginalSha256": "02f0422e39d4ef52dfd664acec1cb5c1fcb6ee90ff832407326d247db2c8d783",
+  "trunkOutputSha256": "2043dea16df3da70b8f17657f8e522a81d15e9342cb047743fcb970f1c1eb97a",
+  "transitionOutputSha256": "d58026d1b0d0756610364392459e34e2d16a9843cdf167ec8557ed90f9cf1caa",
+  "sharedHelperChanged": false,
+  "transitionReplacements": [
+    {
+      "from": "from'./headless-chrome.mjs'",
+      "to": "from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs'"
+    },
+    {
+      "from": "from'./web-bundle-dependencies.mjs'",
+      "to": "from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/web-bundle-dependencies.mjs'"
+    },
+    {
+      "from": "const root=resolve(import.meta.dirname,'..'),",
+      "to": "const root=resolve('/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001'),"
+    },
+    {
+      "from": "import {startMolariumBrowser,waitFor}from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs';",
+      "to": "import {startMolariumBrowser,waitFor}from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs';\nimport {warmNvidiaBrowser} from './warm-browser.mjs';"
+    },
+    {
+      "from": "),20000,'diagnostic navigation');",
+      "to": "),20000,'diagnostic navigation');\n await warmNvidiaBrowser();"
+    }
+  ],
+  "plannedTransitionConfigurations": 0,
+  "plannedTrunkCycles": 4,
+  "plannedTrunkBoundaries": 32,
+  "parentRequestedFp32Job": 20382
+}

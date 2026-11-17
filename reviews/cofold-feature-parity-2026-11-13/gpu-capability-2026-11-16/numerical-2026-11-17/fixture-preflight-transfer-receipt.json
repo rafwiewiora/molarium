@@ -1,0 +1,57 @@
+{
+  "checkedAt": "2026-11-17T03:43:51.987346+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "records": [
+    {
+      "task": {
+        "job": 20398,
+        "name": "requested-fp32-mount-corrected",
+        "root": "/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003",
+        "sourcePin": "2ce3a1e80a7232735fc1e77810bc66958c34aba5fb12b6f8cb236d14578a9876"
+      },
+      "files": {
+        "before-submission-fixture-preflight.json": {
+          "bytes": 15104,
+          "sha256": "ddb7dc561f86386eacb21621067c867bd9fd79f788bc0caddfaf2d92c7fcf4a1"
+        },
+        "before-submission-fixture-preflight.log": {
+          "bytes": 145,
+          "sha256": "610e8099b5dc971334eebd9741812d7d7f40cdd1e81fc3fec727338c9f6e9bdc"
+        },
+        "container-image-receipt.json": {
+          "bytes": 224,
+          "sha256": "89eab1801bbb2946e9a08c92198e11dd7363dd527405b7b8b1e0087caa162169"
+        }
+      }
+    },
+    {
+      "task": {
+        "job": 20399,
+        "name": "strict-fp32-mount-corrected",
+        "root": "/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002",
+        "sourcePin": "bb74286ee381037fd0d7fa2120e3f46a5beac0388d8ff9026ee74142613bd482"
+      },
+      "files": {
+        "before-submission-fixture-preflight.json": {
+          "bytes": 15104,
+          "sha256": "ddb7dc561f86386eacb21621067c867bd9fd79f788bc0caddfaf2d92c7fcf4a1"
+        },
+        "before-submission-fixture-preflight.log": {
+          "bytes": 145,
+          "sha256": "610e8099b5dc971334eebd9741812d7d7f40cdd1e81fc3fec727338c9f6e9bdc"
+        },
+        "container-image-receipt.json": {
+          "bytes": 224,
+          "sha256": "89eab1801bbb2946e9a08c92198e11dd7363dd527405b7b8b1e0087caa162169"
+        }
+      }
+    }
+  ],
+  "newJobs": 0,
+  "newNativeCalls": 0
+}

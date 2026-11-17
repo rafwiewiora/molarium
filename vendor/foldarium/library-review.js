@@ -100,14 +100,17 @@ function render() {
     for(let i=0;i<Math.ceil(poses.length/size);i++){const b=document.createElement('button');b.textContent=`${i*size+1}–${Math.min((i+1)*size,poses.length)}`;b.className=i===page?'active':'';b.onclick=()=>{page=i;render();};$('pages').append(b);}
     if(!reference&&poses.length)reference=poses[0].result.pdb;
     const visible=poses.slice(page*size,(page+1)*size);
+    const referenceSlots=bundle.poses.filter(p=>p.compoundId===c.id&&p.role==='experimental-reference').map(p=>p.sample);
     if(!visible.some(p=>p.id===selected))selected=visible[0]?.id;
     for(const p of visible) {
       if(token!==generation)return;
       selected??=p.id;const card=document.createElement('article');card.dataset.poseId=p.id;card.className=`pose ${decision(p)?.value??''} ${selected===p.id?'selected':''}`;
-      const head=document.createElement('div');head.className='pose-head';const title=document.createElement('strong');title.textContent=`${p.result.model??'Prediction'} · pose ${p.sample+1}`;
+      const experimental=p.role==='experimental-reference',ordinal=p.sample+1-referenceSlots.filter(slot=>slot<p.sample).length;
+      const head=document.createElement('div');head.className='pose-head';const title=document.createElement('strong');title.textContent=experimental?'Experimental reference':`${p.result.model??'Prediction'} · pose ${ordinal}`;
       const meta=document.createElement('p'), confidence=ligandConfidence(p.result);
       const aligned=alignComplexPdb(p.result.pdb,reference);
-      meta.textContent=`Seed ${p.seed} · ${p.result.provider??'unspecified backend'} · ligand pLDDT ${confidence?.toFixed(1)??'—'} · ipTM ${p.result.iptm?.toFixed(3)??'—'} · ${Number.isFinite(p.result.elapsedMs)?(p.result.elapsedMs/1000).toFixed(1)+' s inference':'inference timing unavailable'} · protein Cα RMSD vs ${bundle.poses.find(p=>p.status==='complete')?.role==='experimental-reference'?'experimental reference':'first prediction'} ${aligned.rmsd.toFixed(2)} Å`;
+      const alignment=`protein Cα RMSD vs ${bundle.poses.find(p=>p.status==='complete')?.role==='experimental-reference'?'experimental reference':'first prediction'} ${aligned.rmsd.toFixed(2)} Å`;
+      meta.textContent=experimental?`${p.result.provider??'Experimental structure'} · ${alignment}`:`Seed ${p.seed} · ${p.result.provider??'unspecified backend'} · ligand pLDDT ${confidence?.toFixed(1)??'—'} · ipTM ${p.result.iptm?.toFixed(3)??'—'} · ${Number.isFinite(p.result.elapsedMs)?(p.result.elapsedMs/1000).toFixed(1)+' s inference':'inference timing unavailable'} · ${alignment}`;
       head.append(title,meta);card.append(head);
       const canvas=document.createElement('div');canvas.className='viewer';card.append(canvas);
       const choices=document.createElement('div');choices.className='choices';
@@ -116,7 +119,7 @@ function render() {
         b.onclick=async()=>{selected=p.id;await decide(p,value,decision(p)?.note??'');};choices.append(b);
       }
       const pdb=document.createElement('button');pdb.textContent='PDB';pdb.onclick=()=>{
-        const u=URL.createObjectURL(new Blob([p.result.pdb],{type:'chemical/x-pdb'})),a=document.createElement('a');a.href=u;a.download=`${c.id}-pose-${p.sample+1}.pdb`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
+        const u=URL.createObjectURL(new Blob([p.result.pdb],{type:'chemical/x-pdb'})),a=document.createElement('a');a.href=u;a.download=experimental?`${c.id}-experimental-reference.pdb`:`${c.id}-pose-${ordinal}.pdb`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
       };choices.append(pdb);
       const note=document.createElement('input');note.className='note';note.placeholder='Review note (saved locally)';note.value=decision(p)?.note??'';
       note.onchange=()=>decide(p,decision(p)?.value??'unreviewed',note.value).catch(e=>message(e.message));choices.append(note);

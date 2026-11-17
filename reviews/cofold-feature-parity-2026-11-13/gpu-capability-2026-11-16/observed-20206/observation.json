@@ -1,0 +1,246 @@
+{
+  "schema": "molarium.nvidia-results-observation.v1",
+  "checkedAt": "2026-11-17T00:55:52.066005+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "tasks": [
+    {
+      "job": 20206,
+      "name": "binding",
+      "root": "/workspacenfs/rafal_wiewiora/molarium-gpu-driver-binding-20261116-attempt003",
+      "sourcePin": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff",
+      "accounting": [
+        "20206",
+        "FAILED",
+        "1:0",
+        "00:01:15",
+        "2026-11-17T00:53:28",
+        "2026-11-17T00:54:43",
+        "psigreen-l4spotnodeset-26"
+      ],
+      "terminal": true,
+      "gpuStarted": true,
+      "modelControlsStarted": false
+    },
+    {
+      "job": 20207,
+      "name": "controls",
+      "root": "/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261116-attempt002",
+      "sourcePin": "2955767472d1a95a3481d2e2812bb818bd3485cbfccac989112644f2dc9bec96",
+      "accounting": [
+        "20207",
+        "CANCELLED",
+        "0:0",
+        "00:00:00",
+        "None",
+        "2026-11-17T00:54:43",
+        "None assigned"
+      ],
+      "terminal": true,
+      "gpuStarted": false,
+      "modelControlsStarted": false
+    }
+  ],
+  "allTerminal": true,
+  "files": [
+    {
+      "task": "binding",
+      "file": "binding-result.json",
+      "bytes": 2205,
+      "sha256": "621efa639e47e8d629f309da97e211431319cc6b5986f720c45d96f3479903de"
+    },
+    {
+      "task": "binding",
+      "file": "driver-bind-arguments.txt",
+      "bytes": 8164,
+      "sha256": "e81c54fac2906918328804314e5bf7c1d7ef45cf6331e83a3b3f25bbdd5c307c"
+    },
+    {
+      "task": "binding",
+      "file": "driver-library-bindings.json",
+      "bytes": 18860,
+      "sha256": "af17e8cbcfcffdde6b0268e974cfcc0a89923a50fdd7267ac3645cc0815c2e0d"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-egl/chrome-stderr.log",
+      "bytes": 7887,
+      "sha256": "dba39c468db06426b52a84da3fd0672d7580d5233cd2a503a487efc8dd03de1d"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-egl/driver-entrypoints.json",
+      "bytes": 545,
+      "sha256": "45df95405e8b4841a5bfb7f2d4767cb166ecfdfa6e2926c4ea3a5515c815b530"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-egl/exit-code.txt",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-egl/icd-ldd.txt",
+      "bytes": 611,
+      "sha256": "ff0fb95d570face5f03ae4dd22afcdf99a3a6a43f381118dd8b5e7ee17dea923"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-egl/nvidia-icd.json",
+      "bytes": 215,
+      "sha256": "1eed66d49028350d43f87d70c7a673baa36f23b13d2e3c9cc90e3480db47a3b7"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-egl/probe-result.json",
+      "bytes": 749,
+      "sha256": "13a66fff223aa2df894b8bab7cbbad81d21301218f2273aa63f091f26e851cdb"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-egl/task.log",
+      "bytes": 627,
+      "sha256": "e09c5e9c24153f25fb2868031f03c976586ab94968bfef3c1e706b3c032ab04f"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-glx/chrome-stderr.log",
+      "bytes": 25592,
+      "sha256": "ade783680d79293442b22f842a6c4e43efefd8758b46fa5fd9e918d0585d769e"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-glx/driver-entrypoints.json",
+      "bytes": 545,
+      "sha256": "00ae5e46cc1aff586022387bbe0e9724ad39cea9473100caf029d82e400b9983"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-glx/exit-code.txt",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-glx/icd-ldd.txt",
+      "bytes": 1636,
+      "sha256": "453aec130d41dc30be674d112a36f6d46f7b65d24441e070d6b83d6f650de079"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-glx/nvidia-icd.json",
+      "bytes": 215,
+      "sha256": "10581806b89325da0c29c5c279f15ec0549820b583f4990242f20ab14376799a"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-glx/probe-result.json",
+      "bytes": 749,
+      "sha256": "9ce62838db17c274f7acb9b299d727d1751bd1debb730c726a84a9dd122645d5"
+    },
+    {
+      "task": "binding",
+      "file": "explicit-bind-glx/task.log",
+      "bytes": 1079,
+      "sha256": "3286f4a4a5845fbd739a9735e142242d4b755d90dfe3c3fffd55e4645fb0fc4f"
+    },
+    {
+      "task": "binding",
+      "file": "gpu-identity.txt",
+      "bytes": 90,
+      "sha256": "cd60bb46c7ebbadae4af1d4aae84c1df0b2757b3cf5208809072edf884a784cd"
+    },
+    {
+      "task": "binding",
+      "file": "host-ldconfig.txt",
+      "bytes": 58582,
+      "sha256": "b712481c98002b585719e3e73d7797df9bbbb39ffe61d350da1f08278fd86823"
+    },
+    {
+      "task": "binding",
+      "file": "host-nvidia-icd.json",
+      "bytes": 140,
+      "sha256": "361076eba0aa916c17d23bdec14adef34e58c8f8f8d6a5dd94ac901da5a707ed"
+    },
+    {
+      "task": "binding",
+      "file": "logs/gpu-20206.log",
+      "bytes": 2249,
+      "sha256": "48193c7f50ad9319c94cf496c3e82e6ac41230b585f8feae3ab7dbac2d6fb6be"
+    },
+    {
+      "task": "binding",
+      "file": "recovery-parent.json",
+      "bytes": 4499,
+      "sha256": "3f2d813b5947a61c4841f729f5d01833a44ee8072ffdaed38e1e6af0e169b9fd"
+    },
+    {
+      "task": "binding",
+      "file": "singularity-version.txt",
+      "bytes": 35,
+      "sha256": "14307124116f7e01564048a35ad76f261f17bb5de97add505f3a3edd6d80e6c1"
+    },
+    {
+      "task": "binding",
+      "file": "slurm-grant.txt",
+      "bytes": 1726,
+      "sha256": "49a73183e725c4851bf33ee0f85f081f1b060b10155d8a55bca236ff96b3019e"
+    },
+    {
+      "task": "binding",
+      "file": "source-manifest.json",
+      "bytes": 543,
+      "sha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff"
+    },
+    {
+      "task": "binding",
+      "file": "source-sha256.txt",
+      "bytes": 498,
+      "sha256": "f2791c4bb03687c94de17e3ba83437a714a3271b864ae4b9d5306e0f9e95d73a"
+    },
+    {
+      "task": "binding",
+      "file": "submission.json",
+      "bytes": 992,
+      "sha256": "d7e641f97aae26837bf7d6f612c1e7cede24c3d8dd45ebf0f75ba1010b211f5e"
+    },
+    {
+      "task": "controls",
+      "file": "recovery-parent.json",
+      "bytes": 4499,
+      "sha256": "1cfb8a4dc1d4f27592b223d168343e4a31e32d047bd75ef4f6ae9e487e77b3d0"
+    },
+    {
+      "task": "controls",
+      "file": "source-adaptation.json",
+      "bytes": 720,
+      "sha256": "62646dbca5d4366c509b58a05b6de8ecb588d609b7d9ea718f9e470e292ab66a"
+    },
+    {
+      "task": "controls",
+      "file": "source-manifest.json",
+      "bytes": 933,
+      "sha256": "2955767472d1a95a3481d2e2812bb818bd3485cbfccac989112644f2dc9bec96"
+    },
+    {
+      "task": "controls",
+      "file": "source-sha256.txt",
+      "bytes": 860,
+      "sha256": "854f033909b6ff43f1dcb8c96fe56a2b8f8e51b66fd0759ae29ba01aa479fecc"
+    },
+    {
+      "task": "controls",
+      "file": "submission.json",
+      "bytes": 1068,
+      "sha256": "448ae830165208b7e04b3a4afc3e704c53f7270ac177dc0495c0a7435b29bc06"
+    }
+  ],
+  "newNeuralForwards": 0,
+  "newJobs": 0,
+  "publicationActions": 0
+}

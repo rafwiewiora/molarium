@@ -1,0 +1,10 @@
+{
+  "schema": "molarium.release-upload-verification.v1",
+  "releaseId": 448040291,
+  "assetId": 757717474,
+  "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/ci-browser-f09ed1b-retry-outcome-20261117.zip",
+  "bytes": 36001,
+  "sha256": "cb13abce50d44e022aca519a803f78312e4b0f2d5f2f69336f4060b015a26dc5",
+  "serverDigest": "sha256:cb13abce50d44e022aca519a803f78312e4b0f2d5f2f69336f4060b015a26dc5",
+  "verified": true
+}

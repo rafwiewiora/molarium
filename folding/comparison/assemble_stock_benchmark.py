@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 import statistics
 import zipfile
@@ -16,7 +17,9 @@ def sha(path):
 def assemble(plan_file, repository, pilot, batch, output):
     analysis_names = ['score_stock_localfold.py', 'assemble_stock_benchmark.py',
                       'check_stock_benchmark.py', 'pose_metrics.py', 'experimental_reference.py',
-                      'requirements-analysis.txt']
+                      'requirements-analysis.txt', 'analyze_rnp_sampling.py',
+                      'summarize_rnp_stock.py', 'plot_rnp_sampling.py',
+                      'plot_rnp_checkpoint.py', 'merge_stock_attempts.py', 'finalize_rnp_stock.py']
     analysis_sources = {name: sha(Path(__file__).with_name(name)) for name in analysis_names}
     plan = json.loads(plan_file.read_text())
     results = batch / 'results' if (batch / 'results/progress.json').is_file() else batch
@@ -119,14 +122,27 @@ def assemble(plan_file, repository, pilot, batch, output):
         for name in analysis_names:
             add(archive, Path(__file__).with_name(name), 'independent-analysis-source/' + name)
         add(archive, batch / 'source-manifest.json', 'consumed-batch-source/source-manifest.json')
+        if (batch / 'merge-receipt.json').is_file():
+            add(archive, batch / 'merge-receipt.json', 'source-attempts/merge-receipt.json')
+            for path in sorted((batch / 'source-attempts').glob('*.json')):
+                add(archive, path, 'source-attempts/' + path.name)
         archive.writestr('progress-at-snapshot.json', progress_raw)
         files['progress-at-snapshot.json'] = {'sha256': hashlib.sha256(progress_raw).hexdigest(), 'bytes': len(progress_raw)}
         add(archive, output / 'scores.json', 'independent-scores.json')
         archive.writestr('archive-manifest.json', json.dumps(files, indent=2) + '\n')
     archive_file = output / 'evidence.zip'
+    with zipfile.ZipFile(archive_file) as archive:
+        expanded_bytes = sum(info.file_size for info in archive.infolist())
+        archive_members = len(archive.infolist())
+    if expanded_bytes > 2 * 1024**3 or archive_members > 20000:
+        raise ValueError('Evidence exceeds the checker maximum; preserve source attempts and use explicitly separated checked packages')
+    verify_mib = max(256, math.ceil(expanded_bytes / (64 * 1024**2)) * 64)
+    verify_members = max(4000, math.ceil(archive_members / 1000) * 1000)
+    verify_options = (f' --max-expanded-mib {verify_mib}' if verify_mib > 256 else '') + (f' --max-members {verify_members}' if verify_members > 4000 else '')
     evidence = {'schema': 'molarium.stock-localfold-evidence.v1',
         'scoresSha256': sha(output / 'scores.json'), 'archiveSha256': sha(archive_file),
         'archiveBytes': archive_file.stat().st_size, 'members': len(files),
+        'expandedArchiveBytes': expanded_bytes, 'archiveMembers': archive_members,
         'scope': report['status'], 'completed': complete, 'planned': len(records)}
     if archive_file.stat().st_size > 20 * 1024 * 1024:
         parts = []
@@ -157,8 +173,10 @@ def assemble(plan_file, repository, pilot, batch, output):
         lines.append(f'| {row["caseId"]} | {row["model"]} | {fmt(row["nativeBestA"])} | '
             f'{row["posesWithin2A"]}/{row["complete"]} | {row["limitedValidityPassingHits"]} | '
             f'{fmt(row["oracleBestOfObservedNA"])} | {fmt(row["medianLigandRmsdA"])} |')
-    lines += ['', 'Native KIT (both models) and NSP3/Boltz geometric hits fail the separate limited validity checks. '
-        'They remain explicit geometric diagnostics. “Valid” here means the existing stereochemical identity and severe protein–ligand clash checks; '
+    flagged = [p['caseId']+' / '+p['model'] for p in plan['pairs'] if not p['nativeHasStereoClashPassingHit']]
+    lines += ['', ('Native geometric hits without a separate limited-validity-passing hit: '+', '.join(flagged)+'. '
+        if flagged else 'Every selected case has a native geometric hit passing the separate limited checks. ')+
+        '“Valid” here means the existing stereochemical identity and severe protein–ligand clash checks; '
         'it does not assert complete physical validation.', '',
         '## Pose selection and sampling', '',
         '| Case | Model | Seed 0 Å | Best of first 3 Å | Highest-ipTM seed | Highest-ipTM pose Å |',
@@ -167,14 +185,14 @@ def assemble(plan_file, repository, pilot, batch, output):
         lines.append(f'| {row["caseId"]} | {row["model"]} | {fmt(row["seed0LigandRmsdA"])} | '
             f'{fmt(row["oracleBestOfFirstThreeA"])} | {row["highestIptmSeed"] if row["highestIptmSeed"] is not None else "—"} | '
             f'{fmt(row["highestIptmLigandRmsdA"])} |')
-    lines += ['', 'Best RMSD is a crystal-informed oracle statistic. Native bests use the original three saved seeds; '
+    lines += ['', 'Best RMSD is a crystal-informed oracle statistic. Native bests use the frozen saved native evidence identified in the plan; '
         'stock bests use the completed part of the predeclared ten-seed set. The first-three statistic is shown only after '
         'all three have completed. Confidence selection uses the largest reported ipTM without consulting the crystal; '
         'ties select the lowest seed. All samples, errors and geometry diagnostics remain in [scores.json](scores.json).', '',
         '## Execution and verification', '',
         'The pristine LocalFold page at `'+plan['sourceRevision']+'` executes its own Fold button, SMILES preparation, '
         'quantized weights, sampler and confidence head. The Molarium folding wrapper is bypassed. Actual folding devices '
-        'and browser versions are recorded per prediction. This batch uses physical Apple WebGPU on the local M1 Pro; '
+        'and browser versions are recorded per prediction. Physical WebGPU is required; '
         'numerical settings/tuning are not overridden. Step and recycle counts are read back from the original UI. '
         'Inputs contain sequence, declared SMILES and provided alignment only, with no crystal coordinates.', '',
         'All observed corresponding Cα atoms determine the protein fit. Ligand heavy-atom RMSD allows graph symmetry '
@@ -185,7 +203,9 @@ def assemble(plan_file, repository, pilot, batch, output):
         ('Evidence archive: ' + ' · '.join(f'[part {i + 1}]({p["file"]})' for i, p in enumerate(evidence['archiveParts']))
          + '. The checker reassembles the parts automatically.' if evidence.get('archiveParts') else '[Evidence archive](evidence.zip)')
         + ' · [Archive hashes](evidence.json)', '',
-        '```sh', 'python folding/comparison/check_stock_benchmark.py /path/to/this/review', '```', '']
+        '```sh', 'python folding/comparison/check_stock_benchmark.py /path/to/this/review' + verify_options, '```', '']
+    if plan.get('nativeTopologyLimitation'):
+        lines += ['## Native topology provenance', '', plan['nativeTopologyLimitation'], '']
     (output / 'README.md').write_text('\n'.join(lines))
     print(json.dumps({'status': report['status'], 'completed': complete, 'planned': len(records),
                       'output': str(output)}))

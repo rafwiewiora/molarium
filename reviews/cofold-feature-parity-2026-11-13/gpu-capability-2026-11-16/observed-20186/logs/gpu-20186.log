@@ -1,0 +1,7 @@
+chrome-logging-wrapper.sh: OK
+gpu.sh: OK
+probe.mjs: OK
+/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt005/runtime/browser.sif: OK
+/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/chrome-wrapper.sh: OK
+{"status":"no-adapter"}
+srun: error: psigreen-l4spotnodeset-26: task 0: Exited with exit code 1

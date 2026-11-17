@@ -1,0 +1,20 @@
+{
+  "createdAt": "2026-11-17T03:26:39.298334+00:00",
+  "purpose": "Describe residual magnitude, absolute-gate failures and representable-value distances of the already completed strict-FP32 measurement; no new acceptance criterion.",
+  "fixture": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-20261117-attempt001/fixture",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "measured": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-strict-fp32-20261117-attempt002/measured",
+  "measuredReceiptSha256": "0792c49256349f8cdfbf3c310d7777c2eccf8142dc4b88b99dccd62f5a488ad5",
+  "sources": {
+    "analyze_trunk_residuals.py": "a88964dbb2fba1e3ed40d39d090a7f4ba3767c735999252236cfc178e78ce2c6",
+    "capture_native_features.py": "caa1ccb445b1d362310a9de90bc2fcde5a59b01a84a2575565c350312cb43437",
+    "check_trained_target.py": "a83f21867ecd7f4efadf6f769b7febe6a4c3be2193bb7a6bef45fcec757ce89f",
+    "check_trained_trunk.py": "143aaeb7067c4329f56410d27cc0d0a6afae5ff628232780613eaa4b7397a267",
+    "compare_feature_snapshots.py": "114bae788d05356b2ec8ccb786837fe9c9bb2beb54bb11fb262d9b0c71ac445f",
+    "feature_snapshot.py": "a65c7054477aaa5934a6e337748228ac9574f70cea37004e25361a2a6386ad3d",
+    "make_trained_target_fixture.py": "51b64aae3b688b30672b3787a4d1fdd0e078f98d7381b4739736e71ad4f6c490",
+    "native_run.py": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
+  },
+  "newNeuralForwards": 0,
+  "gatesChanged": false
+}

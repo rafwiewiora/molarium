@@ -1,0 +1,17 @@
+{
+  "status": "verified-for-review",
+  "preparerPid": 36066,
+  "deadline": "2026-11-17T05:30:00+00:00",
+  "newNeuralForwards": 0,
+  "publicationActions": 0,
+  "plannedCases": 48,
+  "samplesPerCase": 10,
+  "sourceState": "prepared-for-review",
+  "checkedAt": "2026-11-17T01:44:51.274638+00:00",
+  "caseId": "8cjg__1__1-a__1-d",
+  "sourceReceiptSha256": "41a58f0acb6f97cfc6ba030f4e21f415431f82cd1e4f6a63e4276a47e80c22cf",
+  "childPid": 83183,
+  "cohortDeadline": "2026-11-17T05:18:03.778331+00:00",
+  "finishedAt": "2026-11-17T03:56:11.374644+00:00",
+  "verificationSha256": "fbe93ebcde6e0233e5d1c32a1652bfd9b28db9f012410a124a4462700a63de11"
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "molarium.physical-apple-trained-trunk-control.v1",
+  "declaredAt": "2026-11-17T02:25:06.142556+00:00",
+  "case": "9t51-a1jtm",
+  "method": "OpenBind-0/OpenFold3 0.5.1",
+  "nativePositiveEvidence": {
+    "source": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/scores.json",
+    "sha256": "ae61388ceed8b03c5d5fa84ddbe8a014e845abd8e5aaaae8b39a27535856bcbc",
+    "summary": {
+      "caseId": "9t51-a1jtm",
+      "method": "native-openbind0-msa256-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 0.7986792326704657,
+      "medianLigandRmsdA": 0.8268209103283953,
+      "oracleBestOf3LigandRmsdA": 0.7986792326704657,
+      "highestIptmSeed": 0,
+      "highestIptmLigandRmsdA": 0.7986792326704657,
+      "posesWithin2A": 3,
+      "medianProteinCaRmsdA": 1.835703073088119
+    }
+  },
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "transferReceiptSha256": "703b5f7232d482e8a7af18e51d3151ab03cf6bf2711591cc6d1484fd72542670",
+  "nativeCaptureAndConversionJobsReused": [
+    15791,
+    15814
+  ],
+  "cycles": 4,
+  "boundaries": 32,
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "precision": {
+    "staged": "f32",
+    "weight": "f32",
+    "accumulate": "f32",
+    "pairWeight": "f32"
+  },
+  "physicalGpuRequired": "Apple, non-fallback; rejects software adapters",
+  "productionSourcePinsSha256": "cfe68ed2b9bab5b6cae600f666db52c792811f18bb7a84efb4fe8dd1735dd4a6",
+  "sourceAdaptationSha256": "6239d59584d0a0aa3ca05284e290c564501d65f2f35b685ef707fcf785f15ebc",
+  "repoRevision": "43c3db5ce9d70e2933fae20081b1924205961804",
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newSlurmJobs": 0,
+  "plannedBrowserTrunkCycles": 4,
+  "plannedWholeModelOrPoseCalls": 0,
+  "maximumMeasurementSeconds": 1800,
+  "scopeExclusions": [
+    "denoising",
+    "confidence",
+    "quantizedweights",
+    "poseaccuracy",
+    "isolatedinferencespeed"
+  ],
+  "nvidiaExperimentStillRequired": 20285,
+  "parentAttempt": "trained-trunk-apple-20261117-attempt001",
+  "parentFailureReceiptSha256": "07cb7e2bdabcc4e4883bef783df5b5b13d2d5db434c2061b422436d180866ac4",
+  "parentCompletedBrowserTrunkCycles": 0,
+  "fixtureReuseDirectory": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-20261117-attempt001/fixture"
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "molarium.rnp-source-extraction.v1",
+  "kind": "reference",
+  "status": "complete",
+  "slurmJobId": "19285",
+  "startedAt": "2026-11-15T06:54:56.167065+00:00",
+  "poolSha256": "c13804b56b1da0d1d877002d835858aa859e75e80168b0c9a5a75c96a02e314a",
+  "scriptSha256": "fdb40dcf4a8ded8226af2482ced15d716a6f599db1c5561929d47f0edfb3ecef",
+  "source": {
+    "id": "c6d7ab66-f7a7-441f-8aae-5281693d4ad1",
+    "key": "ground_truth.tar.gz",
+    "size": 413734790,
+    "checksum": "md5:73fa5378ed7a8e6b94f3b0d6eba8c70e",
+    "links": {
+      "self": "https://zenodo.org/api/records/18366081/files/ground_truth.tar.gz/content"
+    }
+  },
+  "neuralForwards": 0,
+  "selectedFiles": 588,
+  "selectedBytes": 54285276,
+  "compressedSourceSha256": "1b9f778bc3150f246c0f37b48215588c48369e39e6603c2b15975f0ec1b18d51",
+  "compressedSourceBytes": 413734790,
+  "officialArchiveChecksumVerified": true,
+  "finishedAt": "2026-11-15T06:58:30.990657+00:00",
+  "inventorySha256": "26530e4f45e37e6f8fd697437b3de3a0431b2e845ab1f43b30de8a0c310e7bf4"
+}

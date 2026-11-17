@@ -1,0 +1,247 @@
+{
+  "status": "complete",
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "runnerSha256": "7671ae091894d540e54b26df5534467ea8ed70308ddf23a32e111f0eb74f9877",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "startupContextBefore": {
+    "href": "about:blank",
+    "baseURI": "about:blank",
+    "title": "",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "startupContextReady": {
+    "href": "http://127.0.0.1:49502/",
+    "baseURI": "http://127.0.0.1:49502/",
+    "title": "Stock-trained trunk comparison",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "records": [
+    {
+      "cycle": 0,
+      "instrumentedMilliseconds": 5034.859999999404,
+      "timings": {
+        "embedder": 38.34000000357628,
+        "template": 239.125,
+        "msa-stack": 414.8550000041723,
+        "pairformer": 2896.344999998808,
+        "distogram": 13.009999997913837
+      }
+    },
+    {
+      "cycle": 1,
+      "instrumentedMilliseconds": 4676.109999999404,
+      "timings": {
+        "embedder": 2.375,
+        "template": 36.5350000038743,
+        "msa-stack": 219.375,
+        "pairformer": 2576.170000001788,
+        "distogram": 12.314999997615814
+      }
+    },
+    {
+      "cycle": 2,
+      "instrumentedMilliseconds": 4514.22500000149,
+      "timings": {
+        "embedder": 2.380000002682209,
+        "template": 37.270000003278255,
+        "msa-stack": 159.875,
+        "pairformer": 2571.5349999964237,
+        "distogram": 12.515000000596046
+      }
+    },
+    {
+      "cycle": 3,
+      "instrumentedMilliseconds": 4518.255000002682,
+      "timings": {
+        "embedder": 2.644999995827675,
+        "template": 41.50500000268221,
+        "msa-stack": 160.51999999582767,
+        "pairformer": 2568.280000001192,
+        "distogram": 12.25
+      }
+    }
+  ],
+  "adapter": {
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "device": "",
+    "description": ""
+  },
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "features": [
+    "core-features-and-limits",
+    "subgroup-size-control",
+    "subgroups",
+    "shader-f16",
+    "timestamp-query"
+  ],
+  "outputs": {
+    "cycle-0.tap.trunk_in_single": {
+      "file": "cycle-0.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "e134c85acae69453933e8d7bfdf52e6798296d79447740bf341ec9f1f0f31643"
+    },
+    "cycle-0.tap.z_init_generic": {
+      "file": "cycle-0.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "27f9adc33c4eb200a3143829b87c1c9b871396a33a8d6a03793ff30385aa1e22"
+    },
+    "cycle-0.tap.z_after_template": {
+      "file": "cycle-0.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "84730382b06f84aea591f5652185bc6bb119ea3cb2b8425ad1b94dadeb788bca"
+    },
+    "cycle-0.tap.template_term": {
+      "file": "cycle-0.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "047ceff940500b9df9acf9b65666158abbd1a746c2b9384b9d9cec70f728732a"
+    },
+    "cycle-0.tap.msa_activations": {
+      "file": "cycle-0.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-0.tap.z_after_msa": {
+      "file": "cycle-0.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "c54cf2650e734f5efd89603cfd315ab5b5b3431ffe39c84ad0b9ea324dc26c0d"
+    },
+    "cycle-0.trunk-output-single": {
+      "file": "cycle-0.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "671809ee1423635c7ee9e2d15d631ef77993bb0fc78dfbd70b2acfe60a61d04a"
+    },
+    "cycle-0.tap.trunk_out_pair": {
+      "file": "cycle-0.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "33b627ad0b3a4475ad65c5f08b8cce05043205fb97a187e83b7cc29a56720f74"
+    },
+    "cycle-1.tap.trunk_in_single": {
+      "file": "cycle-1.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "4c6265feb4cbda181a028878a3e2f994f3fbd0148b45f18b16e4b44007318056"
+    },
+    "cycle-1.tap.z_init_generic": {
+      "file": "cycle-1.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "eb06fd1cf94a7790675064e84339303ca7eedca3e2e7f2b4fef55266d2d2f309"
+    },
+    "cycle-1.tap.z_after_template": {
+      "file": "cycle-1.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "8ef8abcea8bdacdfc37ad022bda7c608c517532d8277283feb16c52739fd951f"
+    },
+    "cycle-1.tap.msa_activations": {
+      "file": "cycle-1.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-1.tap.template_term": {
+      "file": "cycle-1.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "f801bc114ea05778c8ca09de4ace787bce6a84cc075a745ec92e0605bf0c933c"
+    },
+    "cycle-1.tap.z_after_msa": {
+      "file": "cycle-1.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "dd85e5bcd26a0637e4e5670822f5faff7ef8b51268e9577cd8d950c0e0f91e5e"
+    },
+    "cycle-1.trunk-output-single": {
+      "file": "cycle-1.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "4af7537a76fdf186ab2f7a76b8e3914e730c6f48176757e692d2792f97de5626"
+    },
+    "cycle-1.tap.trunk_out_pair": {
+      "file": "cycle-1.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "5e83af798e0483e854454a22ec6a71ccd3a9bef51508add773af16af54a14587"
+    },
+    "cycle-2.tap.trunk_in_single": {
+      "file": "cycle-2.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "86feb58f1717d878768e72e75e420ee129a43b014eb4a6c956e834b6ea156a17"
+    },
+    "cycle-2.tap.z_init_generic": {
+      "file": "cycle-2.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "2f5f7e290753a22a73cd7a38f54977046e2d874195280274ddf74021f9602cfb"
+    },
+    "cycle-2.tap.z_after_template": {
+      "file": "cycle-2.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "9e310e9a23775a2207f4ca88c698fab2c4f0f13e9fe6a737a4d44c52d45fea78"
+    },
+    "cycle-2.tap.msa_activations": {
+      "file": "cycle-2.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-2.tap.template_term": {
+      "file": "cycle-2.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "6d29cd7611c95c841d793b04e4100f11913625f6ff769f4aa275d85d32b678f2"
+    },
+    "cycle-2.tap.z_after_msa": {
+      "file": "cycle-2.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "475259ab8008794135e1f9a4371da35de24ab3e20be74be948e090e74c32fd3c"
+    },
+    "cycle-2.trunk-output-single": {
+      "file": "cycle-2.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "2a169042a111662753add5e88a446ece20090b48b22793e607eae18aa51af06f"
+    },
+    "cycle-2.tap.trunk_out_pair": {
+      "file": "cycle-2.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "cb666219776fb57689deba9e5511d2993a117132617a8cc813ff184457360ab8"
+    },
+    "cycle-3.tap.trunk_in_single": {
+      "file": "cycle-3.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "5a17c4d681a0f76d463b968504479fcedeb74e03e7fe8b232de8db3e7b1ae1ee"
+    },
+    "cycle-3.tap.z_init_generic": {
+      "file": "cycle-3.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "66dae174241a8ece9cb3434d5963be5ee474d9bda9ecfe2ef0b19c00d50f8882"
+    },
+    "cycle-3.tap.z_after_template": {
+      "file": "cycle-3.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "f4daa8add47f575ec47ff1761e2fd7906527e27429d805d6dc049c1eb6aebd72"
+    },
+    "cycle-3.tap.msa_activations": {
+      "file": "cycle-3.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-3.tap.template_term": {
+      "file": "cycle-3.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "abbefe831636a6b2975127a99e5e55eba07a3195da59eda7dfb875e51664cd6a"
+    },
+    "cycle-3.tap.z_after_msa": {
+      "file": "cycle-3.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "3bd77bb13d01b786f9018e6c5bdf7aaddd5f5c46430bf5a166a66b4fa7847012"
+    },
+    "cycle-3.trunk-output-single": {
+      "file": "cycle-3.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "c3bfddd063a7c2a571fd196f66a25525aa91d44d0db68a672420a6670f0902ef"
+    },
+    "cycle-3.tap.trunk_out_pair": {
+      "file": "cycle-3.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "d0c60dd029e5f5b003b3520240c2a261005a6f60309ac9b0ec89231237146253"
+    }
+  }
+}

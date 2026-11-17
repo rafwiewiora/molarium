@@ -1,0 +1,16 @@
+{
+  "status": "pass",
+  "recomputedPredictions": 480,
+  "plannedPredictions": 480,
+  "scope": "complete",
+  "neuralForwards": 0,
+  "observedDiffusionFrames": [
+    200
+  ],
+  "actualGpuVendors": [
+    "apple"
+  ],
+  "browserVersions": [
+    "Chrome/157.0.8103.51"
+  ]
+}

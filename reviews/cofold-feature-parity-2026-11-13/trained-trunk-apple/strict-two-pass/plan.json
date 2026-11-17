@@ -1,0 +1,71 @@
+{
+  "schema": "molarium.physical-apple-trained-trunk-control.v1",
+  "declaredAt": "2026-11-17T03:28:01.223332+00:00",
+  "case": "9t51-a1jtm",
+  "method": "OpenBind-0/OpenFold3 0.5.1",
+  "nativePositiveEvidence": {
+    "source": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/scores.json",
+    "sha256": "ae61388ceed8b03c5d5fa84ddbe8a014e845abd8e5aaaae8b39a27535856bcbc",
+    "summary": {
+      "caseId": "9t51-a1jtm",
+      "method": "native-openbind0-msa256-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 0.7986792326704657,
+      "medianLigandRmsdA": 0.8268209103283953,
+      "oracleBestOf3LigandRmsdA": 0.7986792326704657,
+      "highestIptmSeed": 0,
+      "highestIptmLigandRmsdA": 0.7986792326704657,
+      "posesWithin2A": 3,
+      "medianProteinCaRmsdA": 1.835703073088119
+    }
+  },
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "transferReceiptSha256": "703b5f7232d482e8a7af18e51d3151ab03cf6bf2711591cc6d1484fd72542670",
+  "nativeCaptureAndConversionJobsReused": [
+    15791,
+    15814
+  ],
+  "cycles": 4,
+  "boundaries": 32,
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "precision": {
+    "staged": "f32",
+    "weight": "f32",
+    "accumulate": "f32",
+    "pairWeight": "f32"
+  },
+  "physicalGpuRequired": "Apple, non-fallback; rejects software adapters",
+  "productionSourcePinsSha256": "c407146330783269671a8b2776d5583ca9b839543bfe52b944adf6776d29ecbe",
+  "sourceAdaptationSha256": "7ab61734799809c6cfec3da7989db944e23fbb454fc68a92a12f51ee169f9fb9",
+  "repoRevision": "43c3db5ce9d70e2933fae20081b1924205961804",
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newSlurmJobs": 0,
+  "plannedBrowserTrunkCycles": 4,
+  "plannedWholeModelOrPoseCalls": 0,
+  "maximumMeasurementSeconds": 1800,
+  "scopeExclusions": [
+    "denoising",
+    "confidence",
+    "quantizedweights",
+    "poseaccuracy",
+    "isolatedinferencespeed"
+  ],
+  "nvidiaExperimentStillRequired": 20382,
+  "parentAttempt": "trained-trunk-apple-strict-fp32-20261117-attempt002",
+  "parentFailureReceiptSha256": "07cb7e2bdabcc4e4883bef783df5b5b13d2d5db434c2061b422436d180866ac4",
+  "parentCompletedBrowserTrunkCycles": 0,
+  "fixtureReuseDirectory": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-20261117-attempt001/fixture",
+  "parentMeasurementReceiptSha256": "0792c49256349f8cdfbf3c310d7777c2eccf8142dc4b88b99dccd62f5a488ad5",
+  "parentAnalysisSha256": "706f627b88a5f8d09e4e55fc29c0779b398d15ee84bb6c721216c5e1a0845229",
+  "hypothesis": "The prior variance control retained default half arithmetic. Complete the 2x2 precision/variance design by measuring existing two-pass variance with strict no-f16 pair precision, without changing gates.",
+  "runtimeVariance": "two-pass",
+  "pairMatrixKernels": false,
+  "requireNoF16Shaders": true,
+  "isolatedSourceRoot": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-strict-twopass-20261117-attempt001/frozen"
+}

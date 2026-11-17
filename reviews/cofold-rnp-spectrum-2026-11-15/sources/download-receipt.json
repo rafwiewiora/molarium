@@ -1,0 +1,33 @@
+{
+  "recordId": 18366081,
+  "files": [
+    {
+      "file": "predictions.tar.gz",
+      "bytes": 48415974,
+      "sha256": "c4eaeec2d5cf7594325822127e8c014237611ba428750d7670bcb23608a82749",
+      "zenodoChecksum": "md5:58648b836ff9434bc929b7fad25cd9bb",
+      "url": "https://zenodo.org/api/records/18366081/files/predictions.tar.gz/content"
+    },
+    {
+      "file": "inputs.json",
+      "bytes": 2168861,
+      "sha256": "85ded25555c1efba0aeb7dc90df2fbf24d9550f390ed3e8ac9b32cf11a0ede4d",
+      "zenodoChecksum": "md5:553f1723fee7f9f51de5764d66a6bbfa",
+      "url": "https://zenodo.org/api/records/18366081/files/inputs.json/content"
+    },
+    {
+      "file": "annotations.csv",
+      "bytes": 3563373,
+      "sha256": "259aa0a8f5ea6008d4036886f1ad5ae255689c223eb839fa1a2e7cb54adae609",
+      "zenodoChecksum": "md5:793c711638ba20ae40518ed0e36b0a56",
+      "url": "https://zenodo.org/api/records/18366081/files/annotations.csv/content"
+    },
+    {
+      "file": "posebusters_results.tar.gz",
+      "bytes": 263644,
+      "sha256": "62bc162c330d4f7d00167a790fdafc993cb7dfb999dc98d18217768208e105a0",
+      "zenodoChecksum": "md5:6086118c63b9726a132eb86aa52008f8",
+      "url": "https://zenodo.org/api/records/18366081/files/posebusters_results.tar.gz/content"
+    }
+  ]
+}

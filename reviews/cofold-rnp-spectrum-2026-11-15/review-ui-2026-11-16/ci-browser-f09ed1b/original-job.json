@@ -1,0 +1,204 @@
+{
+  "id": 133816230980,
+  "run_id": 44016665941,
+  "workflow_name": "CI",
+  "head_branch": "feat/cofold-rnp-spectrum-20261115",
+  "run_url": "https://api.github.com/repos/rafwiewiora/molarium/actions/runs/44016665941",
+  "run_attempt": 1,
+  "node_id": "CR_kwDOT98IBc8AAAAfKBGkRA",
+  "head_sha": "f09ed1b6d47e988861f4ac74ffcba39a35cbe0d8",
+  "url": "https://api.github.com/repos/rafwiewiora/molarium/actions/jobs/133816230980",
+  "html_url": "https://github.com/rafwiewiora/molarium/actions/runs/44016665941/job/133816230980",
+  "status": "completed",
+  "conclusion": "failure",
+  "created_at": "2026-11-17T04:22:12Z",
+  "started_at": "2026-11-17T04:22:14Z",
+  "completed_at": "2026-11-17T04:28:25Z",
+  "name": "Browser integration",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-11-17T04:22:14Z",
+      "completed_at": "2026-11-17T04:22:17Z"
+    },
+    {
+      "name": "Check out repository",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-11-17T04:22:17Z",
+      "completed_at": "2026-11-17T04:22:51Z"
+    },
+    {
+      "name": "Set up Bun",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-11-17T04:22:51Z",
+      "completed_at": "2026-11-17T04:22:52Z"
+    },
+    {
+      "name": "Set up Chrome",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-11-17T04:22:52Z",
+      "completed_at": "2026-11-17T04:22:59Z"
+    },
+    {
+      "name": "Install dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-11-17T04:22:59Z",
+      "completed_at": "2026-11-17T04:22:59Z"
+    },
+    {
+      "name": "Run browser integration suite",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-11-17T04:22:59Z",
+      "completed_at": "2026-11-17T04:27:43Z"
+    },
+    {
+      "name": "Check accessible option help and unchanged molecular settings",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2026-11-17T04:27:43Z",
+      "completed_at": "2026-11-17T04:27:44Z"
+    },
+    {
+      "name": "Check folding controls and local-only boundary",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2026-11-17T04:27:44Z",
+      "completed_at": "2026-11-17T04:27:45Z"
+    },
+    {
+      "name": "Check hosted submissions, saved retrieval and Local Lab isolation",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-11-17T04:27:45Z",
+      "completed_at": "2026-11-17T04:27:54Z"
+    },
+    {
+      "name": "Check actual RDKit WASM ligand normalization and conformer generation",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2026-11-17T04:27:54Z",
+      "completed_at": "2026-11-17T04:27:56Z"
+    },
+    {
+      "name": "Check local Foldarium pose review, decisions and portable export",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2026-11-17T04:27:56Z",
+      "completed_at": "2026-11-17T04:28:09Z"
+    },
+    {
+      "name": "Check closed IndexedDB recovery and checkpoint loss without repeated inference",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 12,
+      "started_at": "2026-11-17T04:28:09Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Check recent-PDB review links, saved decisions and reference separation",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 13,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Import preserved stock review files and retain local preferences without inference",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 14,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Check method-labelled browser/native comparison review",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 15,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Check numerical-only public validation panel and evidence links",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 16,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Check final SOS1 contact failure and explicit release through public actions",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 17,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Check unprepared protein calculation notice and prepared controls",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 18,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Check minimization reuse in the release bundle",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 19,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Post Set up Bun",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 37,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Post Check out repository",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 38,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 39,
+      "started_at": "2026-11-17T04:28:24Z",
+      "completed_at": "2026-11-17T04:28:24Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/rafwiewiora/molarium/check-runs/133816230980",
+  "labels": [
+    "ubuntu-latest"
+  ],
+  "runner_id": 1000001996,
+  "runner_name": "GitHub Actions 1000001996",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

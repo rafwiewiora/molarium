@@ -1,0 +1,27 @@
+{
+  "queries": {
+    "compound_000": {
+      "chains": [
+        {
+          "molecule_type": "protein",
+          "chain_ids": [
+            "A"
+          ],
+          "sequence": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS",
+          "main_msa_file_paths": [
+            "/workspacenfs/rafal_wiewiora/molarium-ythdf2-trained-20261115-attempt001/inputs/32qy-a1keo/msa/colabfold_main.a3m"
+          ]
+        },
+        {
+          "molecule_type": "ligand",
+          "chain_ids": [
+            "B"
+          ],
+          "smiles": "Cc1cc(=O)c2c(-c3ccc(=O)[nH]c3)[nH]nc2[nH]1"
+        }
+      ],
+      "use_msas": true,
+      "use_paired_msas": false
+    }
+  }
+}

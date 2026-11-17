@@ -1,0 +1,4735 @@
+{
+  "schema": "molarium.stock-localfold-benchmark.v1",
+  "status": "planned-not-run",
+  "selection": "Frozen native-qualified Runs N Poses similarity cohort; stable quotas/caps and explicit low-bin shortfall. Selected before new stock inference.",
+  "selectionSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+  "sourceRevision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+  "steps": 200,
+  "recycles": 3,
+  "recycleSemantics": "Three additional stock UI recycles = four trunk passes; no native recycle equivalence asserted.",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "samplesPerPair": 10,
+  "perSeedDiffusionSamples": 1,
+  "pairs": [
+    {
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "name": "8cjg \u00b7 UV3",
+      "similarity": 0.0,
+      "similarityBin": 0,
+      "cluster": "c248",
+      "sequenceSha256": "9ec353694ae54d883684ed3a3a0b1eddd9b9daf5169b1bb05729e5d6bafcf139",
+      "nativeBestA": 0.5838215814204312,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8cjg__1__1-a__1-d/reference.json",
+      "referenceSha256": "8b726c637514ce8fb04c435b86dcb503f83c7421f8d20a391376fdae0ac37037",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 195
+    },
+    {
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8ou2 \u00b7 W2W",
+      "similarity": 43.650996835542074,
+      "similarityBin": 1,
+      "cluster": "c7",
+      "sequenceSha256": "250a0b13b064d7bd76bf9479e584a78b5840c1ab2bb4bc948ac9b1f247eb37de",
+      "nativeBestA": 0.7240960505827496,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8ou2__1__1-a__1-c/reference.json",
+      "referenceSha256": "10d4ff203a0707cd22ac6b4ec6783d90b5bb69aa29e433da611f2622e3394d68",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8j30 \u00b7 UPG",
+      "similarity": 36.060763604540384,
+      "similarityBin": 1,
+      "cluster": "c815",
+      "sequenceSha256": "f2a2a1c68da9eee4ebd4d073531b9b65eda6cbdd6f66ffe1e07254dcab9e362c",
+      "nativeBestA": 1.4818156001211278,
+      "nativeHasStereoClashPassingHit": false,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8j30__1__1-a__1-c/reference.json",
+      "referenceSha256": "56dafe12f8ff966107173d5db33ac4ada2dc741d0896abccb16b5ec15fef0e23",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8cij \u00b7 USF",
+      "similarity": 44.498718415317356,
+      "similarityBin": 1,
+      "cluster": "c1",
+      "sequenceSha256": "683161ac02bcd8065b9230d0f057675e5594a222e2949be7a0a3c2e2ef191872",
+      "nativeBestA": 1.5446586044617692,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8cij__1__1-a__1-b/reference.json",
+      "referenceSha256": "198c06956d8e13463fd2b42ef250c5c006100250f59421915552ecf91dd15906",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8chc \u00b7 Y45",
+      "similarity": 47.24119199233605,
+      "similarityBin": 1,
+      "cluster": "c728",
+      "sequenceSha256": "efb0d1b639c959cfc6cccb1ead2c4a98cb642b36237b72e27fb3c7bbca9d68f1",
+      "nativeBestA": 0.9010775785195233,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8chc__1__1-a__1-b/reference.json",
+      "referenceSha256": "c61d1f266e07cef128bcdc8e5939a5adaced5dff3a3aff5f66904d1b2bca3b9e",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8aqf \u00b7 NUX",
+      "similarity": 34.50054524205617,
+      "similarityBin": 1,
+      "cluster": "c783",
+      "sequenceSha256": "d876c3e71dd7e2321d63c691796858d92cea3926736ad24dd2e662ac22dbba7c",
+      "nativeBestA": 1.3915339861168017,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8aqf__1__1-a__1-b/reference.json",
+      "referenceSha256": "2c0015649e4fc83255350e045d4928eadc801afdb616442cfc60332872bf8dd9",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "name": "8am2 \u00b7 N0C",
+      "similarity": 34.723492302862354,
+      "similarityBin": 1,
+      "cluster": "c761",
+      "sequenceSha256": "7aff9d4ba950ca8b824850349a330b011d813e33d8a82c01fdcae8f4b3e64f31",
+      "nativeBestA": 1.341629740604994,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8am2__1__1-a__1-d/reference.json",
+      "referenceSha256": "656e021778b2bd47b756ba4a89b3343379cb30afe13bfaf0f4d1e7e61ed62aec",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "name": "7g00 \u00b7 WII",
+      "similarity": 36.57765975415737,
+      "similarityBin": 1,
+      "cluster": "c6",
+      "sequenceSha256": "2fc76506bf2706c4caca0307e07c91828b38c948fcbdcf52d2234bf786e74902",
+      "nativeBestA": 0.7256734438122728,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/7g00__1__1-a__1-q/reference.json",
+      "referenceSha256": "200a22bf4f6cd828ee5f94d6fbf16377e12e36c2cba75800115303c767eb7218",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8gev \u00b7 ZDK",
+      "similarity": 40.52692100313553,
+      "similarityBin": 1,
+      "cluster": "c6",
+      "sequenceSha256": "8665deba5580cd38afb3d55bae4c456b4bb5ea1077377ec959c22e4f4d7633e0",
+      "nativeBestA": 0.6343420393676846,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8gev__1__1-a__1-b/reference.json",
+      "referenceSha256": "4c9c4f78da01ceca79d82b5e7f8aac03348e27f36162e1f8182af15ba78c6921",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "7u8x \u00b7 UJV",
+      "similarity": 49.89193816712874,
+      "similarityBin": 1,
+      "cluster": "c107",
+      "sequenceSha256": "781198eda632c238d1b3b621ea899b3a29e3ee92c9cc68496b5c62d16778a0cf",
+      "nativeBestA": 1.4272898265693306,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/7u8x__1__1-a__1-b/reference.json",
+      "referenceSha256": "cd9c33850b6d78b3f2eba18fbf43e17ba8daa251de40b1135a1c510343d922c3",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8i2n \u00b7 O4U",
+      "similarity": 43.64131101187512,
+      "similarityBin": 1,
+      "cluster": "c383",
+      "sequenceSha256": "49a510ac2fddf44c30bf26d90f81094f815da2573b38f902e79ab70a6561fad9",
+      "nativeBestA": 1.0796337616646976,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8i2n__1__1-a__1-c/reference.json",
+      "referenceSha256": "f29a15b0b6cce8e2b2241229b9119bbf5748966300b579343f3e40551395b2d9",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8pqf \u00b7 9KI",
+      "similarity": 39.23390321714783,
+      "similarityBin": 1,
+      "cluster": "c1",
+      "sequenceSha256": "e9fe05412533442f59280e4eb92ecfdb4b291d8d9a26ae5cbf74a2a00389ea8f",
+      "nativeBestA": 1.9015081462727437,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8pqf__1__1-a__1-c/reference.json",
+      "referenceSha256": "84e55d9baa56ee1e5a5658a4e2807f225101337480187a894a2783b153eab949",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8geu \u00b7 ZCF",
+      "similarity": 42.864302639658305,
+      "similarityBin": 1,
+      "cluster": "c6",
+      "sequenceSha256": "8665deba5580cd38afb3d55bae4c456b4bb5ea1077377ec959c22e4f4d7633e0",
+      "nativeBestA": 0.9996246553053139,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8geu__1__1-a__1-b/reference.json",
+      "referenceSha256": "26f41fd76804b047a9eae4ef402fad734759db72dd8a4340efd17ae3fafc1409",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "name": "8swe \u00b7 WXQ",
+      "similarity": 53.57519878804947,
+      "similarityBin": 2,
+      "cluster": "c1",
+      "sequenceSha256": "9244ec3a83537c75d6648dfa4c318aca26cd4f17896256463c8bea96362685a7",
+      "nativeBestA": 0.8681016106900175,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8swe__1__1-a__1-e/reference.json",
+      "referenceSha256": "280f77bc4c6a5ecd5e1d56a625b1566bb9a813578bfbd1b0ae9763ca8269e1d3",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "name": "8pji \u00b7 ZJF",
+      "similarity": 52.86894497109831,
+      "similarityBin": 2,
+      "cluster": "c82",
+      "sequenceSha256": "31c871f0f62862664d6fba8c0e50ac3d03a9f881d9ecf3810d175bd7a50366ab",
+      "nativeBestA": 0.339684348298895,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8pji__1__1-a__1-e/reference.json",
+      "referenceSha256": "1aabc7fb71ffac0e9ddb4fff53831a7842a2413a0194ec72b20bd9af8e256680",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8pbo \u00b7 Y5I",
+      "similarity": 66.57821688138633,
+      "similarityBin": 2,
+      "cluster": "c721",
+      "sequenceSha256": "6bdd55e0f05cb3ba03733bfce6e8b0fab58c51f172b546c3e0df6faa176feb6b",
+      "nativeBestA": 1.4770400678462552,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8pbo__1__1-a__1-c/reference.json",
+      "referenceSha256": "a200f978219f1a9738168127af3e57d7349c8ac90ffc934fa86606ef1b013f43",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "7uad \u00b7 M5R",
+      "similarity": 61.56914415689032,
+      "similarityBin": 2,
+      "cluster": "c950",
+      "sequenceSha256": "d2345faf774c0870e5e47db0011a6cec8e47af93409780ab06ddf4c05949a283",
+      "nativeBestA": 0.37644250420604086,
+      "nativeHasStereoClashPassingHit": false,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/7uad__1__1-a__1-b/reference.json",
+      "referenceSha256": "1dbee47d8f02d42427ca4248c5682a22161d32eb8090e9a383d5c666ea5f680a",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8u7w \u00b7 W8I",
+      "similarity": 68.19416840744066,
+      "similarityBin": 2,
+      "cluster": "c60",
+      "sequenceSha256": "c83243a980dd4c415a6de2561db8077db53c38da90f365ef4e1879000cee66c5",
+      "nativeBestA": 0.672842377919917,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8u7w__1__1-a__1-c/reference.json",
+      "referenceSha256": "8c42a68c6ab0f78ceddf1c6d33f382fdc8f030ab1e27b25739be9c15fb7385de",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "name": "8gcz \u00b7 YZI",
+      "similarity": 62.54329672560063,
+      "similarityBin": 2,
+      "cluster": "c22",
+      "sequenceSha256": "3d7c62e7d13883a6a644342c959fd8d28a9496348b961e33b158af7c34f89d08",
+      "nativeBestA": 1.3289405597433748,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8gcz__1__1-a__1-n/reference.json",
+      "referenceSha256": "cd9afd3172e071ac478aa47c5449bc13202be539cbb3ca1873a54ccdca74ccc6",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "name": "8px8 \u00b7 I0U",
+      "similarity": 62.22206957145832,
+      "similarityBin": 2,
+      "cluster": "c7",
+      "sequenceSha256": "88522f683ea7038d15ac640d9b899440f0be1fe9b5019397d47125ca11543b55",
+      "nativeBestA": 1.5357662895510362,
+      "nativeHasStereoClashPassingHit": false,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8px8__1__1-a__1-d/reference.json",
+      "referenceSha256": "c4e6528f079947a35323bdb1188775a6f4a76169620012c6120ba57dd033717c",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8q2y \u00b7 IVI",
+      "similarity": 61.226216567451594,
+      "similarityBin": 2,
+      "cluster": "c81",
+      "sequenceSha256": "f79d4c044957b283898bade6e9ac5da6aeef1f08a0c916560644dd3d963b49f4",
+      "nativeBestA": 0.5179735184751808,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8q2y__1__1-a__1-c/reference.json",
+      "referenceSha256": "da2685f8286e487701168a2c96e492fed8eb7f24a3f559e53f1bfda6a681cbd5",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "name": "7szr \u00b7 DYQ",
+      "similarity": 64.90484472794725,
+      "similarityBin": 2,
+      "cluster": "c836",
+      "sequenceSha256": "56ca5df2a9f24c39381d71e97b85209e449435bc872d559610133e0cb0a6f2bd",
+      "nativeBestA": 0.441138924733686,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/7szr__1__1-a__1-g/reference.json",
+      "referenceSha256": "168ccccdd3812fedfda92c9b16a1d338b2ba7d14c71c2e3fbbcc50e7a9670d71",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "name": "9f40 \u00b7 ERG",
+      "similarity": 74.07112737148283,
+      "similarityBin": 2,
+      "cluster": "c283",
+      "sequenceSha256": "2cd8e7d28ce63374faca06b142c2c205e0420b8a2a125a0ad847922f18174106",
+      "nativeBestA": 0.45239489244510117,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/9f40__1__1-a__1-q/reference.json",
+      "referenceSha256": "dd50b54672119e59b2cca245e9484ecebc7ea9f583b40999ae4b43c5a2bd5288",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8crl \u00b7 VK9",
+      "similarity": 71.37311810155991,
+      "similarityBin": 2,
+      "cluster": "c207",
+      "sequenceSha256": "e25d2ce3c73e0e1ee946f8efdf74f2f11b9d179e2ac6ad42ba45c06d65ba40a5",
+      "nativeBestA": 1.3000431561564658,
+      "nativeHasStereoClashPassingHit": false,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8crl__1__1-a__1-c/reference.json",
+      "referenceSha256": "64eac9cc2b96e694a527108963dcfa8711b434906bf22f506e295303899af63c",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "name": "8jmo \u00b7 E7J",
+      "similarity": 71.96749868729896,
+      "similarityBin": 2,
+      "cluster": "c434",
+      "sequenceSha256": "21b6bf2ed359f1b116ea625319a007518afb87e8e950f7bf084847aefe63f4e0",
+      "nativeBestA": 0.9395676615759638,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8jmo__1__1-a__1-d/reference.json",
+      "referenceSha256": "666749c0b076820cea77bb8499dac9889c125498fe30d1bc2a13588e6d6f09fd",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "name": "8q34 \u00b7 IX4",
+      "similarity": 55.937476914537186,
+      "similarityBin": 2,
+      "cluster": "c7",
+      "sequenceSha256": "f0b38d6553e85bd34ddb0e47313994a188b268feffdc96149286a3b00bfaae46",
+      "nativeBestA": 1.703956470062121,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8q34__1__1-a__1-f/reference.json",
+      "referenceSha256": "4e379d40a4cdd2f13636d8145682eaa1b217765433c35e1cf1e08ef1c3ec1b49",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "name": "8gdk \u00b7 Z7N",
+      "similarity": 58.026954930205086,
+      "similarityBin": 2,
+      "cluster": "c22",
+      "sequenceSha256": "3d7c62e7d13883a6a644342c959fd8d28a9496348b961e33b158af7c34f89d08",
+      "nativeBestA": 1.129452160216467,
+      "nativeHasStereoClashPassingHit": false,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8gdk__1__1-a__1-o/reference.json",
+      "referenceSha256": "b01f055236f494af7d91b9fe1e1645b6ad98befe404a4f31bd518a923ced2d21",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8bo3 \u00b7 QV3",
+      "similarity": 74.85914177493858,
+      "similarityBin": 2,
+      "cluster": "c53",
+      "sequenceSha256": "3cca457501f4cc363b8b7a9be72f7c1148f5f9c8ab2e302a80085b134a8dfedb",
+      "nativeBestA": 0.6637101485786455,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8bo3__1__1-a__1-b/reference.json",
+      "referenceSha256": "4c6045ac148302d231faba9cf6ae602302beb593ab72cb3f53957f21df930dfc",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8u7x \u00b7 WAB",
+      "similarity": 66.84693807440355,
+      "similarityBin": 2,
+      "cluster": "c60",
+      "sequenceSha256": "c83243a980dd4c415a6de2561db8077db53c38da90f365ef4e1879000cee66c5",
+      "nativeBestA": 0.5288390247028417,
+      "nativeHasStereoClashPassingHit": false,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8u7x__1__1-a__1-c/reference.json",
+      "referenceSha256": "f657159265321e4ba69bbfe39fbc503e7dc1cf8be0aa260e134378f5c904ebef",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8i0d \u00b7 UPG",
+      "similarity": 71.17646917304904,
+      "similarityBin": 2,
+      "cluster": "c24",
+      "sequenceSha256": "ad9e3def2d7904bdda6be8a425ea325ce81d58d46954913fe972163addc2e1e5",
+      "nativeBestA": 1.0135718781656566,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8i0d__1__1-a__1-b/reference.json",
+      "referenceSha256": "1eebf2f6d042b840b26975f67f900f2bcf8a8aec13e6975e88c82a24e22c2b2e",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "name": "8efj \u00b7 WHQ",
+      "similarity": 70.43219978625473,
+      "similarityBin": 2,
+      "cluster": "c1004",
+      "sequenceSha256": "d6b56819a9eea7ec18a677e30a81a636e0da276e1af93d57149b50c7d7a4a389",
+      "nativeBestA": 0.9993584334358435,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8efj__1__1-a__1-d/reference.json",
+      "referenceSha256": "46abef348217947256b11239dd06d29151fc06ebc8b84b3552553033799e4cd4",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8iqt \u00b7 SV0",
+      "similarity": 97.13521273818846,
+      "similarityBin": 3,
+      "cluster": "c67",
+      "sequenceSha256": "89a8eaaf2e98f906301b2e0c9ac806458b520a4cc82c61bb40ea991f574d09e1",
+      "nativeBestA": 0.14742258869317892,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8iqt__1__1-a__1-b/reference.json",
+      "referenceSha256": "2663d530707127757440d083a2b3f5ae8857cea2d0314aa824d4b691e46efdb7",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "name": "8tti \u00b7 TRP",
+      "similarity": 96.92620672616698,
+      "similarityBin": 3,
+      "cluster": "c258",
+      "sequenceSha256": "5344c8ade9d214b95de9b2f7b1181df7bf6409364ae4c193adefb821c8064d70",
+      "nativeBestA": 0.28986255561195495,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8tti__1__1-a__1-e/reference.json",
+      "referenceSha256": "81dc0aab828f70d72485e5128412c652cd0a95339d8ef766f4e0f6c9c51f6943",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8t1y \u00b7 DAN",
+      "similarity": 91.98558171267041,
+      "similarityBin": 3,
+      "cluster": "c59",
+      "sequenceSha256": "aa92652c7ee2a32c3a1d45bfdc704b4ee81542a06a090954dd1da70b8ff0966b",
+      "nativeBestA": 0.4314492824987516,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8t1y__1__1-a__1-b/reference.json",
+      "referenceSha256": "57a183f5667774fcc249152e1a63d4c96c722ff848a726c4df6c8cb32a245787",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8jby \u00b7 U7L",
+      "similarity": 77.55203920028555,
+      "similarityBin": 3,
+      "cluster": "c773",
+      "sequenceSha256": "4ded001ec4f4d0b9f35a42d0aa6ea6a0c7bd102c765760c935779ceb79315c1b",
+      "nativeBestA": 0.2997086687867665,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8jby__1__1-a__1-c/reference.json",
+      "referenceSha256": "25224d562d7b2c4f759759884882ee86158158c1f5bc98332809b4452235cbac",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8q2u \u00b7 IUH",
+      "similarity": 75.34018123371548,
+      "similarityBin": 3,
+      "cluster": "c81",
+      "sequenceSha256": "f79d4c044957b283898bade6e9ac5da6aeef1f08a0c916560644dd3d963b49f4",
+      "nativeBestA": 0.6035040458710661,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8q2u__1__1-a__1-c/reference.json",
+      "referenceSha256": "d5958dcb5e51673b6715a092be221c965f769fb5bef9f9b8c5bd3907e9754c0a",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8a3a \u00b7 KYR",
+      "similarity": 85.26525529295843,
+      "similarityBin": 3,
+      "cluster": "c442",
+      "sequenceSha256": "1b60bc6a1be9b6f3deb46def951dbd3e3a6f6463beb114873517830a6ed5da14",
+      "nativeBestA": 0.21215623629550998,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8a3a__1__1-a__1-b/reference.json",
+      "referenceSha256": "3651f42b1933e56467316bfbb17619c1657872d1e3af424590b5d4ef3d8dc19c",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8sze \u00b7 TOP",
+      "similarity": 93.01359708496295,
+      "similarityBin": 3,
+      "cluster": "c253",
+      "sequenceSha256": "4746b7574d8d6614f2ae868a55bae2d7f2949b1602b22de4c874c5af3dcce33e",
+      "nativeBestA": 0.39583150080336377,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8sze__1__1-a__1-c/reference.json",
+      "referenceSha256": "42241a6215e693da284e9c36ee8be31b36c93bd5f95de3bf9d415ef9d24437f2",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8hlj \u00b7 09L",
+      "similarity": 89.25886654478741,
+      "similarityBin": 3,
+      "cluster": "c154",
+      "sequenceSha256": "ced1df7192008d0f69a39537189dfe489cc4f292846bb4ec3c38b322a3ea1c80",
+      "nativeBestA": 0.4914013018071303,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8hlj__1__1-a__1-c/reference.json",
+      "referenceSha256": "f71b16405c3ca265f0403474bd85c8caa1d8d9d677834287c7f47901e8534fbc",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8sx2 \u00b7 UHB",
+      "similarity": 84.41950145224763,
+      "similarityBin": 3,
+      "cluster": "c170",
+      "sequenceSha256": "9269ac73813ca9fad67e33ca28e4b6168e5f82809a37c2c9b1505047ea8967a4",
+      "nativeBestA": 0.9050680030247664,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8sx2__1__1-a__1-c/reference.json",
+      "referenceSha256": "8bc4be5aa7d08d36ce4ff59122e562f0c4e93da1ff92b2192547dfec137681c1",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "name": "9f41 \u00b7 CLR",
+      "similarity": 76.9407939420012,
+      "similarityBin": 3,
+      "cluster": "c283",
+      "sequenceSha256": "2cd8e7d28ce63374faca06b142c2c205e0420b8a2a125a0ad847922f18174106",
+      "nativeBestA": 0.6981834514311942,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/9f41__1__1-a__1-q/reference.json",
+      "referenceSha256": "37a6dc3003a734b6bb9944866e1320f534dd16ffa5cde0dddb03a20fc0f92b54",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8usm \u00b7 XC8",
+      "similarity": 79.94607563075242,
+      "similarityBin": 3,
+      "cluster": "c730",
+      "sequenceSha256": "3f0f43fbbf1e0e69d0e8651e67de6fd9bdfeef9c337ca48f39903a893fdffb99",
+      "nativeBestA": 0.4733859493221085,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8usm__1__1-a__1-c/reference.json",
+      "referenceSha256": "7eb622bbc3ef919b688dc32d5cd52071fb8840a911f8b20f6caf97b542f15dfd",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8t27 \u00b7 SIA",
+      "similarity": 90.23072622274212,
+      "similarityBin": 3,
+      "cluster": "c59",
+      "sequenceSha256": "2964063876caf3a64305d4292c76b61e70b888174b9a503aca86e75120461af5",
+      "nativeBestA": 0.5441858636901201,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8t27__1__1-a__1-b/reference.json",
+      "referenceSha256": "8b6f849a33fc80cde82ba88536cc317ff0ee16ce2d2a7d6e3be0eb90b02260d7",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8b62 \u00b7 GDU",
+      "similarity": 84.41998010440632,
+      "similarityBin": 3,
+      "cluster": "c187",
+      "sequenceSha256": "0e0155ec6e219ca9a2b92aff664ce4b255cdb94ff4f807e32690b2d03428daab",
+      "nativeBestA": 1.567297498727614,
+      "nativeHasStereoClashPassingHit": false,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8b62__1__1-a__1-c/reference.json",
+      "referenceSha256": "416fb6f709495ce6eecb5be277881a60ee5e4433c70b333f2e00463067b670fa",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8a2p \u00b7 9Y2",
+      "similarity": 89.54601281676176,
+      "similarityBin": 3,
+      "cluster": "c439",
+      "sequenceSha256": "1ea623892a3a46b00d5b81db1caa8af4be1637055f5412869cd84de948fdabb9",
+      "nativeBestA": 1.1923458490016634,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8a2p__1__1-a__1-b/reference.json",
+      "referenceSha256": "4d5d2bc56f4b95b627271b5c0e403b666537d53eb1436989c9f948d81a73ee06",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "name": "8pp8 \u00b7 3IA",
+      "similarity": 77.67842462673491,
+      "similarityBin": 3,
+      "cluster": "c63",
+      "sequenceSha256": "d0810d040246675f41418f2c4246f2e44498e8b18f2ae7062baaff9c70d4428c",
+      "nativeBestA": 0.4198080230033869,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8pp8__1__1-a__1-d/reference.json",
+      "referenceSha256": "365805da5863f7d31f1a719080f6f305a6cafae29d9ba0d8e4c484a945252ce1",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "name": "8t9v \u00b7 ZJT",
+      "similarity": 82.42267773755012,
+      "similarityBin": 3,
+      "cluster": "c75",
+      "sequenceSha256": "af90cf99b499ad6f209d9c79fe09194824a821641b28fea10d07959b07846d73",
+      "nativeBestA": 0.47449019294680844,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8t9v__1__1-a__1-b/reference.json",
+      "referenceSha256": "bf74a1d7086f1fed23ea049e9613ef73a444cf9ad1dd8e9098f98de2d48d9d63",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    },
+    {
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "name": "8gww \u00b7 KID",
+      "similarity": 89.15457845542322,
+      "similarityBin": 3,
+      "cluster": "c60",
+      "sequenceSha256": "aa90bacf4c56ab5c8ac08118c56af12ed844330686fc98c6a1e0b89b5f56ef2f",
+      "nativeBestA": 0.7588330353344801,
+      "nativeHasStereoClashPassingHit": true,
+      "nativeScoreFile": "reviews/cofold-rnp-spectrum-2026-11-15/native-qualification.json",
+      "nativeScoreSha256": "7a7ccfc945f8a7d863026db1daf43a23364d17203c73184d90e9522068876eba",
+      "referenceFile": "reviews/cofold-rnp-spectrum-2026-11-15/references/8gww__1__1-a__1-c/reference.json",
+      "referenceSha256": "f6e27bc1e366bdba6fb7de64a5b63bc4c9af517d7528e1ea0ec30ade69a80152",
+      "panelFile": "reviews/cofold-rnp-spectrum-2026-11-15/selection.json",
+      "panelSha256": "c7a9c5b22d0174d58b47b28718440348377b0e70ca9ead861c65296b6e45d6bb",
+      "msaRows": 256
+    }
+  ],
+  "jobs": [
+    {
+      "index": 0,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed0.json",
+      "inputSha256": "4d438563d7916197d85ea0b6b052afa3f07ecf6a5d3a982a0ca13d58b6bdba97"
+    },
+    {
+      "index": 1,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "cbec8aebf184f60bf0c52a498202872f6b17927b3bb0be693934de8b9eab227e"
+    },
+    {
+      "index": 2,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "582f2d1c178d3b4789eeae205f6523629d285331cd86b3638835f05243ea0b6b"
+    },
+    {
+      "index": 3,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "cf2360c713e3da459e6b83b7657fe804e9fa7e2e593a94febf531b02947a37e4"
+    },
+    {
+      "index": 4,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "ca5259cff8ee599de40a057e061a37ef865e4efbe48381a4f32fb54d982f2df3"
+    },
+    {
+      "index": 5,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "0312392f3e07b1c0104d8b562f111430bcf154e8fd0ae29102947d0549d0d118"
+    },
+    {
+      "index": 6,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed0.json",
+      "inputSha256": "095645add7d1a826a904abb46bf9818d80ac7286ed62c4e2d66aad4b1ec5ea69"
+    },
+    {
+      "index": 7,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed0.json",
+      "inputSha256": "7a2936386434848067ac400e07778f91c8733bf219bba2cdde7e0f3d2331dfe0"
+    },
+    {
+      "index": 8,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "d75417d22abf843004660a180f5b31ad4f1c675eaec02df1c9010ab2399aebf5"
+    },
+    {
+      "index": 9,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "c85f988f1dce6460c84aacaaad4f5abe2497d81cd1d204011964b8543c7aa61f"
+    },
+    {
+      "index": 10,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "b974a73b9bdc86c166c0dbb03b7313707f4ad8d8024ef58a59ccc9cc905e1e08"
+    },
+    {
+      "index": 11,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "c95fd8d0c27618e1904d3ca9558169badcfad770cfb7ec78577933b53a82f9ae"
+    },
+    {
+      "index": 12,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "a33083d874295552790175c6f4ac1b41e75b0d6b7d039b1e1c7e04283677458d"
+    },
+    {
+      "index": 13,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed0.json",
+      "inputSha256": "5ffd8371bcbd127b194a13130a6f3518dc22341a7dc0ccb549fa56417ab616bc"
+    },
+    {
+      "index": 14,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed0.json",
+      "inputSha256": "aae32a74ca41bc705929f105c06492f982fa6400925433f2e8565f7ba69f811b"
+    },
+    {
+      "index": 15,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "ee57a3476c38b954f0137eeeef661d688826825a546643c5179f18fb0f74c1bc"
+    },
+    {
+      "index": 16,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "e10d7132c0b3721044ab148d4c4acd3a886b53fcc0517e76e0edc83bc1857fa4"
+    },
+    {
+      "index": 17,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "85291723641132dd122954da147fc37e9a0acdd59aa65048fe61f989d44a3e4f"
+    },
+    {
+      "index": 18,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed0.json",
+      "inputSha256": "9746ad937fb48d253a87199c6becf2824c4fa070b6974e48e2a47aae3375a7b8"
+    },
+    {
+      "index": 19,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed0.json",
+      "inputSha256": "186cfb91ac934de10e91381fc374710b67256adc52f7e7026a1828140a529aa8"
+    },
+    {
+      "index": 20,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "a636d4d91b1455d5ac8f7ec8e941e3ca57ecb376596804a2e17273ecd8a1f523"
+    },
+    {
+      "index": 21,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed0.json",
+      "inputSha256": "e85c767475bc422d0342394b88272d79b779828853a1cc40d9da05ac4542ffe6"
+    },
+    {
+      "index": 22,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed0.json",
+      "inputSha256": "6e9e0e27cf66308c4104ca986d64a5611cf61a7d05d34a1580b0b7db9ec38ca2"
+    },
+    {
+      "index": 23,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "4fcdabd3bf1ca96d3fc7212e0aa2098282dd72c7f5b721c4d489a879466e8edc"
+    },
+    {
+      "index": 24,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed0.json",
+      "inputSha256": "eebc2413e587eac0014216a400ee98b79efc50937041ca6536d13685dd92fac4"
+    },
+    {
+      "index": 25,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed0.json",
+      "inputSha256": "cd9a20d2cf0c1f238bf855ef71d16c04ae7fe277a2d8f757e4416c2e630c4999"
+    },
+    {
+      "index": 26,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed0.json",
+      "inputSha256": "e54c6a8639f33f6b61c0f5d75805462372cee22871ba3df7a9223eef619d5d66"
+    },
+    {
+      "index": 27,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "3cb3a680209d3220724a6b00c4b9994bcc93564a6bb5257f17cd4af416d20b22"
+    },
+    {
+      "index": 28,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "a59cb650e706916939dc79ba7d5cbcc0e9cd630c47d8acdddf9d982c560ceed3"
+    },
+    {
+      "index": 29,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "8364b4cee7cb078c145e1e01fd0c3bdc85fbf2fa1803c2d8603c40832e5197b5"
+    },
+    {
+      "index": 30,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed0.json",
+      "inputSha256": "67da96405920022604926480471758c7918318178ae7faec7d3e5f12d507ffcd"
+    },
+    {
+      "index": 31,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "b043dcbc17d822e61f26cd8f6fd8d78f85337a5333e465d1df6d496c43a8faf1"
+    },
+    {
+      "index": 32,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed0.json",
+      "inputSha256": "d8c2c45d2ab21f51e7fa9da1b6fe68980473530ce9b38fddc49f186a1c85b54d"
+    },
+    {
+      "index": 33,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "0ddecf779c570d30d02d510e3145b209b1c56c9b6471f9667e1997992fb188d2"
+    },
+    {
+      "index": 34,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "1ee995ef24557ae7fb9487ab4cc5eae26aec01915101f5415d78651c56f453dc"
+    },
+    {
+      "index": 35,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "b583c39487c24bd4e4bfbddffb014a31131090b1d74f71084e8388d48d3d74bd"
+    },
+    {
+      "index": 36,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "fbf945c43e8f3f1f6f0a9bc6defe8a2e7bf297ad96b2f75e3e7608f6f8110e51"
+    },
+    {
+      "index": 37,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "0f4a522d84db10f20cbfc7ca3176e0789500a6b01a8a220db0fcc723ba989d4f"
+    },
+    {
+      "index": 38,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "44b0e9bb3f223e18f2ee0afe98ab55a58bf3226081f782654e2b903362f52e18"
+    },
+    {
+      "index": 39,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "f37150b920d23e88c0a03f3bdc4f0dcfe11d08610be7b80fd466ada7eab8b26a"
+    },
+    {
+      "index": 40,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed0.json",
+      "inputSha256": "fedb190b33ad9f466b3c88555d3b7ceedf1f4bc277ec6e05df8521590772568d"
+    },
+    {
+      "index": 41,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "dbf3f4d4302eb12d861fb1bc50ea83fb9151f89b8b13d723a2ed841665e33328"
+    },
+    {
+      "index": 42,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "eb7d85e628757417bfbbe9c5a645481f6359a9ac111ee2b10474391fb75d2183"
+    },
+    {
+      "index": 43,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "ea7191ba62d71608dc7b20fa3b574b73d35d76ab164fecfc87fbaa5c20041e8e"
+    },
+    {
+      "index": 44,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "a12497b4dce29efac9543b79a1b75e23c6689fb60a164dc4cc5b2e71480dc289"
+    },
+    {
+      "index": 45,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed0.json",
+      "inputSha256": "187c9b042a9df78e369272ea53cf3bee4fc760c9cd259c040e647843ff8f8385"
+    },
+    {
+      "index": 46,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed0.json",
+      "inputSha256": "20cf2bd2ae36720f745155376aa1b14076cbf37610477b65007484ccfe11d034"
+    },
+    {
+      "index": 47,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed0.json",
+      "inputSha256": "2fc588cee479364c9238a8207c10c96fd29e1bfc9c17a55bc80f328dd3fc4b37"
+    },
+    {
+      "index": 48,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed1.json",
+      "inputSha256": "231417ea5344eac51d5af9ba0d5c4bc5a3a3437e7e88efec2b3f5a53db8864fd"
+    },
+    {
+      "index": 49,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "2be61e0dcb71e7284a8a9faed9840d1e805ef37d15a3453c9d58236e5a44c46d"
+    },
+    {
+      "index": 50,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "e651817c832fe95f0ce836e97dbf5d717226a3a66377cb62c89a609d2970ab69"
+    },
+    {
+      "index": 51,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "e724dc89d09e21c4f674a30346ffaa4f2bf734dfcd2deffa2da118996b4a1c0b"
+    },
+    {
+      "index": 52,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "9f77b140f2ee7e55fbe9176b5648ed920754a5b2ccb75448b4b382455d364d5e"
+    },
+    {
+      "index": 53,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "317d38ba0b299efdd300382465d59f65366d5c73fa81bcaa3d36d53ccecd654e"
+    },
+    {
+      "index": 54,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed1.json",
+      "inputSha256": "3e17343f207360563c63e24d6abba4bbcd16b915ea6fa38bf7c4c293bd5d656f"
+    },
+    {
+      "index": 55,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed1.json",
+      "inputSha256": "ccf3593f0a53b03bed7bf8fffa5117764464fa79646656e264e29407b92eb6aa"
+    },
+    {
+      "index": 56,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "6a631501f5d97a034093d2914dba4306eae6d0e9a2ce4bf98415824d8e0023b5"
+    },
+    {
+      "index": 57,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "5e4c1079456c536db7e0a8396384dc702d46c1ce2c5901f4cb30d4aaca88302e"
+    },
+    {
+      "index": 58,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "6541dab650128e1bdedaf7dc395c0191eb074f54f4c7818d141993250ff23d79"
+    },
+    {
+      "index": 59,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "f23293bd53cc1b17068b14ad51b7852f1bd4d1dfdee551f338c44bb5104b8335"
+    },
+    {
+      "index": 60,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "3eed904877c7de611279b8974932c4922233ce8597872b99bbf23d374ce8de9c"
+    },
+    {
+      "index": 61,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed1.json",
+      "inputSha256": "b8563a09e0509220e05978583360a6b28a803e0eb96977b9af849467facf8ad1"
+    },
+    {
+      "index": 62,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed1.json",
+      "inputSha256": "0db84b5fc7f22cbea958d98fed1b5aa33eb69d41c64daf53b63957a5d490bbea"
+    },
+    {
+      "index": 63,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "42921d4f417c39e96af69ac599e6b28d2bad63f9465d3026c21212344a5a4cec"
+    },
+    {
+      "index": 64,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "84b54f114ce44e71e56a419e4f5b7a351614c4c3830f6ba57a6a0ef5f9f05afb"
+    },
+    {
+      "index": 65,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "e0f9198d7929479440249a84a2b2a1c5088fcd14ccc43d27d83f81d85e843bc6"
+    },
+    {
+      "index": 66,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed1.json",
+      "inputSha256": "eab68449e2a055767171cfd848f63532ef4e20f437774b0432fb8c49844a964e"
+    },
+    {
+      "index": 67,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed1.json",
+      "inputSha256": "9d0706a2612f97d72499dd9dbfab31122e80b8da8b10822a4855f78b4ae1bb43"
+    },
+    {
+      "index": 68,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "9db3f90e0083ea36dbc8720e7e8b1f9b94fffc54bf9c45fa79f04512d11569b8"
+    },
+    {
+      "index": 69,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed1.json",
+      "inputSha256": "bb404f3d080eebcee938de47e3d2f3b4e7cb1387bbf954f43b5f21d3fa4317c3"
+    },
+    {
+      "index": 70,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed1.json",
+      "inputSha256": "1adbbb37223eb302af329d2011a74e37c0e698600435279a7329208cf9c7db83"
+    },
+    {
+      "index": 71,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "f0ded7b732db0002ad8137ec8aaf6c7d2df8e7ec0a6c54e9d29bc542a3133e9c"
+    },
+    {
+      "index": 72,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed1.json",
+      "inputSha256": "387eb39555ff601275a975c03dcdb403d98ffd297890c2e3de9550b55fa09123"
+    },
+    {
+      "index": 73,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed1.json",
+      "inputSha256": "a03a561f02bac268c565bde09c90b5e147d7fd1b70f7db7fb03e4cf87bb8a37d"
+    },
+    {
+      "index": 74,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed1.json",
+      "inputSha256": "fb555bd091363c3a82f0048cbc6460d19683fee8a3770d532c5ce8f39b6a0c50"
+    },
+    {
+      "index": 75,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "d8781d304901aa89433fc61b0cb1a1a1f09a32c53e1e191c8629dd29d0fd1e4f"
+    },
+    {
+      "index": 76,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "b7b14fd741ba12fee11a9ab994a9fc79fc86d4f14dddaa6131b39b54de800b99"
+    },
+    {
+      "index": 77,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "d88df80d76fb755faac0cb137126111afd529cbd21b91a25b937946ccc012e44"
+    },
+    {
+      "index": 78,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed1.json",
+      "inputSha256": "09d78afea3350747e6345d8603b6e48c0c26f0a62f393ad92cb2c700361ada84"
+    },
+    {
+      "index": 79,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "b22a0ce782a86e046eefa4f69ad8488fef6af4679a2de8bde1b38dfb866f2e57"
+    },
+    {
+      "index": 80,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed1.json",
+      "inputSha256": "c19792e5c6c55a7e5a1cae6690bd1a815325891431293ab2dce848e3c2dc4bfa"
+    },
+    {
+      "index": 81,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "c07f6e39f0d9cda06510d9472ba6b12d2d8cc8e5b6035dfa37fd92b62143e84e"
+    },
+    {
+      "index": 82,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "d3b39430acecd4c876bed9b16af637e6e215c5f22c93bea60960c5320e4023cd"
+    },
+    {
+      "index": 83,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "d88b7dc42d4e9065161780531cc15b01a6e834f9abe07f3246e310a4dc1e9844"
+    },
+    {
+      "index": 84,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "f3f1a542bef7f043c5a3a08da9d8f9fa292ea029aeb6ba35f5cfbe5165176d27"
+    },
+    {
+      "index": 85,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "3e330678645e01328f494fcc84f45fafa030d971d0f62192f2fda0005238490a"
+    },
+    {
+      "index": 86,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "1893ad26a00a42833d40ae1e979f27abd5704e41fef68f009159d8b7151d16d3"
+    },
+    {
+      "index": 87,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "0cd3fa9bbc6f0d76cfea3e7d7ffc21ef5da7d31edf6509479f5f87d024afed0d"
+    },
+    {
+      "index": 88,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed1.json",
+      "inputSha256": "38b04379ae0130ceb1b0709a678efbe6c6d050877a0fe52c619941f3ee49eb61"
+    },
+    {
+      "index": 89,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "5a7e98cca8874d2517548b270f38e8016179edcf85a45b811157df9cb7705087"
+    },
+    {
+      "index": 90,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "b01497912260805ff10b5e3cc1aaff2e7c884403581b6f47112ccd5e1dc4cb93"
+    },
+    {
+      "index": 91,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "d99c0d710f3af6065093e1c18aff080f448b54cfee9a07f425770a6ed05d5845"
+    },
+    {
+      "index": 92,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "1d2584c3360c49700095ae838778a376fde511cecbd75dc1b1fc4a89fcd1989a"
+    },
+    {
+      "index": 93,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed1.json",
+      "inputSha256": "e0225027ed98100a131010e8155d8a4a0bf4c05e8c6b6ff2cf3cb9346604f56e"
+    },
+    {
+      "index": 94,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed1.json",
+      "inputSha256": "ea8b56be096746f1bc285e95dbcf86261d02a4689b585728e4f8dc259ef50071"
+    },
+    {
+      "index": 95,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed1.json",
+      "inputSha256": "67fd7fba6e29793944c480567d4da611b1d9426c922f934f4a7a62861f4958ce"
+    },
+    {
+      "index": 96,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed2.json",
+      "inputSha256": "bd0ef38a879280ba6083b6e7289d3889a59ae24b874dfcbf8064ff6761cc9f61"
+    },
+    {
+      "index": 97,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "b67d868a39b120ba831fee202df92747f622c3800bfc4652ca4eee2461a65632"
+    },
+    {
+      "index": 98,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "848d5d3419bfd3995b8c7b484229b9d418bbed5d141f5a5f0f87bf90a135d3ed"
+    },
+    {
+      "index": 99,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "d4a97d76f0f584b37b37d07514152016af86f8e62d36d90011a099da93339637"
+    },
+    {
+      "index": 100,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "6ca365c88f3e1d80d32af87165e9bb54d94752fc66207685bf13960a381c9a36"
+    },
+    {
+      "index": 101,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "31b6bbd4fe284790269dc6533ff4e78e51ff74f5dd3b0a4a230cd5f598a03c38"
+    },
+    {
+      "index": 102,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed2.json",
+      "inputSha256": "0157cd0fedf0ededa12c16dee941061fd6d3f37653a145e4c1fcb6ed11617e2d"
+    },
+    {
+      "index": 103,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed2.json",
+      "inputSha256": "5121ce29814d1c10c6f1c6a55dd00367dbfe053c74f0f3365d5fde4d69a74c13"
+    },
+    {
+      "index": 104,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "223a83bb93377152fec68a8a7bb9427e8c2ff0c0d775040131f4e9c331969305"
+    },
+    {
+      "index": 105,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "7521411932d01e3f3d543e57896e6b02938ca77ac335060ade0925ad8411c6f2"
+    },
+    {
+      "index": 106,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "a5fdf0a1e1b91802db34ac985e3dbe0ce35db7d66cee5446ecb278d325078a16"
+    },
+    {
+      "index": 107,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "79242b97c2dd4f4d25f71fa8cbae55995ef027f338f0a46479d2762732754d3c"
+    },
+    {
+      "index": 108,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "d1a5c3035b128c0fb8a85887246948c0193e44319edc865ecbe8967017a832c2"
+    },
+    {
+      "index": 109,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed2.json",
+      "inputSha256": "0354c6a24c045988f89f76b57e309819831639797d8b31f13cfb1da30febcc4c"
+    },
+    {
+      "index": 110,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed2.json",
+      "inputSha256": "ffeff31bde8363aa842357d31eff9eebbac1832dc3e6b37425ae60aede7c5444"
+    },
+    {
+      "index": 111,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "15602ed5784eb2af4ab4087df953d437182da572a78a97348cfc4195bff0a7c2"
+    },
+    {
+      "index": 112,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "d7027d555de26cb08fce02cd57645b61fc0175d20cf3cd7e89df338f308fdae2"
+    },
+    {
+      "index": 113,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "e6d8111a5bed12dca2d43d158c878ed883830a6df5954d5ffdfa88dbda2256b2"
+    },
+    {
+      "index": 114,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed2.json",
+      "inputSha256": "83522b5c68190741aea6697cc523960bf2e5669014402f607ec8226cf0140fae"
+    },
+    {
+      "index": 115,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed2.json",
+      "inputSha256": "2145637683e6dcabeafb8babdbe2da173c945c5775417130837af571acd5e400"
+    },
+    {
+      "index": 116,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "e82a091647daee96cd428720a3db2e830389d64752c7564c212db38ee56a54ff"
+    },
+    {
+      "index": 117,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed2.json",
+      "inputSha256": "e38ad8b255da7b48929bb2b96251db9bc2f7fc89c2be0f8e2d87e22f496ab9c9"
+    },
+    {
+      "index": 118,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed2.json",
+      "inputSha256": "e0df0d2aff989e02a398fb89a4abc290921e84387783bb38d3c1fb81df5dd4f7"
+    },
+    {
+      "index": 119,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "fce2ab1e4086130ea4367996e8421baae29a0d34dc31b960781551b2b9c71003"
+    },
+    {
+      "index": 120,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed2.json",
+      "inputSha256": "c19ed4d1b81abed050243180fe05cbeb41ac780221a32f527535842923cb5dfb"
+    },
+    {
+      "index": 121,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed2.json",
+      "inputSha256": "ca602dbbfb126a1068f51c2fc10187d3041233e7a3bb32e46915ec22d204bf7a"
+    },
+    {
+      "index": 122,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed2.json",
+      "inputSha256": "98344b75f1045a99e53f8d664ca9c137e67981809136f9eec7af37a7b599e7d8"
+    },
+    {
+      "index": 123,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "82a9ac8bb4e4245e69867ba828b806b55f522d685c8c2cda423deee9cf536f86"
+    },
+    {
+      "index": 124,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "4a3c26fcd42c8c051c8661b33136b5dbe4750fc1e980b5dae944bbd7f6922b57"
+    },
+    {
+      "index": 125,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "c8dfaa5ada900a18aff01479906144443aa93651a4c3bdce60f828d1861183c9"
+    },
+    {
+      "index": 126,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed2.json",
+      "inputSha256": "4d54e79dcb5d91ac489af97dc7cf8a6b8aeb7df57efeef0b58ee7c56b740b2a0"
+    },
+    {
+      "index": 127,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "f515547b9d2a56d73e94d5e192662c113505f8b1d749a022190856bc2321bb43"
+    },
+    {
+      "index": 128,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed2.json",
+      "inputSha256": "439267094530c0176ef45e8a4d4ddaa1acd768d3a73d74e769095df91f15a920"
+    },
+    {
+      "index": 129,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "ff5baff86325d2df6d5df26f1adc8ade03f22724f891c70e2768814812c2cc44"
+    },
+    {
+      "index": 130,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "0074bab1d4fced6eef8d030873014f571be46e9baef977412d6f6a08802f4f06"
+    },
+    {
+      "index": 131,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "ea656d01a5400e437345770958ac6101e0a57f7d8ddb087d1e33f6a95421dc24"
+    },
+    {
+      "index": 132,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "9c9b7294e496ff7453e83d84bf5dfaaa1706748247aa8312736eb6ccdff4e089"
+    },
+    {
+      "index": 133,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "59c272fa8688c962d0e36b4edd0722ed7222a8354d7ed451a9069bf98b920e31"
+    },
+    {
+      "index": 134,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "d618f988f96d55bd4a3ab3a07dc30442f882b2955f4128469b31e0d1fb7d028b"
+    },
+    {
+      "index": 135,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "eacf575d833836ef41f08e11a5c5d3bbcff6aa22b9e8fd671f7cb45b4ee6c5aa"
+    },
+    {
+      "index": 136,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed2.json",
+      "inputSha256": "02a0a193062ab9e7aa147d2beeec15bcc70dbaec0de2218f0e0a7af8a58d5ad7"
+    },
+    {
+      "index": 137,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "5d6fc96f21c0b5d4c79480d0ad177e7e14235ffa3ce8dbd2fdf5f0357e9f41d2"
+    },
+    {
+      "index": 138,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "1759cabb085f4e853ea602a68bf79c58e660a8922953f5c09aabab147edd4143"
+    },
+    {
+      "index": 139,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "89d733857cdb1d6b57ecc83239a9d1f95aa357498b0f89a2df58505b79af8cb2"
+    },
+    {
+      "index": 140,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "64c21f1de922ba2fa46fd160afe17bdb3b485270c67b2b255f39593132cd3d54"
+    },
+    {
+      "index": 141,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed2.json",
+      "inputSha256": "5fa5f697a1b9f6a53bb07cfd2a8cf4fe00a7e269f0b721448184223f7095a891"
+    },
+    {
+      "index": 142,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed2.json",
+      "inputSha256": "4606094771de469cf3d84297c460b25a1d046528db1d3807e774f3307975fc1b"
+    },
+    {
+      "index": 143,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed2.json",
+      "inputSha256": "4c38e691abe2432e15c740d23d9f90b76e20d43a4a74b05171ec3472e6e96a17"
+    },
+    {
+      "index": 144,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed3.json",
+      "inputSha256": "4c1a966c61b58c307bc28ff1b1d87bae0c915abfc85205c5fa8321dd5a30ea01"
+    },
+    {
+      "index": 145,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "0cd3307e100c1d7d2f10efcc43acf4f312e102da5906d7344992f121515f7727"
+    },
+    {
+      "index": 146,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "442325f60fe0f8a44f9c428456c1326cb221919984f9b52cbb0181f099fe49fa"
+    },
+    {
+      "index": 147,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "226b136d658d58e0ad43e37aabdd9464da4a98f669c04940f30634ee7e1f2d96"
+    },
+    {
+      "index": 148,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "0fc61566f4fb7b844aa94fe697e04aef1f887b75d82534ee48be1e9f6082c5ee"
+    },
+    {
+      "index": 149,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "5da4519a84a8f7bcbc7097a1ae60e7344a765142a2e383bb874f4e4ef6c7cf8b"
+    },
+    {
+      "index": 150,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed3.json",
+      "inputSha256": "a9f6afed6458c3591b37dc86962fdddd499a77d98e0ea4df45a675bb3030f6e7"
+    },
+    {
+      "index": 151,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed3.json",
+      "inputSha256": "f3e84b7253cecf177cff2e8b58121f194d6db2ff3a425b6b7d430524f7228ffa"
+    },
+    {
+      "index": 152,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "e37954c7884794fb2ea0be29d6475f136f241186420dc3eedb5f94c40d3a4681"
+    },
+    {
+      "index": 153,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "114304313eec31161135290e5349c549ff0d4fb189f25e090a662544e781c345"
+    },
+    {
+      "index": 154,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "551a5efec55221ef55f73271d46ba2bde6dd37cf6698c46b72f922d804c3c50b"
+    },
+    {
+      "index": 155,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "355198c6b428169f2c2f66a5b683b6c34ac83faa727b27f2cbf58ce0c0f3550d"
+    },
+    {
+      "index": 156,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "c0c7e3603490b00695dc553a9918c5ad46775b5c659845e4c64948ebe5818af1"
+    },
+    {
+      "index": 157,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed3.json",
+      "inputSha256": "197aedea6a2ec44388e8af9761dff92ed2e85221a10b900232a41c5900986fb9"
+    },
+    {
+      "index": 158,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed3.json",
+      "inputSha256": "a985f4293f22c0526c55c313ee9cc2b99adb97d242cb10d7c354108ecd3c40f7"
+    },
+    {
+      "index": 159,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "c8ee1cad9e837be525e5ca218abf6cd621c07db2fcfce47ba694f9adcee638b4"
+    },
+    {
+      "index": 160,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "8607254fd11fa8c13eaba5b43724d4c9a3def5792ece86af06914a63c0364471"
+    },
+    {
+      "index": 161,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "86fedc9377dff25a49f5c516976d537436cfa808b5412061af124a833619c622"
+    },
+    {
+      "index": 162,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed3.json",
+      "inputSha256": "5560724de387ccab3c929fa73e3d9fcb9ee9cac8435e67e2ad06a3d73b577efc"
+    },
+    {
+      "index": 163,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed3.json",
+      "inputSha256": "1bcd21185282f290c6ee657c878825deca3118ad6968dc58b1fbb856897b0771"
+    },
+    {
+      "index": 164,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "82e6b2f24825842393bf4fd6a67db811514774a2c2a86fb5bd9c69a44a411794"
+    },
+    {
+      "index": 165,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed3.json",
+      "inputSha256": "2fbb2bb19966933c1960bbe692ccbbe3348a1a0b59663dd2b9d9ff187d05a1b9"
+    },
+    {
+      "index": 166,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed3.json",
+      "inputSha256": "a409e181ee24486cd5164665c68e32b33e4bc31cc8221ca5abb636202cc52ac6"
+    },
+    {
+      "index": 167,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "8de4dca59ab9c8320674406c353dd1770395e5fcf9d72e88ebe51b97273da340"
+    },
+    {
+      "index": 168,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed3.json",
+      "inputSha256": "78b1284d19bbe8f2bccab89c4d21acd7a77fafb1ef4746d27a089c74cfe19551"
+    },
+    {
+      "index": 169,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed3.json",
+      "inputSha256": "21956ba75206fd33d1d0f860077244c5c9652fa780c73d2ef74578479553e718"
+    },
+    {
+      "index": 170,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed3.json",
+      "inputSha256": "786066b50e48220cd0ee204cdde01334c803784bad80520470809302e8bbce36"
+    },
+    {
+      "index": 171,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "652b31fe95e48dce06de31d6f60dc51105cfb0b7ea45b781696ed05863224b2e"
+    },
+    {
+      "index": 172,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "1213ec6d46e0803c34f656e414151d94df7a0e721fcd77d9e6d46663285e0be7"
+    },
+    {
+      "index": 173,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "7cabdf6156513a4700ffebc1dd94c575896aae405a3f9df3b3dec597af46deac"
+    },
+    {
+      "index": 174,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed3.json",
+      "inputSha256": "3134c9cb51aa179df8e582397dc87ada9afa8b18b7dc8d223090f3cf3c0aa5e8"
+    },
+    {
+      "index": 175,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "98d69806960403c121deb0dbcc65b5cf44a71e4ffd0aa70e8c8b908545bda4b7"
+    },
+    {
+      "index": 176,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed3.json",
+      "inputSha256": "9227c53575129875b4f90911c012003f8719e2d2bd40e9bcc0eb1f6fdd8ae7d5"
+    },
+    {
+      "index": 177,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "033b15a52ead78015025f3f1158863d9894d8c88fd8141672ef17623a87003fd"
+    },
+    {
+      "index": 178,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "a7423d0e5914f388cf16e85fdf922e71eed40a4239a0d99ba2b7d93ae142c3f7"
+    },
+    {
+      "index": 179,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "565866e450ea17f6f721b20af95811280e7aa90b456bcf31590ccb1c295bb25c"
+    },
+    {
+      "index": 180,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "76df8f2a3ee31eeb7730564e9b635ee4d80899e92168cbf621ab8611b9d5ab6a"
+    },
+    {
+      "index": 181,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "1343a9c03f4f3446b6875f6e2dc6e35f6f129c35c7c68f9b37df59d54bfb069b"
+    },
+    {
+      "index": 182,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "2898d8b2fc47e58a11884ea6bc6c96afeced077f9ccd56f12c4624cf9ff38200"
+    },
+    {
+      "index": 183,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "e850c3c9ba466c1e0f98611863c169bbd3464995a2b1451030e8c6a8e6f1b728"
+    },
+    {
+      "index": 184,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed3.json",
+      "inputSha256": "abd6a80fb23afa19c0385b47d02187a4b52bdffdc7f4489e0f6cd85783f57ba1"
+    },
+    {
+      "index": 185,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "cb7ef00899e04d03257a792da145112f800b3a81f993582c05329afe2ff4505b"
+    },
+    {
+      "index": 186,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "4f01f10ccb217658cfab65d8c91b6ce5f5b96499de2e508c9a4f03244ce38663"
+    },
+    {
+      "index": 187,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "f48aa02846c1e6da83c1695ab0097ab0c9ff04c56290fc371e0d655f5e5e647c"
+    },
+    {
+      "index": 188,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "3bc49be5a1530e5c7ce0019ec251cd68c84b7ebae91d3fcee0a606cbcb3cd441"
+    },
+    {
+      "index": 189,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed3.json",
+      "inputSha256": "0a8e16234f123fd7f096369f24b60056c7dabdbe9542ae06b193807b8d0d4ddb"
+    },
+    {
+      "index": 190,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed3.json",
+      "inputSha256": "048634f48658c35fbf044f905385943acd76233303728bbb8c7b1a99e9e32744"
+    },
+    {
+      "index": 191,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed3.json",
+      "inputSha256": "a02b9cf65aadf2c8e5a9ff2e61801636fde7103fa3d4232b34585edcf38911ab"
+    },
+    {
+      "index": 192,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed4.json",
+      "inputSha256": "65d2bdc5fddd9294c86b21db232d8170ce790e865384965e5202940ada9437c8"
+    },
+    {
+      "index": 193,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "4fbc957e8e2f4c356ea030bc446974c99d46dfe8fed88cc58f4905a1eaced564"
+    },
+    {
+      "index": 194,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "75dfe332724464775b9e5326d25c139afc4dd07d53e7a44818fe13ed7268f8e1"
+    },
+    {
+      "index": 195,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "2a5715915c5a1288c15e9540bacac71b307221682dca7b59d8aee8ac087595f9"
+    },
+    {
+      "index": 196,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "f1b84e64d918862b2dc6369fb420512f2df52d7a35092ccfcee23f320e3809ab"
+    },
+    {
+      "index": 197,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "4f594d163cc19e6f84bc94bac47a1bc5f9c8646ba47b9bc652f25475df7c646a"
+    },
+    {
+      "index": 198,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed4.json",
+      "inputSha256": "be541e5fbc2339e1b99037168800f782b377838f7b2d9b04c9b2061067d78f34"
+    },
+    {
+      "index": 199,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed4.json",
+      "inputSha256": "e2f3681020c9b5eebaecf197b203bab5eb1cdc276aa110e6669f8eed9cbd22f9"
+    },
+    {
+      "index": 200,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "f4ad9b97d90c7b7f10bfa09204fa84bf5ddfecda6f53ffe129e83109d7433c18"
+    },
+    {
+      "index": 201,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "ddf0b476f953a0f00f75778f06e5b35b2dc45fb506a1c95099b1313528117c85"
+    },
+    {
+      "index": 202,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "d7828c55f2cbf515f5ed94df4d6f15ce612e6c223c48c34f868c6bc998132ead"
+    },
+    {
+      "index": 203,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "05c5f979a8764434d3534946b321bf8a8e1a7224256ab97abe77d9f182641603"
+    },
+    {
+      "index": 204,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "fff1cb24414b0bdab90fd44cb607f1dffac9fed6a9338abf86df540848d91566"
+    },
+    {
+      "index": 205,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed4.json",
+      "inputSha256": "9fdda118335b2eda95c9feab2fd30fca571a0f2cb5a23fb7543381ca95116000"
+    },
+    {
+      "index": 206,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed4.json",
+      "inputSha256": "125916f5e107b1203de3969b315e0d09fcf0f05d2b9e13a19051117934505057"
+    },
+    {
+      "index": 207,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "8f699ca89c3e4e1ef71f2019b5c80fcd4c8b32c8c2cd09549a3f14a527e74b5a"
+    },
+    {
+      "index": 208,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "81d2a3154f30467f22a56f0db70dc0a624f97399b051bc826ce34519b10b80a8"
+    },
+    {
+      "index": 209,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "25b3a28f3d1caf992c7df5305f0e3962904002c06f86c9ee8983e5b5c6db5f0c"
+    },
+    {
+      "index": 210,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed4.json",
+      "inputSha256": "9999291ae75892ad17e3e1e7ec7ef1575264ac95eb4cda9c9c7b89e7fc968717"
+    },
+    {
+      "index": 211,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed4.json",
+      "inputSha256": "ae59fc23b0da3042c99864956730b48178787272123c0dcf7e664637b96e02c9"
+    },
+    {
+      "index": 212,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "aa10269493e9d4bed5af165f5cfe4dc103bee15bf7c72f03d48866413fc8e33d"
+    },
+    {
+      "index": 213,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed4.json",
+      "inputSha256": "7a38ec9b4dcb1517b3e952588fab4f14dea1a847eb5644c88fba6be77dd9fe65"
+    },
+    {
+      "index": 214,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed4.json",
+      "inputSha256": "6d1f15cea6bd991dc7af8161e2188335b33ff3b703dd8b4160e802c54f0607fa"
+    },
+    {
+      "index": 215,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "25334eeeaa0eb0caf057553c148bf5b9ab137530c4776ff00c1f69f8327c1717"
+    },
+    {
+      "index": 216,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed4.json",
+      "inputSha256": "46db98aaff4ce22da1c116d17135999c09fd67a67a54d0b94821fe1dde58549c"
+    },
+    {
+      "index": 217,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed4.json",
+      "inputSha256": "a3a93a4fe083468ce514098a87a1918b1f96f3cc54f7925092abbf56d7599b7d"
+    },
+    {
+      "index": 218,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed4.json",
+      "inputSha256": "750184840d9a871e4292166fc3ef32b30ed9eb8d29b8733752030d8834b7a481"
+    },
+    {
+      "index": 219,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "de91defc7446756e6fc060f39bcd58bbfd3f8ab19949a459ba2a965a21c15367"
+    },
+    {
+      "index": 220,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "9078cf9808361550fd583eafdaa932df9cad95f3f6a649aa0c6c3d4debfb3e15"
+    },
+    {
+      "index": 221,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "59aeda9455a39a456020d52018f5f41859708d4c0019a59e732108a97f69d5bd"
+    },
+    {
+      "index": 222,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed4.json",
+      "inputSha256": "ffdb4b6b125a111602222756c695f271667659a3fa08fe4e3cbe73303cc187dc"
+    },
+    {
+      "index": 223,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "7c977d0d980cd3ce8c578036a796249195d8628e4433c5a972b119a5dd054872"
+    },
+    {
+      "index": 224,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed4.json",
+      "inputSha256": "53bc1a1d93110516eaf84e18aff28e274e512dd7713d071ee47fa781275c5356"
+    },
+    {
+      "index": 225,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "1b30f4eb8fb705a6f546b09320a851d8000ade9c895e5a8d5fcac86b63b38c74"
+    },
+    {
+      "index": 226,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "f8bafaf05695bca6a7164244c3a8aff9bbfc17053859951287520b1492e604c4"
+    },
+    {
+      "index": 227,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "b0a171ff582a97be14185e29458a7ecd1abc8542c35de2b884d5197dc276ba49"
+    },
+    {
+      "index": 228,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "7952edfc920ca7b71de4f57d40614dce8fb466d42c20bbec8befd50534c5c219"
+    },
+    {
+      "index": 229,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "a4d130522f75c9c9ef7335577fc87ed22769f3389fd18f144bf0c6c4fd75abc5"
+    },
+    {
+      "index": 230,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "d42fcf42c5a2abf61f2c868024c9218dd43468197d894cd559ea19be485d07aa"
+    },
+    {
+      "index": 231,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "274790e9e0a3ade13169303b32f36b7ae3741304b35be8a047ff5ac3695aacba"
+    },
+    {
+      "index": 232,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed4.json",
+      "inputSha256": "77ffff19eedb78f33dc524e36742a4111ab9ec1bc6e5f17a7a02b089a989ef38"
+    },
+    {
+      "index": 233,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "7e928e68e8040d198fafd3e49e7cb67d26544c053dbf21575760cacdf10bf0c0"
+    },
+    {
+      "index": 234,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "59aca7abd5d598ed9b20582cdbffa3d3caae4b55f26d77844fc1d3515e01e248"
+    },
+    {
+      "index": 235,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "6d7c667ec27acd09f2fe5057e3d7d7cafe0ec92835d7f16a1e3d114387f5b7b9"
+    },
+    {
+      "index": 236,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "e054db7a60b778490875c51ba2e06ed6758f08561753a560925b9aa0ff093885"
+    },
+    {
+      "index": 237,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed4.json",
+      "inputSha256": "97eda9c436df099226ea977c7d7c83d269ba9b8c9c9df3ad5d281abd07cdd353"
+    },
+    {
+      "index": 238,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed4.json",
+      "inputSha256": "66a98ddfbe128c472aa2d39d3823bf833261e94cf8440df6014b417b9a7c3512"
+    },
+    {
+      "index": 239,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed4.json",
+      "inputSha256": "e89b3da0575542d993a51f3582b1c6d74de8ce5779530d9ef66c26ab439f6172"
+    },
+    {
+      "index": 240,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed5.json",
+      "inputSha256": "97721b95e1df2deff6741fa0f0fc77ccbc15a13692ae871bf0eced42f6b92716"
+    },
+    {
+      "index": 241,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "a9d88d149e0fac970ae8630219d58263ed931b19ef9ef96f0d08daf9538576ae"
+    },
+    {
+      "index": 242,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "85fed91e035eb3bb43421a7e63a28fc99fe5510400f25d437c4eee7b206d45d7"
+    },
+    {
+      "index": 243,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "e03ab92487ef781be7918dfc749a6d7b5af4c32f80fcdd61f68538c3deb29f29"
+    },
+    {
+      "index": 244,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "6ec4da81ef985190308e49d85eeb106b1d1042f8c4ec48b8e000b622ecc8a8ae"
+    },
+    {
+      "index": 245,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "e90a1d61a337ac5f9d80ebc3f1afb1d9d892552a8c4684e91ff1e23b95239760"
+    },
+    {
+      "index": 246,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed5.json",
+      "inputSha256": "8244107e555fa6c78c723454a8769c57aa87db12419b1bc5ad1b2b4f7d536550"
+    },
+    {
+      "index": 247,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed5.json",
+      "inputSha256": "a09f015615eb3d1d5f277dcd24519ef30cd17994bb55a713603a4ced3219853f"
+    },
+    {
+      "index": 248,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "c5842bf6227b50abfd8a5098e32b3af6d3c7faba557d498530aaaf197a65af08"
+    },
+    {
+      "index": 249,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "b46187fcb5cf9afec5a3b914eacb7c8ee9fdf2af90329f6653d9309f85f2430e"
+    },
+    {
+      "index": 250,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "03a6e4fc523ae71235eca939ff485d4d1d6df986e06a6afbf976376776dbca31"
+    },
+    {
+      "index": 251,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "8c75c9d39ddad0ecd8b9a9752f9869d49eb7fa3db9a8c7393f87fbb6d619a10e"
+    },
+    {
+      "index": 252,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "d7a126daf20bbab429ed0309bb3f558b0021f9f59ba81b9c728c4c170aa0fdbf"
+    },
+    {
+      "index": 253,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed5.json",
+      "inputSha256": "a0221ba299a58d92de064232c69988c7d76627238382e4b56ca2cd5ae4c5da84"
+    },
+    {
+      "index": 254,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed5.json",
+      "inputSha256": "ceaa5662c2beaff5d9272265ab8003fc30edd7d2272c6a1129da191a33b8a584"
+    },
+    {
+      "index": 255,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "90fdc3b9f685e22d28cf82529e332afb8502d91259a3e0479c7b0b2e87815435"
+    },
+    {
+      "index": 256,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "041c5af46d6806279ff7b8809529e184726326946c86dfe8237f3b1cb1abe3e6"
+    },
+    {
+      "index": 257,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "cd4856a5f6b0a37eca603b2da98b473a402585ac8c15fda28f059c9fc18b22a9"
+    },
+    {
+      "index": 258,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed5.json",
+      "inputSha256": "f2ea38768985db678ed98f0da633024bf4339959e7c01c129d99e2f6308e97bc"
+    },
+    {
+      "index": 259,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed5.json",
+      "inputSha256": "84f20f6114ad2e35cd4662e506366669c38d2bd9fba7f47dd6a1028c4b5dcdfe"
+    },
+    {
+      "index": 260,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "cfc832981c15f29ffceafebb3bb2861ddb6a7a688baf00275ff7791d0161374f"
+    },
+    {
+      "index": 261,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed5.json",
+      "inputSha256": "0698dc07ead6de896422b6be107caa9713d1fa77e5b4821bedcf0d07d3bada5a"
+    },
+    {
+      "index": 262,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed5.json",
+      "inputSha256": "52c1429e6363cd1786082bebed94a2e5809c47e48ea1807c7cd54bb6789dd442"
+    },
+    {
+      "index": 263,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "df3539b7b97708c243e76f61695bfbd5a49b0e624b14acef82d513477c0171e4"
+    },
+    {
+      "index": 264,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed5.json",
+      "inputSha256": "f625019c713e5c3fd9b01213822377ec15e5ad2572390b2248a3842f48e49259"
+    },
+    {
+      "index": 265,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed5.json",
+      "inputSha256": "865abd686c550fa4feca6ca9b59403ed26609956d549f057c38e025568758de6"
+    },
+    {
+      "index": 266,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed5.json",
+      "inputSha256": "44f418fbda537dfc1c2e93309f03241eed4fb8bf574bdfd3666d4a5b2328fa7c"
+    },
+    {
+      "index": 267,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "8204a063e398f5cd3b49223b98dd0165b28628807b444af90d1709de8b424cf0"
+    },
+    {
+      "index": 268,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "c428d7ad23d466bd57ad2735b4f0a9d355808f4d5bb6e7eb524de78a43b210aa"
+    },
+    {
+      "index": 269,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "251d8d787e6000364611f858fc211c703194ef690b77fb3a12f3bd687137bb3d"
+    },
+    {
+      "index": 270,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed5.json",
+      "inputSha256": "3d4b09deff80eb900508274ed7cbe8c89a02f80689ac4cb99db61ca1953ce2c5"
+    },
+    {
+      "index": 271,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "723b1a2c3dceaad6d328eef6da5f80e5590d90e6af7bd987603d7a57f30f0885"
+    },
+    {
+      "index": 272,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed5.json",
+      "inputSha256": "b928022152b49e7edc376cf6995c72b56c805b80c6412586a99ba6ed1edbe473"
+    },
+    {
+      "index": 273,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "2f6f16950e39325751bc4e8eb96a19cda4ea0639a5a8c3075a4648eb3ad91947"
+    },
+    {
+      "index": 274,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "65703bb8be31c334c7f6be8e05331e74ee54bca5cbeb372bc7bef31d606e7f90"
+    },
+    {
+      "index": 275,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "63ddac93197e055d237b559aca5cb7f0048b7d5cc6a5e80cf9f65f82ebe53475"
+    },
+    {
+      "index": 276,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "2110782f743a75b3fed3e3c109b034aa29f5d22093913cc87be939fb7d32a5d5"
+    },
+    {
+      "index": 277,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "09032436de6bbe1eec55ab7b16e92f84d2b4cc595f16641d0e2a9e2c42ec421a"
+    },
+    {
+      "index": 278,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "55ad032d5d11506ba252750f2d43db2afd8ebb3921276ee195096b7a091d7e35"
+    },
+    {
+      "index": 279,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "8837544cd1e7d866a5eceabfbacf15f3f7a694a6303c0f9e4eee469d91ad260e"
+    },
+    {
+      "index": 280,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed5.json",
+      "inputSha256": "daef278340cad206a8613529edefba4d2285f81d7fdde1803e69b386d07396e6"
+    },
+    {
+      "index": 281,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "7c0a0c331f20fbaab73e0a1d0bcb88ac36c9a2d27ff122ec06ca1a0bb602354a"
+    },
+    {
+      "index": 282,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "888966e5524b9bdd263abf3f64ada8e7d110fb6ec46553b8a015784771011274"
+    },
+    {
+      "index": 283,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "c62cbc83bc039489c9f01970ac2010e48ac1145eddcab3ae299ba179beb0c69a"
+    },
+    {
+      "index": 284,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "9efdbd8f6782f6fbcae7b8146e7bffa8164482562c88b753ae373b041aa45926"
+    },
+    {
+      "index": 285,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed5.json",
+      "inputSha256": "fa91cdc64185268445f25556d3d85c204e1d0ebe10ab982080a7b4962d42ce0c"
+    },
+    {
+      "index": 286,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed5.json",
+      "inputSha256": "de244bb81629332b518a31222f3f07cec696c140e465c3206f3b75c56eb6ab60"
+    },
+    {
+      "index": 287,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed5.json",
+      "inputSha256": "880291594a3fb6698a50b596cd60fa7c18de819c45e6c71069c0fd9f0bfb31bc"
+    },
+    {
+      "index": 288,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed6.json",
+      "inputSha256": "66fbf9209af5956c33ad5382b88ee467ff83f82514520a1904018173685ce99f"
+    },
+    {
+      "index": 289,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "4df7d74e0cb9c3963c2f146286904472e12ba3e911451ef1837f9383b4d811e8"
+    },
+    {
+      "index": 290,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "1b6b47468d4e94b105a5e29cb1b9ca3a8226c90250e846de15f0da19241fc55b"
+    },
+    {
+      "index": 291,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "22ccacb254c553ac1e076cf18c5c7e1d0c49efc24dc7b30f572a0f697fe95fc2"
+    },
+    {
+      "index": 292,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "702532ce857dc692dae9e1b005496bba899b754557c802d729f991883e6943af"
+    },
+    {
+      "index": 293,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "a6f7d7ff10eb668051b9fd30ff026908a7668fc54d4d3f270182686ab083176f"
+    },
+    {
+      "index": 294,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed6.json",
+      "inputSha256": "ee6774d4bacfd424104385b9ad9b1450d6f004491aeae694400e0accc8304343"
+    },
+    {
+      "index": 295,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed6.json",
+      "inputSha256": "09e9ecbce625e7a4112e85b4ed61fb2ca40e8f01b7ebe3ba80007cf0bb3628f2"
+    },
+    {
+      "index": 296,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "c946acc81130792cb9cecef49b741d7bfa10e188ca6602a9ea653bd9b7f31c78"
+    },
+    {
+      "index": 297,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "0d456429db4bfbb9c53631a79aa02653004b96e1ba3c180bf6630e440f80d4cf"
+    },
+    {
+      "index": 298,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "91ae63cfee0b548d30fb22d5849f51694a8ed3a98e3eef24c03acd41933f9b3a"
+    },
+    {
+      "index": 299,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "781eebf10265146702ceb3236a876b3ca994e5e03c33152d5eaad9338403533a"
+    },
+    {
+      "index": 300,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "dca4056f6e5d43fd3fec0e511b1e7a38efa92515e72893fd4864b7863c3b8d70"
+    },
+    {
+      "index": 301,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed6.json",
+      "inputSha256": "4adf6492c2b30614062d8f92c155e687f0715d2c34fff2904754a39bca61c9ab"
+    },
+    {
+      "index": 302,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed6.json",
+      "inputSha256": "6655e1f6fbec7cc0d9e9cb7aa8e1b64c46ff425c94154ce272112e98798b5099"
+    },
+    {
+      "index": 303,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "f705bec912c4425f7d4866057e1ffa83c254d6d88643579d51377a682c1dac1b"
+    },
+    {
+      "index": 304,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "3d8cb89112369da5919e7968bbfcf279a03cfb82dd26b366664861efad246c4b"
+    },
+    {
+      "index": 305,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "deea2bad8c9ae4aeeb362f91c295bb1a929b0d463601ab625824e346204702f1"
+    },
+    {
+      "index": 306,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed6.json",
+      "inputSha256": "ee49776f8c317ca3fb86e965751d84a085cd5f3188b1142d5db6f8d618fa637f"
+    },
+    {
+      "index": 307,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed6.json",
+      "inputSha256": "8f44b8d08848914886a67c664dd2dae51c9701ecb239b5b815ffeecddc7d62e6"
+    },
+    {
+      "index": 308,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "662a4e419f22e0a724f0a8bb49e3946b7859a71dba1869052b0d779bbbd8af28"
+    },
+    {
+      "index": 309,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed6.json",
+      "inputSha256": "b97e52abd6f2dfcc60c2697d9cf0097a0bb3c0189bc37259c3d23946716ed490"
+    },
+    {
+      "index": 310,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed6.json",
+      "inputSha256": "01087685178dc3c0e5bd7e86d890ecb81250ece599730e3ca9fcacaf34c6b9ff"
+    },
+    {
+      "index": 311,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "2dc404465fdc54aa28ea3495e98c45a66d1e3cc7853bb933ba912c3521c2d461"
+    },
+    {
+      "index": 312,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed6.json",
+      "inputSha256": "79b14e264a43615d3b25e941237fadb722dde1dadc65425d423b7afd0f151cb9"
+    },
+    {
+      "index": 313,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed6.json",
+      "inputSha256": "0a5d64ae1ac1032a21068990711c98f9193cc6bc94f41c23781abd5f1b4935be"
+    },
+    {
+      "index": 314,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed6.json",
+      "inputSha256": "eda190039249347dab59111977f32a7e4b6a62d6de0fe3f4c68a5f8eb6420a6b"
+    },
+    {
+      "index": 315,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "9280f3c210403c7c844f4ab845dcf95f06b7571c4ea760816c5199681a1e7c3a"
+    },
+    {
+      "index": 316,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "a65b3eba176d7d57a9f1c4e6badcd21e514bc1ed541be623c94a105e90455494"
+    },
+    {
+      "index": 317,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "85eb6e82d3413aa20beac90e0afc12143b782ac2a6213661cdf3b6bcde5656b9"
+    },
+    {
+      "index": 318,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed6.json",
+      "inputSha256": "1f41c7017d59e325e6060edff38fe7b2b5ee919137f3e30355e9dc309c7171e5"
+    },
+    {
+      "index": 319,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "5ec6a1eb8f07611d2bd3955aaf107920d9de1a502268e33e552e03c42451c5f1"
+    },
+    {
+      "index": 320,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed6.json",
+      "inputSha256": "39a6de754397ce2bef38389a179693ce3075746fb1282b762f519a368db2ff1b"
+    },
+    {
+      "index": 321,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "77a929b2e08457f112eb13dfebce00166c6b7620d889dc0f0504b5abf27396af"
+    },
+    {
+      "index": 322,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "2f2a395238931f125619cc62571318aecf3cb9854c0dc3a8ba348056dcf75e2a"
+    },
+    {
+      "index": 323,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "9dbd5aa8afad3e8132ae88624f0f1f8ec0ce176adf5f8a322ee7508e9efd87d0"
+    },
+    {
+      "index": 324,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "7967e04d98fd4b2b495fc39edc168407deb3a23cb911be5c085ef282c1861950"
+    },
+    {
+      "index": 325,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "a4a8b924daa335edd9725a46d80bec2cbbb10368f15471ac3d40ac3b49487a3b"
+    },
+    {
+      "index": 326,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "b2e53b3ae45f8a2475674b6d21fc032c46706a2a158a2bda0dba41b1ad012770"
+    },
+    {
+      "index": 327,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "6f620de6041c59fea1b38b5f892f1282fd95f527215436be0f92a5ee6cc78f2b"
+    },
+    {
+      "index": 328,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed6.json",
+      "inputSha256": "43b90a500fbad0e10b6a08ba408393bb6235cbd06e6d8b02a96517c954b2b6dc"
+    },
+    {
+      "index": 329,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "848027da9d36bb3fc175d6092038b67f764ee26630fed9c6f09d88ad77541284"
+    },
+    {
+      "index": 330,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "e19e292fe9eb71585da5ec819fc475fd5d4a3aa2110ad8d7214c131ddf6e7e51"
+    },
+    {
+      "index": 331,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "dee1bb30825bb9114c5287a83dca833a67cb61b0a0ad477348ff03426e80846d"
+    },
+    {
+      "index": 332,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "38f52b8e0c6e6d62bbe2784ad109e55cccfc371977b96687c8879b64ad74e5db"
+    },
+    {
+      "index": 333,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed6.json",
+      "inputSha256": "a803d104063980904b5ccc67e871056b0f5bfd909bd923dc898b7d447d8297f5"
+    },
+    {
+      "index": 334,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed6.json",
+      "inputSha256": "7abd232c24b06a3743b5586898bd46d746290c14b93e3760a2b1a9cfcb89e52d"
+    },
+    {
+      "index": 335,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed6.json",
+      "inputSha256": "6f64210bb0f41c800780f6a4e19e86c27740370db56d05d23bf70dfce8d269c6"
+    },
+    {
+      "index": 336,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed7.json",
+      "inputSha256": "9470d2c773abf997459757ec15ac6a23eb059533a91deb8ecc55d1d3e8b12591"
+    },
+    {
+      "index": 337,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "9e6b216ecc427641c9573d30bdbce7ce4ce2d5a629f4148d67fd9028c4da24d2"
+    },
+    {
+      "index": 338,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "632a3150f250185a21900640d129e1ba74ded0c2dfd68b218430971a4de977f6"
+    },
+    {
+      "index": 339,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "9dfbdfce2905723db1c9b2820290a5dba1818dfcc2ea4569c74a091e46f52a12"
+    },
+    {
+      "index": 340,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "9e50db37848d07babccf8179dbb8deaeb9ebecd87c94f424363db29cc5ae7445"
+    },
+    {
+      "index": 341,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "be244b1fc314d6afa2758b0ca3ee90e7fd760db8d4d9663cf79abd5eb213ea3a"
+    },
+    {
+      "index": 342,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed7.json",
+      "inputSha256": "3b2cd4f290e73ae44e8beb74b953c4d816fda257344ce39c124dbac3200df08c"
+    },
+    {
+      "index": 343,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed7.json",
+      "inputSha256": "aafedb4b6016734311a722bd0ff861c49c92a37fa7f03e3b13ef5a224d27cafa"
+    },
+    {
+      "index": 344,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "55ba3229e0780e93ee0fa4b07060c2687b6db4b621b3a618a794820920dda128"
+    },
+    {
+      "index": 345,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "a4fc264a6f7a8f49ab9082183bee90b8626c71361a2ed0fd2c6c1b50481253ad"
+    },
+    {
+      "index": 346,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "e9a7a5a30d8ea1912b957c987b44d0a86ec2e47bf9a5d6eab632d6b3e3d2b6a0"
+    },
+    {
+      "index": 347,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "9aed8bb2786752872e86e859920073a5247cca5ac129aabb8b759e45d0f145af"
+    },
+    {
+      "index": 348,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "d7130b5738ac9aa0da64044b72b8a0c2e6e9a107d6189e4a0529a405fe4bc741"
+    },
+    {
+      "index": 349,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed7.json",
+      "inputSha256": "5b4f9d6082a322aee731290a0cc35d6954170eaa6a102ee3ee78d1e2c5f50e9a"
+    },
+    {
+      "index": 350,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed7.json",
+      "inputSha256": "a07eaa9ce586497942ecd1a9f6862bb6c264e2b6024e2c12b55f39568373faa8"
+    },
+    {
+      "index": 351,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "68efc095c626666e6f5b95edac8d9658e6d6ce7fea16bbd771000cd796948ca6"
+    },
+    {
+      "index": 352,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "fb8a3206944e30e0bf89077fc61f62a9a8f18303451d4d93b8aa1233788c7468"
+    },
+    {
+      "index": 353,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "e5c9ac1f6387ac60cd05b861b2a0824e5366d3db674e5c4fb074bb86b78bc38b"
+    },
+    {
+      "index": 354,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed7.json",
+      "inputSha256": "766773e063d77989b3666157cd8452941c28d80577870edfad2ef45413662f44"
+    },
+    {
+      "index": 355,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed7.json",
+      "inputSha256": "40226e27733e557a7258d315b59ae8f0a40b07c25e02aa89ef80aaccd4f9d08a"
+    },
+    {
+      "index": 356,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "ba668e020868a7c1503b0dea1c94b873e5349b8601f5fcc5c1847dd6e3194933"
+    },
+    {
+      "index": 357,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed7.json",
+      "inputSha256": "9f5fa4a58374ed682f192354b7e2ac18809f909c6803237cb94369cc02a61bd4"
+    },
+    {
+      "index": 358,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed7.json",
+      "inputSha256": "4ec73ccfaa32a69fc2c503ed0cf50b1af61612c23bcf585bdfee22b4435a659a"
+    },
+    {
+      "index": 359,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "f5a3d9c04ab3d3e25e46ea4169d99767ab10e61ae4c118d483353b7223690618"
+    },
+    {
+      "index": 360,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed7.json",
+      "inputSha256": "13406b9e3f7aba479c970086f49b90bcb20870c10c2313b1f43ebfe111e58ae2"
+    },
+    {
+      "index": 361,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed7.json",
+      "inputSha256": "49a3f92fd085ea5464a65d20da25567e942335e5ece46631bb7d79b8fb7cf9d1"
+    },
+    {
+      "index": 362,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed7.json",
+      "inputSha256": "dcaf8880e1d9f15fdfbd6f9ba1cdfee309433eac660222acf34910b020f1803d"
+    },
+    {
+      "index": 363,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "4a5bdacf7838ca2c8d59769aad5b5c19e77906ce1170d09f4b08c5d454ab3d91"
+    },
+    {
+      "index": 364,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "5e9bc2f04a2180face920baf9e236e4ca6d78ad27b9f898bf88eb9630f7e126c"
+    },
+    {
+      "index": 365,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "6212aac369273e1491006e345cf585fc676ea41943e3f40c3715b5185001591e"
+    },
+    {
+      "index": 366,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed7.json",
+      "inputSha256": "5ee309e6e47ccd0f67c54a3958922086f2bec8612da9935d09a8c53a90285923"
+    },
+    {
+      "index": 367,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "997df6974bc3934e92f725efaf98d9eea2c0adf2aeae557fc435c290a873e240"
+    },
+    {
+      "index": 368,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed7.json",
+      "inputSha256": "cd0317fa100671badcf6852b536fe298cc33a9b2c4bf01891bde8536207fa6c1"
+    },
+    {
+      "index": 369,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "6eaf2046c2036873afaa6af9bdbc531109c7e70d3d94b0ab789de02f2cb2befc"
+    },
+    {
+      "index": 370,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "b48b1cac6c40f65a0c3dc25028e95b8900fa1b3c2926fb04488e4f735d2efe36"
+    },
+    {
+      "index": 371,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "9693a52c15018a0e01b06fcb07ad437b02490977a0e04176f347617f2e121d94"
+    },
+    {
+      "index": 372,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "fcfb6c67dff6372b168e99bdef05731da7de7582fb097f014645e08183152ac9"
+    },
+    {
+      "index": 373,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "28599bec87eb9672e21387005134819fd6f24f7fb1c7d14b8f55f3474f6459ce"
+    },
+    {
+      "index": 374,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "e5bba8badbd2915323218d68b1f4c453d6269af98fd9260ea8496b8b4a642b80"
+    },
+    {
+      "index": 375,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "2400936aebcd497d3930ffb250467cd6f1d84b7ebfcef6a1aca44bbda1f5feac"
+    },
+    {
+      "index": 376,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed7.json",
+      "inputSha256": "e47b7929cd17976cc50eecf85ba2d65db9942914f4efe89cf1c5d2b85430c93e"
+    },
+    {
+      "index": 377,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "6afaaec4c618fb8c7877a5a99d7dfeddb6ee753577c2e53553f9e81bf1fed66c"
+    },
+    {
+      "index": 378,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "1d6f1b57c64fb1898628189a648c2c7d77cec1d504ff24095c4f67cda33dba83"
+    },
+    {
+      "index": 379,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "abbdab64e139e727ae4ec6fa6106d846bb82d640efbe57312e58750806953e9e"
+    },
+    {
+      "index": 380,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "f8dea94e3a87c2a07b77d622bcc54e9777733a7d943491f6880f5fa2810aebcf"
+    },
+    {
+      "index": 381,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed7.json",
+      "inputSha256": "a643a3818ec7db95759811d47c856e9c2969ec6b22c64cdc7a4a65e3c874836b"
+    },
+    {
+      "index": 382,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed7.json",
+      "inputSha256": "5ec131a47aceb600cf052d09b8e4ee526c49673ae1ca04ee9411e25feffb23c3"
+    },
+    {
+      "index": 383,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed7.json",
+      "inputSha256": "effd314104eb231fa755d23308d4c73c1e99d5e53600ab979b6593928f85a63a"
+    },
+    {
+      "index": 384,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed8.json",
+      "inputSha256": "6d8c3c3d31d4346ab86b0ccc6ac77822b4199823ba0479654688f495642fc797"
+    },
+    {
+      "index": 385,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "8982cdf6fe457ac7f31b1c9c3ece67e2b7ef9587b70107fc0499d42dfdb65021"
+    },
+    {
+      "index": 386,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "ec6baa9e3921345a8bcdb9c55fa2da036cae91bf44e8ca2ee3838741440ab6d4"
+    },
+    {
+      "index": 387,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "a03fc1b845cf72c969a1025ec791ed4871877e4522f1d0f3be625b6d4434ffaa"
+    },
+    {
+      "index": 388,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "00f18157986269f3257d1fae7e3ae3a8d1af70e1685ac1e4d92b14700ba2f8ca"
+    },
+    {
+      "index": 389,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "63275c21a46d44a52116c710cdf136396c68ffa55fcfe1865dffe265be679728"
+    },
+    {
+      "index": 390,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed8.json",
+      "inputSha256": "dc6bff16fd0dd6d0c6132746ad5580329ee6d9fc8bbb1216cf812fb43bc21da7"
+    },
+    {
+      "index": 391,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed8.json",
+      "inputSha256": "922bfb8c6f3df5832e812a69d0355b2aada78dc20072cae50b2576632e835765"
+    },
+    {
+      "index": 392,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "9abff3005383b0779fd23b7fa1a26d95c62c2f48618d9d8ee74d9114d17210fb"
+    },
+    {
+      "index": 393,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "1c9cef216529687479acbef9d8272988eef9a81eed2af880060fa71c83b447a2"
+    },
+    {
+      "index": 394,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "4f96f0da1654f1488f226fc78028cf86884b6e2719d1084ed92b82c13359d26f"
+    },
+    {
+      "index": 395,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "4334c5ffe7cf9ef5c9e43e2ab92cbeeb6796fed504aa41558a36e842260c8c3b"
+    },
+    {
+      "index": 396,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "60f227c1b503d92995b6316f50e84171c5645e3e350fb9a2f1c2e0a7282d112e"
+    },
+    {
+      "index": 397,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed8.json",
+      "inputSha256": "6ceb02329bfaecd7e81a21088d391d3e76938272d9fb5fa8c167df32812daf61"
+    },
+    {
+      "index": 398,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed8.json",
+      "inputSha256": "301692c6680586d2dd1c994fcc72e7696a6a741cd4c11bda49e26a15f5e8d094"
+    },
+    {
+      "index": 399,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "fb029aab02264ebd4d2542fe53538dccdae0804a0c7f519895268beb8c4fc0cb"
+    },
+    {
+      "index": 400,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "12a503f48a392a418c22b6f9ba6eb3ada2f2c290f5f0d7455ff52c5ec3c7b35d"
+    },
+    {
+      "index": 401,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "3816e3f64bcd284e3950f578604549f38306231f289f1c0620e425d48a23101e"
+    },
+    {
+      "index": 402,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed8.json",
+      "inputSha256": "497c6560c5eae8d8d894ea2103607d7d04ae476c99435e240edcd10c09d49c40"
+    },
+    {
+      "index": 403,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed8.json",
+      "inputSha256": "98054faeca07e60879cef1427df62ab8113dedf731ecdba9de551fda6cb34004"
+    },
+    {
+      "index": 404,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "87c46cc3d49e174d37f0d46285be69ba23aea2b403c308b219477ed126e513cc"
+    },
+    {
+      "index": 405,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed8.json",
+      "inputSha256": "3154b61e98c23b234f63516f0c521958ec8cfc2ea16991dc693e63a4b3687bdc"
+    },
+    {
+      "index": 406,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed8.json",
+      "inputSha256": "9d59a328e93f1ce530393946751f5e788934ac1fb60efa70888e79d3d0c4cfb5"
+    },
+    {
+      "index": 407,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "3f597ba25a1fc1195840848d3f5ad81e4b896ebc9b5cb8457c21a066ad6f4f69"
+    },
+    {
+      "index": 408,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed8.json",
+      "inputSha256": "895c80c5852858b9de1c30271ccd54d614775a84c757ea325ee0fadbaf91ebb3"
+    },
+    {
+      "index": 409,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed8.json",
+      "inputSha256": "4dceb93513b26659f02a673488cae3f89b5aa109e31fd85b9381b7ffe00eed05"
+    },
+    {
+      "index": 410,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed8.json",
+      "inputSha256": "1f2c2c38428102101261951094f8446e2f15031765a4f72ca7f3e79b6555a11c"
+    },
+    {
+      "index": 411,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "ffb50ac4c7ffd3e9986d88cdeb4ec1258d1df7915fa6016667f9cb4187c7ba31"
+    },
+    {
+      "index": 412,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "4889e3e1f306ba68959984930933f4592e7f9f66572383b0afd415ecb5b4beec"
+    },
+    {
+      "index": 413,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "42bac7b8b739a4bea5aeecaad7e00eea48028815480ab2925163c3530a661edc"
+    },
+    {
+      "index": 414,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed8.json",
+      "inputSha256": "f88a2b90d2a4d70b40d1ca2b10228cd9cba4ad7359e876fa923c3d6ba507f4f2"
+    },
+    {
+      "index": 415,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "34bf8ad90ec148aa52b09b8d98df69dfcb0d8d60ab5e53966ae407be7ae0c05c"
+    },
+    {
+      "index": 416,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed8.json",
+      "inputSha256": "f411a454b5c60324241c7afcb082655014e9063ed345bee93b230fb81f1de3a7"
+    },
+    {
+      "index": 417,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "fe19b4f7111ea57ea59e7173aab92553e8eaf080cf2ececf87e6c33656de86ee"
+    },
+    {
+      "index": 418,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "b9197442254bc90e12ae176db89aabe2c3126eca398cf7268972ef6f3e8f9372"
+    },
+    {
+      "index": 419,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "8f6029ed545c0b7dbd2361876d7b5e131e6e4b5331f876f880daf3b9f84299a3"
+    },
+    {
+      "index": 420,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "3e3cba247f5f33efcb9b8283b0f1bdb77fb20e72d1fc87738e19655aeee33bca"
+    },
+    {
+      "index": 421,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "e8f8792f749a550ee1c9bae8effe3216a08ac7bd39bd89e4d3d928847d345792"
+    },
+    {
+      "index": 422,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "7b04716cf9736f6fc0d4c56c980efffadbf8284619289e61e1bba02b1d69e28e"
+    },
+    {
+      "index": 423,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "32b98553fecb25d4cdd6a896e116d80533eac6e99397fa07243a94fffbc71831"
+    },
+    {
+      "index": 424,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed8.json",
+      "inputSha256": "543b5772c2f306712be902f5c6475f7744135f064bbc482bc5970b09fac3b5e9"
+    },
+    {
+      "index": 425,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "f2837359302e3b10c3ffc6576455328279d629180dedccdef1f58010127f2ed0"
+    },
+    {
+      "index": 426,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "9e45934015f285f90a96e5240aeed9aff435173807df1fc0219003e993243401"
+    },
+    {
+      "index": 427,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "95d25a27669edb5ab9f217a5e06e2a7bf6ff41c5f824cf22cf4dbdd8a49767c5"
+    },
+    {
+      "index": 428,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "e66b52471d053a692139ee003ecc5c82bfe78ccbc55b05c905c5294a81cf931f"
+    },
+    {
+      "index": 429,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed8.json",
+      "inputSha256": "4f7c03f67f9a1126b7460cbd19ef311bfc9f66838319df3ab3eb76cda0974778"
+    },
+    {
+      "index": 430,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed8.json",
+      "inputSha256": "c0d08967265b6bddcf395fc54c797f594ee4d8013e4317088ae3d3284c85b5cb"
+    },
+    {
+      "index": 431,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed8.json",
+      "inputSha256": "6ee46d5bb740de4f24c88a064a3355a303626e690510386790ac889bc27eadbe"
+    },
+    {
+      "index": 432,
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8cjg__1__1-a__1-d-boltz2-seed9.json",
+      "inputSha256": "64c13c6d8873d8afa785a969c37485089e2516519515bdfc6b40552e23ca544f"
+    },
+    {
+      "index": 433,
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8ou2__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "b4253a7b5946c3baa8b4bc0c31c6764b22f9b810432cd5d69b83d91bd7c856b0"
+    },
+    {
+      "index": 434,
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8j30__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "8411fa507416829b4425db93be04301c9a20d51a7dcc741425ef9cc08a13b7ac"
+    },
+    {
+      "index": 435,
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8cij__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "2d554ffd1984b07196a6cfe28c12128e8712257fac54bfe1f5d22178832d9c56"
+    },
+    {
+      "index": 436,
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8chc__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "5f8a7d68d575c9351655ba538a25323dc12ef41854889e2f8c7bd7a6192354ca"
+    },
+    {
+      "index": 437,
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8aqf__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "11aa33afe3fc772fbc7feb6c52495158991bb7608d976a8e7cdb086c5ecb1ca4"
+    },
+    {
+      "index": 438,
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8am2__1__1-a__1-d-boltz2-seed9.json",
+      "inputSha256": "538da18c2f035a5fc1c9bbd6cd8b969d32cfd2bced9f857d1227abb826033df8"
+    },
+    {
+      "index": 439,
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/7g00__1__1-a__1-q-boltz2-seed9.json",
+      "inputSha256": "c29e2f9bd4f116146148506169ff98566d889a4cc7b084c8962191d5a9f5e3f6"
+    },
+    {
+      "index": 440,
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8gev__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "d8052c3706803e63c811305beb3bc9d9b60835d73811f5ac059ef9f1fdb86010"
+    },
+    {
+      "index": 441,
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/7u8x__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "cdf76000045b6ad7a017ec5935508b5d152ded44516ef906628d4a9816467873"
+    },
+    {
+      "index": 442,
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8i2n__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "e4149c064e59317d1b6266a865a4dfd8a6c72b9d3b2ffc27c3f961793c401ab4"
+    },
+    {
+      "index": 443,
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8pqf__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "e3186a2c24c13b79be0d643f5cd30deb6d7ee47ca98b83fbee102b895b656808"
+    },
+    {
+      "index": 444,
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8geu__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "79596af7b1b926286434ae3b38cd52723f13c2289473ffb39ffbec7bb052a724"
+    },
+    {
+      "index": 445,
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8swe__1__1-a__1-e-boltz2-seed9.json",
+      "inputSha256": "442daa85f507243898787c0a1cfc252dd80626c7100ab6acb096b25a73120d9c"
+    },
+    {
+      "index": 446,
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8pji__1__1-a__1-e-boltz2-seed9.json",
+      "inputSha256": "3f7d8ee9600ac4626194a69dd4bcd1dd35baca4e1dff7451c0a0a1e750a7ea5a"
+    },
+    {
+      "index": 447,
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8pbo__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "24254bf0a3ea6805ebac18649f13dff083f81fe0c7bf02514a7762e6e1344b85"
+    },
+    {
+      "index": 448,
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/7uad__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "bab6e23a81f8787471069f96c991d6b0004f9ed99af705acc7548abcfe6db908"
+    },
+    {
+      "index": 449,
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8u7w__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "539ad839a89874d8a3a646e58e9b6794d6fa22a5e5604e09666dbaf4fd853a53"
+    },
+    {
+      "index": 450,
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8gcz__1__1-a__1-n-boltz2-seed9.json",
+      "inputSha256": "92021f02b1a0141b404da8626b072a74d078e859234fb4835eaf27a2bae8e6d7"
+    },
+    {
+      "index": 451,
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8px8__1__1-a__1-d-boltz2-seed9.json",
+      "inputSha256": "35bce8551d3c83d202de14fa3e5a327798284ea280a6d0f19e3c2b659a52a277"
+    },
+    {
+      "index": 452,
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8q2y__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "a7d21b1340bd2672067d4b95f4e037b92e5a16b3e360cddf8230b21165e3b62d"
+    },
+    {
+      "index": 453,
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/7szr__1__1-a__1-g-boltz2-seed9.json",
+      "inputSha256": "468b9d9989495274bc61ee250444fc646743a3f910c783c056e05344ee879498"
+    },
+    {
+      "index": 454,
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/9f40__1__1-a__1-q-boltz2-seed9.json",
+      "inputSha256": "4a3b3001a4e5cc29b4db5b56f026b644104755a495011e89ec394a0b34b91afd"
+    },
+    {
+      "index": 455,
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8crl__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "72bcc736be1d7acc4cc202882ff0170969c13a35762b20115c39b7f0f15f1994"
+    },
+    {
+      "index": 456,
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8jmo__1__1-a__1-d-boltz2-seed9.json",
+      "inputSha256": "178f149a92e8ad388a6a399a9c7d864f66fec0ba21f143fb1470f1ddd158dcc2"
+    },
+    {
+      "index": 457,
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8q34__1__1-a__1-f-boltz2-seed9.json",
+      "inputSha256": "79073554c93b9cbce030dbbbb642f01b83bbb350eaae22f55cc6df3643b426bf"
+    },
+    {
+      "index": 458,
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8gdk__1__1-a__1-o-boltz2-seed9.json",
+      "inputSha256": "25624652a87759ad6ac2a252bf7a9e8c23aa1579edafdb4cd4fd017b15f3bd8f"
+    },
+    {
+      "index": 459,
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8bo3__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "ee4cda7a22677813941ff6acc582c0c16dc57b633ebc671392ae9a38f9119125"
+    },
+    {
+      "index": 460,
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8u7x__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "46dc13449579436314c7e405a95b2cc916fe68b92210df0ebd2586e2ed928681"
+    },
+    {
+      "index": 461,
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8i0d__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "2600a178b96adf538fd39b2a9b084dfcc134ff817de088b24d12776f3c2c67bc"
+    },
+    {
+      "index": 462,
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8efj__1__1-a__1-d-boltz2-seed9.json",
+      "inputSha256": "7fb5bdd93f49295b2fb2fb328f8aec26fc4f030bfea108e65c9bc1c688ae6282"
+    },
+    {
+      "index": 463,
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8iqt__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "8d1d620c970e70fb5019cfe0829788522b53b20fb1802d0d319a41357fb73466"
+    },
+    {
+      "index": 464,
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8tti__1__1-a__1-e-boltz2-seed9.json",
+      "inputSha256": "87dd9098fd7cd545fb9795a03d490666a177d1057d9dcdc6e8dc94bbd93c7da3"
+    },
+    {
+      "index": 465,
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8t1y__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "ac66a5dd2571a7bb45b81f63908755814acbe34c62997fa85e9deb9d759f529f"
+    },
+    {
+      "index": 466,
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8jby__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "9b15c3493713a7c68759c362989b477b7002b154b26ef45f69b89daea87fac88"
+    },
+    {
+      "index": 467,
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8q2u__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "6f267dbdf477c17deae01dacb22a0823aa92384d143ce4d282665e38c1934807"
+    },
+    {
+      "index": 468,
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8a3a__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "4fbd301a57c57a5eb8ec5428a0ba0b43bbac3afd2086895c8f6d187cf2445306"
+    },
+    {
+      "index": 469,
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8sze__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "249c7d03ce14228cbc867c1c5670ba09218558eb929698c21ac764ee698f715f"
+    },
+    {
+      "index": 470,
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8hlj__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "1d09ae7fce65e59cab5c6ce6acee0092cd053efc784096c0e75df3b118d3e7c2"
+    },
+    {
+      "index": 471,
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8sx2__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "e3758297cbf4669721a439896be3deee1586601d6eac8ba31748d89a4a25c110"
+    },
+    {
+      "index": 472,
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/9f41__1__1-a__1-q-boltz2-seed9.json",
+      "inputSha256": "decbd1205ae146eec3df059566bbc7f69fe4dd1556971f25bff782e1cc36d989"
+    },
+    {
+      "index": 473,
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8usm__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "3ee4ce675d0d01d7415139fb810ad27fe3b7ef8abfe1ae24ce466824558ac537"
+    },
+    {
+      "index": 474,
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8t27__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "1c7ec2f4f4c5b291e60ae10b4502659cb08e2d17d2dfc2a4c000f9086ba1126b"
+    },
+    {
+      "index": 475,
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8b62__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "6102d42a7963d6280c4499ec0b821ef5772b5442d65390c7f59688d7b6538172"
+    },
+    {
+      "index": 476,
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8a2p__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "b30b2ac3b4f6b7f9ca7de961f44705893645b82e778fa8b3b1d9ba60bd1d6b90"
+    },
+    {
+      "index": 477,
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8pp8__1__1-a__1-d-boltz2-seed9.json",
+      "inputSha256": "f3ecc314120a337b016795c3f846d43953b396436d8344291a107a1139a146b0"
+    },
+    {
+      "index": 478,
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8t9v__1__1-a__1-b-boltz2-seed9.json",
+      "inputSha256": "bf8df40ee8dd875f2ed239e8fa2130eecbd441e5702e1f32ce422a181646c413"
+    },
+    {
+      "index": 479,
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/8gww__1__1-a__1-c-boltz2-seed9.json",
+      "inputSha256": "08087840b50d73db9be4f2e3a515f1c6f420c791c73b96f17539c2b432d4f010"
+    }
+  ],
+  "executionOrder": "Seed-major, frozen selected-case order within each seed; no outcome-dependent ordering.",
+  "stockInputWarnings": "See conformer-audit.json. Flagged input conformers remain unchanged and in the denominator.",
+  "nativeTopologyLimitation": "Reconstructed input graph. The original processed RDKit cache and exact historical RDKit version were not published; a matching native cache is not asserted."
+}

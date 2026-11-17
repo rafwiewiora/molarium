@@ -13,6 +13,12 @@ from assemble_stock_benchmark import assemble
 
 
 class StockPageGuards(unittest.TestCase):
+    def test_explicit_artifact_budgets_remain_finite_and_enforced(self):
+        with self.assertRaisesRegex(ValueError,'Finite evidence budget'):check(self.review(),max_members=0)
+        with self.assertRaisesRegex(ValueError,'Finite evidence budget'):check(self.review(),max_expanded_bytes=3*1024**3)
+        with self.assertRaisesRegex(ValueError,'excessive evidence members'):check(self.review(),max_members=1)
+        with self.assertRaisesRegex(ValueError,'artifact budget'):check(self.review(),max_expanded_bytes=1)
+
     def review(self):
         return Path(__file__).resolve().parents[2] / 'reviews/cofold-stock-localfold-2026-11-13/initial-snapshot'
 

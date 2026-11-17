@@ -1,0 +1,27 @@
+{
+  "parentRunnerSha256": "7671ae091894d540e54b26df5534467ea8ed70308ddf23a32e111f0eb74f9877",
+  "runnerSha256": "189d3717b0b7b1ca8d6258d5be934fe64da0f29c96d9f71fd5af2349323253c9",
+  "reversibleReplacements": [
+    {
+      "from": "/Users/bb/repos/marco/tmp/molarium-chemrxiv-v1",
+      "to": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-strict-fp32-20261117-attempt002/frozen"
+    },
+    {
+      "from": "      const weights=await trunkWeights(store),trunk=new Af3TrunkGpu(device,{",
+      "to": "      const shaderAudit=[];\n      const originalCreateShaderModule=device.createShaderModule.bind(device);\n      device.createShaderModule=descriptor=>{\n        const code=String(descriptor.code),withoutComments=code.replace(/\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[^\\n]*/g,'');\n        const usesF16=/\\bf16\\b/.test(withoutComments);\n        shaderAudit.push({label:descriptor.label??null,usesF16,code});\n        if(usesF16)throw Error('Strict FP32 control encountered an f16 shader');\n        return originalCreateShaderModule(descriptor);\n      };\n      const weights=await trunkWeights(store),trunk=new Af3TrunkGpu(device,{"
+    },
+    {
+      "from": "stagedPrecision:'f32',weightPrecision:'f32',accumulatePrecision:'f32',pairWeightPrecision:'f32'",
+      "to": "stagedPrecision:'f32',weightPrecision:'f32',accumulatePrecision:'f32',pairWeightPrecision:'f32',pairMatrixKernels:false"
+    },
+    {
+      "from": "window.trunkControl={status:'complete',records,adapter:info,userAgent:navigator.userAgent,features:[...device.features]};",
+      "to": "window.trunkControl={status:'complete',records,adapter:info,userAgent:navigator.userAgent,features:[...device.features],precisionControl:{pairMatrixKernels:false,requireNoF16Shaders:true},shaderAudit:await Promise.all(shaderAudit.map(async({code,...m})=>({...m,sha256:await digest(new TextEncoder().encode(code))})))};"
+    },
+    {
+      "from": "  await browser.evaluate(`(()=>{",
+      "to": "  await browser.evaluate(String.raw`(()=>{"
+    }
+  ],
+  "scope": "Isolated paths, existing pairMatrixKernels=false precision control and shader-observation/rejection of f16 code; inputs, native arrays, variance mode, kernels and gates unchanged."
+}

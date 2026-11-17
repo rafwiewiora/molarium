@@ -1,0 +1,533 @@
+{
+  "status": "complete",
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "runnerSha256": "0cd1148707e59c7e45dd87605cc4c6aba3c590713d66170276679757dd1c0802",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "startupContextBefore": {
+    "href": "about:blank",
+    "baseURI": "about:blank",
+    "title": "",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "startupContextReady": {
+    "href": "http://127.0.0.1:52883/",
+    "baseURI": "http://127.0.0.1:52883/",
+    "title": "Stock-trained trunk comparison",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "records": [
+    {
+      "cycle": 0,
+      "instrumentedMilliseconds": 5156.920000001788,
+      "timings": {
+        "embedder": 44.75500000268221,
+        "template": 251.6850000023842,
+        "msa-stack": 396.1600000038743,
+        "pairformer": 2892.6849999949336,
+        "distogram": 13.269999995827675
+      }
+    },
+    {
+      "cycle": 1,
+      "instrumentedMilliseconds": 4720.39999999851,
+      "timings": {
+        "embedder": 2.3900000005960464,
+        "template": 41.73499999940395,
+        "msa-stack": 217.62000000476837,
+        "pairformer": 2599.384999997914,
+        "distogram": 12.219999998807907
+      }
+    },
+    {
+      "cycle": 2,
+      "instrumentedMilliseconds": 4658.97500000149,
+      "timings": {
+        "embedder": 3.864999994635582,
+        "template": 44.71000000089407,
+        "msa-stack": 163.5350000038743,
+        "pairformer": 2596.170000001788,
+        "distogram": 11.769999995827675
+      }
+    },
+    {
+      "cycle": 3,
+      "instrumentedMilliseconds": 4682.189999997616,
+      "timings": {
+        "embedder": 2.5499999970197678,
+        "template": 44.17999999970198,
+        "msa-stack": 151.25999999791384,
+        "pairformer": 2594.2750000059605,
+        "distogram": 14.979999996721745
+      }
+    }
+  ],
+  "adapter": {
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "device": "",
+    "description": ""
+  },
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "features": [
+    "core-features-and-limits",
+    "subgroup-size-control",
+    "subgroups",
+    "timestamp-query",
+    "shader-f16"
+  ],
+  "precisionControl": {
+    "pairMatrixKernels": false,
+    "requireNoF16Shaders": true
+  },
+  "shaderAudit": [
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:two-pass:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:projectTokens.wgsl",
+      "usesF16": false,
+      "sha256": "9d7d4a94ac076c90989fdf27dd64ba0741053ca86c366a26937816532cb2e25e"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:two-pass:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:projectSingleInit.wgsl",
+      "usesF16": false,
+      "sha256": "745ad6dadbcd085898290a3ee72ae8568cdad833e11e7eaea48736f19983652c"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:two-pass:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assemblePair.wgsl",
+      "usesF16": false,
+      "sha256": "e3a43bc6b5109580e7f6584629e55eb2dc7ce31dd653efa29aae7b7485046ece"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:two-pass:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assembleMsa.wgsl",
+      "usesF16": false,
+      "sha256": "a711e8c5d8b10edbf99554f3c9bc514779a335b8933c9624dbb25c81d1fd104c"
+    },
+    {
+      "label": "af3-embed:238:257:447:128:384:64:0.00001:two-pass:gather:false:btfalse:mw34:pqfalse:dnfalse:mdfalse:ctfalse:assembleSingle.wgsl",
+      "usesF16": false,
+      "sha256": "fae80e20821bb9434bebc64c720b278cd817334182697cb1bf986d84aaaa07a2"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::embed.wgsl",
+      "usesF16": false,
+      "sha256": "91e8079b46c8bbd78eebc21eb556871155ca9eb9d6706ec53f22b457cd4b54f9"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::accumulate.wgsl",
+      "usesF16": false,
+      "sha256": "56396ae6a68ba82745b9fdafba1c34b3befc2f33a0d904a76dc820f574642cd5"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::output.wgsl",
+      "usesF16": false,
+      "sha256": "3bf7fbffef84fd6ad8dad464dfc4152b86d5149074bf7096bae76c974603088b"
+    },
+    {
+      "label": "af3-template:add-pair:7250432.wgsl",
+      "usesF16": false,
+      "sha256": "0b4d0c7b36f2c3b35e2647c60a3b17160a568122144057d6bbdb61d7b086a613"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:normalizeInput.wgsl",
+      "usesF16": false,
+      "sha256": "4ef6431a7e60f6482e8d3ec73b0e15fb58a216e10b6ed3229caac5dc01b137fe"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:projectAB.wgsl",
+      "usesF16": false,
+      "sha256": "8fa3e3bf7d93ff3180b62532f6d95bd77e17eac25bf61fde8abe304a05b90e33"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:contract.wgsl",
+      "usesF16": false,
+      "sha256": "7a9026ae6c1ddbd03f38d964f2908dae5807939188e740872006ee1b1adbf0b2"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:normalizeHidden.wgsl",
+      "usesF16": false,
+      "sha256": "5d9c7bffe9baf0d15a0a939209a4e7900a770557de881ddef3040cb36bb9e006"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:projectOutput.wgsl",
+      "usesF16": false,
+      "sha256": "52b48b864a66ecd315a353c63813002447c13f6a1fcacd48a7ab757f4ffb1816"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:tri:incoming:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":64,\"linearAPWeight\":128,\"linearAPBias\":4224,\"linearAGWeight\":4288,\"linearAGBias\":8384,\"linearBPWeight\":8448,\"linearBPBias\":12544,\"linearBGWeight\":12608,\"linearBGBias\":16704,\"layerNormOutWeight\":16768,\"layerNormOutBias\":16832,\"linearZWeight\":16896,\"linearZBias\":20992,\"linearGWeight\":21056,\"linearGBias\":25152}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:contract.wgsl",
+      "usesF16": false,
+      "sha256": "44890e67688c4501178117008af1afd8490206379a31b77b16c925e24fe0096b"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:normalize.wgsl",
+      "usesF16": false,
+      "sha256": "1720d4e3e6d77c559d6e16533a567c90007d005bbc26df98d0a7196309459083"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:bias.wgsl",
+      "usesF16": false,
+      "sha256": "239bcdace56ba6a7fc1ad7c86ebfc22ee98b8b8f383cf480567a13d8ddaaf0c0"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.wgsl",
+      "usesF16": false,
+      "sha256": "2adffaed32bba012ac259164892a7c489301aa6e0ace3d4021e7091953f6d2a5"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.wgsl",
+      "usesF16": false,
+      "sha256": "7a7879d8ba345efb945fc673de7c29dd55b46940dcdf693f6c9e4c85fab0fa86"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:grid:false:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.wgsl",
+      "usesF16": false,
+      "sha256": "525210d813bfed4a5a5e11f8092ec223b28a2b1e28f8c5bb5951ed2e0941764c"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.wgsl",
+      "usesF16": false,
+      "sha256": "83c28a1c06404976595fb0ed712908fdd26c811448428ddaec4efd1d180bda62"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.wgsl",
+      "usesF16": false,
+      "sha256": "5e66c41bd5b521a2be2ee5a361c0b701be014bf43d58570c833aa79bd0b55ac6"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:grid:true:f32:f32f32f32f32f32:m0:t0:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.wgsl",
+      "usesF16": false,
+      "sha256": "442408575df36aff0cd876a779f2388fce76f1ecb151e1e6d85139fba015b4c7"
+    },
+    {
+      "label": "af3-template:238:128:4/4:0.00001:two-pass:false:c64::track:pair-transition:2:f32:f32.wgsl",
+      "usesF16": false,
+      "sha256": "abce02b0fda96415e2dec0f235cd4aa227ad284eb9641dad995686c11ac9ec70"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:normalizeInput.wgsl",
+      "usesF16": false,
+      "sha256": "8ef0b836dd247e87520e42c858faceed8f33a838695a30ff737830e5b2593dee"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:projectAB.wgsl",
+      "usesF16": false,
+      "sha256": "e771ea9365954a12a22e52beec1c00563e301ddc6a6fd7a10ec2ccababa5418f"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:contract.wgsl",
+      "usesF16": false,
+      "sha256": "86a9991a5dc86e2a102d8205284de2aa2f89c5392f99cce814d1485d30f67e96"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:normalizeHidden.wgsl",
+      "usesF16": false,
+      "sha256": "6076d99368f2f35d726abadc47dca7234a22126604fe92ae32fa34fcf8a49c6d"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:tri:outgoing:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:projectOutput.wgsl",
+      "usesF16": false,
+      "sha256": "2377ddc9592d79cc1b3efd60d375b9ef67b8efce430dda4f8ea9cb39de80ddc1"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:tri:incoming:f32:f32:f32f32f32f32f32:{\"layerNormInWeight\":0,\"layerNormInBias\":128,\"linearAPWeight\":256,\"linearAPBias\":16640,\"linearAGWeight\":16768,\"linearAGBias\":33152,\"linearBPWeight\":33280,\"linearBPBias\":49664,\"linearBGWeight\":49792,\"linearBGBias\":66176,\"layerNormOutWeight\":66304,\"layerNormOutBias\":66432,\"linearZWeight\":66560,\"linearZBias\":82944,\"linearGWeight\":83072,\"linearGBias\":99456}:dlfalse:nr8:ccfalse:rcfalse:hp1:pt64x32x64w16:ct32x32:contract.wgsl",
+      "usesF16": false,
+      "sha256": "7a3ed986e0526dac6a47a0cfe38a9e6feb020a8f93ff367e7787d0015c51f528"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:grid:false:f32:f32f32f32f32f32:mfalse:tfalsesf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:normalize.wgsl",
+      "usesF16": false,
+      "sha256": "2f75ea28357ebf16a3c7812cd46336bafac15ee9f959373bb1789d84075dc596"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:grid:false:f32:f32f32f32f32f32:mfalse:tfalsesf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:bias.wgsl",
+      "usesF16": false,
+      "sha256": "fb6488fdc2df0626ae014de129804024ea44b08cf56c65bad2b9125001597635"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:grid:false:f32:f32f32f32f32f32:mfalse:tfalsesf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.wgsl",
+      "usesF16": false,
+      "sha256": "8b0c5ce52ac912f2d35f4b48cafc943a82ce11fc2cf24ec7dea72c181be03030"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:grid:false:f32:f32f32f32f32f32:mfalse:tfalsesf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.wgsl",
+      "usesF16": false,
+      "sha256": "e11307a30ec6d01b45f5dee6974dcee2c032d723af06d2328ec322a9d377e336"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:grid:false:f32:f32f32f32f32f32:mfalse:tfalsesf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.wgsl",
+      "usesF16": false,
+      "sha256": "c3bc46a0aae2d9b8582fe584ae80124100667a81ccb740c644547c4575ae9d5b"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:grid:true:f32:f32f32f32f32f32:mfalse:tfalsesf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project.wgsl",
+      "usesF16": false,
+      "sha256": "307a3e5dc8d9752eb513cfadb59c1cfc4760a22dafbe4ecb42627c0f0341f536"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:grid:true:f32:f32f32f32f32f32:mfalse:tfalsesf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:attend.wgsl",
+      "usesF16": false,
+      "sha256": "03fbea94ea6a9c962327cc39c343d55465209e77a4adbd87e4209f7fc20faf79"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:grid:true:f32:f32f32f32f32f32:mfalse:tfalsesf:chfalse:lsfalse:paf32:t8x8x8:gbfalse:obfalse:project_out.wgsl",
+      "usesF16": false,
+      "sha256": "f4dc7bb570ba10ecd178d957b7691d5ef965e049f50fd076b79de86beb090dc4"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:pair-transition:4:f32:f32.wgsl",
+      "usesF16": false,
+      "sha256": "0a9cfd7b438d6425ef05a5b6ac7f9bdc5aa44fabe59dd0dd2811bf8cddeff570"
+    },
+    {
+      "label": "af3-opm-vec-contract:32:128x128x8:f32.wgsl",
+      "usesF16": false,
+      "sha256": "050d74edce99c56f5895a1330b1429aa05427723e74a73ef3594b2c3a038cc10"
+    },
+    {
+      "label": "af3-opm-vec-output:banfalse:128x128x8:f32:r1.wgsl",
+      "usesF16": false,
+      "sha256": "7b79ec0b6569ae18dcdda9b0525934441597b349f4b1c9c96199c50fb50ba6cf"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:opm:project:2x4:d:banfalse:lrbfalse.wgsl",
+      "usesF16": false,
+      "sha256": "de3d20212a486ad91d4a9ba7e9085f3efb697ad2aa2bef4a8ab8dce14aa1caed"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:opm:counts:2x4:d:banfalse:lrbfalse.wgsl",
+      "usesF16": false,
+      "sha256": "9540b2f1847cdeb97da5accc0066ce7159a0e4a8fad3c19ea193fccdf61d581d"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:opm:contract:2x4:d:banfalse:lrbfalse.wgsl",
+      "usesF16": false,
+      "sha256": "d3ad74e78a8a03d1932f94ac4c73ec68e01ee39de6732b4c3eb4de1dc5a52f63"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:msa:keyMask:8x8.wgsl",
+      "usesF16": false,
+      "sha256": "1838fa040e11863c04201294353c92b048f12741b473630c9babd64ba844b7c6"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:msa:attentionLogits:8x8.wgsl",
+      "usesF16": false,
+      "sha256": "3532217cd35b4a21b481d3d982ed3e0948ef80f130337e9f445ea675baaa6c01"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:msa:attentionWeights:8x8.wgsl",
+      "usesF16": false,
+      "sha256": "f2445e9d451de66e36e93c526d9f733909c1f35042e73c34beba52e9bdbdb32e"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:msa:project:8x8:r16.wgsl",
+      "usesF16": false,
+      "sha256": "08223a05da2f97f8697fe493c0e8587aae6f3b109aa934fb8cc35961bed54ae9"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:msa:average:8x8:r8.wgsl",
+      "usesF16": false,
+      "sha256": "b9756b21b212a4b1f19b68b8668d80ec077f700d890e0d9fde8fbc229aefd487"
+    },
+    {
+      "label": "af3-msa:238:257:64:128:0.00001:two-pass:false:msa-transition.wgsl",
+      "usesF16": false,
+      "sha256": "5dcdf19357588ebaa0932d4d835d0a0e221589331cfd6f6ed4c5c0d9521accc2"
+    },
+    {
+      "label": "af3-distogram:238:128:64:-1.wgsl",
+      "usesF16": false,
+      "sha256": "13f391cbdb9e06b6baf03ce5e5e482265f163fed394457ddce88a39df926f799"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:two-pass:false:nobias:single-transition:f32:t4.wgsl",
+      "usesF16": false,
+      "sha256": "f77cb8a82ebc7b3f849b83485b9cb915b66686b9fe70ae41dd4a510a5bdc642e"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:two-pass:false:nobias:single:f32:64:64:s2:pr4:r1:project.wgsl",
+      "usesF16": false,
+      "sha256": "c92c5b62b29c8035737db6215a6eafb777fe1415b3a682569c86a62d4e711d3c"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:two-pass:false:nobias:single:f32:64:64:s2:pr4:r1:attend.wgsl",
+      "usesF16": false,
+      "sha256": "615bb80bab18af4654b66d4dc8e61ed8b0007e48fa326f36c5f9007c912b1945"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:two-pass:false:nobias:single:f32:64:64:s2:pr4:r1:project_out.wgsl",
+      "usesF16": false,
+      "sha256": "3b40b54fc805c15017fb072fc4a3298b4893de7429f6c6f729cc1a0eccc52f81"
+    },
+    {
+      "label": "af3-block:238:128:384:16x24:4x32:0.00001:two-pass:false:nobias:pair-logits.wgsl",
+      "usesF16": false,
+      "sha256": "d37156585eca5c8e890aab278728c1007a3f8f5880be698c09b040d066c39280"
+    }
+  ],
+  "outputs": {
+    "cycle-0.tap.trunk_in_single": {
+      "file": "cycle-0.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "e134c85acae69453933e8d7bfdf52e6798296d79447740bf341ec9f1f0f31643"
+    },
+    "cycle-0.tap.z_init_generic": {
+      "file": "cycle-0.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "27f9adc33c4eb200a3143829b87c1c9b871396a33a8d6a03793ff30385aa1e22"
+    },
+    "cycle-0.tap.z_after_template": {
+      "file": "cycle-0.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "fc483d9a350bd3464093b942d49a1080b6bef1a68338d566b3000db0b2de0910"
+    },
+    "cycle-0.tap.msa_activations": {
+      "file": "cycle-0.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-0.tap.template_term": {
+      "file": "cycle-0.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "94935647f29129effb554cf2fd50f0ef340bfea0999b8191d1589665459babde"
+    },
+    "cycle-0.tap.z_after_msa": {
+      "file": "cycle-0.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "675d8054a8b37b9eb283b12b3af69f9cb5e72e34d2c068e0c21a81b969425626"
+    },
+    "cycle-0.trunk-output-single": {
+      "file": "cycle-0.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "35f8749937ced9fe38085ebf3a8dc8da0306a2dd4f4a34055be9062178256bf4"
+    },
+    "cycle-0.tap.trunk_out_pair": {
+      "file": "cycle-0.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "495c6ab39a3f106806fc882326d9058b12d245abc215524899e9a023790d7d82"
+    },
+    "cycle-1.tap.trunk_in_single": {
+      "file": "cycle-1.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "98da01eff45e2ed84918c2caf0f3d8ccca4590996ba6d4c01030127ee502e158"
+    },
+    "cycle-1.tap.z_init_generic": {
+      "file": "cycle-1.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "3143e3728e3c490e2f84e9b1ff702f52536cf24dacb7d48eb4c19e8d72033208"
+    },
+    "cycle-1.tap.z_after_template": {
+      "file": "cycle-1.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "46a899b13aef677303eb909479c90a06ef6d26efcfcb47fff4596c5d0622e322"
+    },
+    "cycle-1.tap.msa_activations": {
+      "file": "cycle-1.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-1.tap.template_term": {
+      "file": "cycle-1.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "ce4db0796ffca033509ab03a39426fe2882a59a08a6953e911a3ff7cb7519e90"
+    },
+    "cycle-1.tap.z_after_msa": {
+      "file": "cycle-1.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "74e111e124971bd6c4145a2aad5283b60f1925a6ff7768d1d4403c89c1cfd4f9"
+    },
+    "cycle-1.trunk-output-single": {
+      "file": "cycle-1.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "ca8c1c9e8ce8a1a76cab9209afa92a0a6c3a2c12d354c7153517a79016757107"
+    },
+    "cycle-1.tap.trunk_out_pair": {
+      "file": "cycle-1.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "e2e7fb14a12623fe8133157f9f7e6c0e28843ab7140daefdd5f6fa7bcd4983e5"
+    },
+    "cycle-2.tap.trunk_in_single": {
+      "file": "cycle-2.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "c65a90962e499da500075ddaa41138844967e61a589de6cacdc749d4c2bb7da4"
+    },
+    "cycle-2.tap.z_init_generic": {
+      "file": "cycle-2.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "260da7c5771e5dbbce38b94f1c0450bf705bc89f4557f4dbb35b49e37a002fd7"
+    },
+    "cycle-2.tap.z_after_template": {
+      "file": "cycle-2.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "00fda43812d749c0d2732ed06aad662f054f4d820e9f5af5cdf3a5d59c2e978c"
+    },
+    "cycle-2.tap.msa_activations": {
+      "file": "cycle-2.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-2.tap.template_term": {
+      "file": "cycle-2.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "d87d2b95ce625edfaf0cf855b08c1846d9c2372b707cf9950f4c655ac532b596"
+    },
+    "cycle-2.tap.z_after_msa": {
+      "file": "cycle-2.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "603cf9f51e16a66489b77d809e8f1f3ea37d6dce9e26991ae634202821d573a3"
+    },
+    "cycle-2.trunk-output-single": {
+      "file": "cycle-2.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "6e0c08c365e1c174509f78abae189582938e9e5dc29964e19beff47b888bdf7e"
+    },
+    "cycle-2.tap.trunk_out_pair": {
+      "file": "cycle-2.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "f27ec0ac5cd47029dc3e7b8ab84058a5d185d40bf1b8fd1a005688a2483604e4"
+    },
+    "cycle-3.tap.trunk_in_single": {
+      "file": "cycle-3.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "55d8a43b5b72f1bd4610b6bd8bda353c14debee377b5aeec100fcaab0710acf8"
+    },
+    "cycle-3.tap.z_init_generic": {
+      "file": "cycle-3.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "00f290eb139730d5bee1acaf75d38d74e4074b39161a66468c849f6af892ead5"
+    },
+    "cycle-3.tap.z_after_template": {
+      "file": "cycle-3.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "be012e33075a0ef4f0e25764bda96998824bbd2da80d2c49145321b8d8af3d08"
+    },
+    "cycle-3.tap.msa_activations": {
+      "file": "cycle-3.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    "cycle-3.tap.template_term": {
+      "file": "cycle-3.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "9476e372eeb5a00fc8ac2c816433599c4d793131dd7731973aa4f1ade5d9922a"
+    },
+    "cycle-3.tap.z_after_msa": {
+      "file": "cycle-3.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "b7620f8929d338faaffb53dc75726c8d233ee9cae17fd47ec5c58abe0b145ad9"
+    },
+    "cycle-3.trunk-output-single": {
+      "file": "cycle-3.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "a997a0c6cc95444fdcf727f929dce24fe0cbdebe4e298f1e321e998831818993"
+    },
+    "cycle-3.tap.trunk_out_pair": {
+      "file": "cycle-3.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "198ecb9e13d7b0d698bb03cd9a28cfb408e48842c2f1552d86eece2d1815b9e7"
+    }
+  }
+}

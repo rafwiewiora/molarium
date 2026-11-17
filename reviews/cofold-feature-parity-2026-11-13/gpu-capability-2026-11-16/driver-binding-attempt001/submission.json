@@ -1,0 +1,29 @@
+{
+  "schema": "molarium.nvidia-driver-binding-submission.v1",
+  "jobId": 20188,
+  "submittedAt": "2026-11-16T21:33:41.645697+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/zone": "projects/734263838611/zones/us-central1-c",
+    "instance/id": "3894148826269628555"
+  },
+  "cluster": "psigreen",
+  "controller": "psigreen-controller",
+  "owner": "rafal",
+  "sourceManifestSha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff",
+  "purpose": "Resolve observed Vulkan ICD initialization using read-only task-local host NVIDIA user-space library bindings; bounded GLX then EGL capability checks only. Same SIF/Chrome flags/shared helper and physical NVIDIA integer-readback gate. No model, global driver or cluster changes.",
+  "cpu": 4,
+  "memory": "14G",
+  "gpuCount": 1,
+  "timeLimit": "10min",
+  "nice": 0,
+  "partitionEligibility": [
+    "gpu",
+    "l4spot"
+  ],
+  "retentionDeadline": "2026-11-20T22:30:00Z",
+  "slurmDeadline": "2026-11-20T22:30:00Z",
+  "sourceFailureJob": 20186,
+  "newNeuralForwards": 0,
+  "standaloneVmActions": []
+}

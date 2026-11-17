@@ -1,0 +1,2304 @@
+{
+  "schema": "molarium.rnp-prefix-diagnostics.v1",
+  "samplesPerCase": 3,
+  "upstreamRevision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+  "plannedCases": 48,
+  "completePredictions": 144,
+  "executionFailures": 0,
+  "caseCategories": {
+    "geometric-hits-fail-limited-diagnostics": 5,
+    "selected-passing-hit": 16,
+    "no-geometric-hit": 22,
+    "passing-hit-not-selected": 5
+  },
+  "rankingMissDetails": {
+    "passing-hit-tied-at-highest-reported-iptm": 3,
+    "passing-hits-have-strictly-lower-reported-iptm": 2
+  },
+  "highestReportedIptmTieCases": 19,
+  "tiesMixingPassingHitsAndOtherPoses": 3,
+  "tieInformedPassingHitBounds": {
+    "lowerCases": 16,
+    "upperCases": 19,
+    "meaning": "Minimum and maximum possible passing-hit counts among the highest reported-score ties; crystal-informed bounds, not prospective selection."
+  },
+  "selectedPoseDiagnostics": {
+    "stereochemicalIdentityFailures": 15,
+    "withSevereClashes": 0,
+    "proteinCaRmsdMedianA": 0.9775135663687476,
+    "proteinCaWithin2AAndLigandAtLeast2A": 21
+  },
+  "cases": [
+    {
+      "caseId": "8cjg__1__1-a__1-d",
+      "model": "boltz2",
+      "similarity": 0.0,
+      "similarityBin": 0,
+      "cluster": "c248",
+      "sequenceSha256": "9ec353694ae54d883684ed3a3a0b1eddd9b9daf5169b1bb05729e5d6bafcf139",
+      "nativeBestA": 0.5838215814204312,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "geometric-hits-fail-limited-diagnostics",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        1
+      ],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 1.7368692145319924,
+      "highestReportedIptm": 0.95,
+      "highestReportedIptmSeeds": [
+        0
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 2.7930858260043885,
+        "proteinCaRmsdA": 1.2372781110950293,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.7368692145319924,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8ou2__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 43.650996835542074,
+      "similarityBin": 1,
+      "cluster": "c7",
+      "sequenceSha256": "250a0b13b064d7bd76bf9479e584a78b5840c1ab2bb4bc948ac9b1f247eb37de",
+      "nativeBestA": 0.7240960505827496,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.2439288056919113,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        0,
+        1,
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.4785467782127073,
+        "proteinCaRmsdA": 0.4282234482189233,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.4785467782127073,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.7072240295758216,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.2439288056919113,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8j30__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 36.060763604540384,
+      "similarityBin": 1,
+      "cluster": "c815",
+      "sequenceSha256": "f2a2a1c68da9eee4ebd4d073531b9b65eda6cbdd6f66ffe1e07254dcab9e362c",
+      "nativeBestA": 1.4818156001211278,
+      "nativeHasStereoClashPassingHit": false,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 6.310589724099122,
+      "highestReportedIptm": 0.88,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 8.657884124866294,
+        "proteinCaRmsdA": 1.1978793988183305,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8cij__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 44.498718415317356,
+      "similarityBin": 1,
+      "cluster": "c1",
+      "sequenceSha256": "683161ac02bcd8065b9230d0f057675e5594a222e2949be7a0a3c2e2ef191872",
+      "nativeBestA": 1.5446586044617692,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.294198246180218,
+      "highestReportedIptm": 0.98,
+      "highestReportedIptmSeeds": [
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 2.3917044969886474,
+        "proteinCaRmsdA": 2.389670173995863,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8chc__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 47.24119199233605,
+      "similarityBin": 1,
+      "cluster": "c728",
+      "sequenceSha256": "efb0d1b639c959cfc6cccb1ead2c4a98cb642b36237b72e27fb3c7bbca9d68f1",
+      "nativeBestA": 0.9010775785195233,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.0846408114968304,
+      "highestReportedIptm": 0.96,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 2.647005226615622,
+        "proteinCaRmsdA": 1.5492819395995092,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8aqf__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 34.50054524205617,
+      "similarityBin": 1,
+      "cluster": "c783",
+      "sequenceSha256": "d876c3e71dd7e2321d63c691796858d92cea3926736ad24dd2e662ac22dbba7c",
+      "nativeBestA": 1.3915339861168017,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 7.338903727168639,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 7.60094969483112,
+        "proteinCaRmsdA": 1.6462574892814774,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8am2__1__1-a__1-d",
+      "model": "boltz2",
+      "similarity": 34.723492302862354,
+      "similarityBin": 1,
+      "cluster": "c761",
+      "sequenceSha256": "7aff9d4ba950ca8b824850349a330b011d813e33d8a82c01fdcae8f4b3e64f31",
+      "nativeBestA": 1.341629740604994,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 3.2548979966999863,
+      "highestReportedIptm": 0.78,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 3.2548979966999863,
+        "proteinCaRmsdA": 0.4072633988994125,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "7g00__1__1-a__1-q",
+      "model": "boltz2",
+      "similarity": 36.57765975415737,
+      "similarityBin": 1,
+      "cluster": "c6",
+      "sequenceSha256": "2fc76506bf2706c4caca0307e07c91828b38c948fcbdcf52d2234bf786e74902",
+      "nativeBestA": 0.7256734438122728,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 0.7620765550580111,
+      "highestReportedIptm": 0.96,
+      "highestReportedIptmSeeds": [
+        0,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        0,
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.0314599067134071,
+        "proteinCaRmsdA": 0.7960532815011654,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.0314599067134071,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.0029735482300701,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 0.7620765550580111,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8gev__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 40.52692100313553,
+      "similarityBin": 1,
+      "cluster": "c6",
+      "sequenceSha256": "8665deba5580cd38afb3d55bae4c456b4bb5ea1077377ec959c22e4f4d7633e0",
+      "nativeBestA": 0.6343420393676846,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.2382274069316734,
+      "highestReportedIptm": 0.96,
+      "highestReportedIptmSeeds": [
+        0,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 2.41023872360986,
+        "proteinCaRmsdA": 0.44747737964047185,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "7u8x__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 49.89193816712874,
+      "similarityBin": 1,
+      "cluster": "c107",
+      "sequenceSha256": "781198eda632c238d1b3b621ea899b3a29e3ee92c9cc68496b5c62d16778a0cf",
+      "nativeBestA": 1.4272898265693306,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 3.785404096819149,
+      "highestReportedIptm": 0.98,
+      "highestReportedIptmSeeds": [
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 3.785404096819149,
+        "proteinCaRmsdA": 11.199016549559353,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8i2n__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 43.64131101187512,
+      "similarityBin": 1,
+      "cluster": "c383",
+      "sequenceSha256": "49a510ac2fddf44c30bf26d90f81094f815da2573b38f902e79ab70a6561fad9",
+      "nativeBestA": 1.0796337616646976,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.2183682304543377,
+      "highestReportedIptm": 0.96,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 1.4438302484977281,
+        "proteinCaRmsdA": 4.131411947769172,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.2183682304543377,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.7732152628958875,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.4438302484977281,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8pqf__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 39.23390321714783,
+      "similarityBin": 1,
+      "cluster": "c1",
+      "sequenceSha256": "e9fe05412533442f59280e4eb92ecfdb4b291d8d9a26ae5cbf74a2a00389ea8f",
+      "nativeBestA": 1.9015081462727437,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 8.367439517219383,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        0
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 8.367439517219383,
+        "proteinCaRmsdA": 5.432729740655662,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8geu__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 42.864302639658305,
+      "similarityBin": 1,
+      "cluster": "c6",
+      "sequenceSha256": "8665deba5580cd38afb3d55bae4c456b4bb5ea1077377ec959c22e4f4d7633e0",
+      "nativeBestA": 0.9996246553053139,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.2487863974668594,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 1.2951985811019184,
+        "proteinCaRmsdA": 0.43916233417690864,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.2796042140414958,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.2487863974668594,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.2951985811019184,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8swe__1__1-a__1-e",
+      "model": "boltz2",
+      "similarity": 53.57519878804947,
+      "similarityBin": 2,
+      "cluster": "c1",
+      "sequenceSha256": "9244ec3a83537c75d6648dfa4c318aca26cd4f17896256463c8bea96362685a7",
+      "nativeBestA": 0.8681016106900175,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.208224811688999,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 1.7244329487351076,
+        "proteinCaRmsdA": 0.6818235124692839,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.325161041478604,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.208224811688999,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.7244329487351076,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8pji__1__1-a__1-e",
+      "model": "boltz2",
+      "similarity": 52.86894497109831,
+      "similarityBin": 2,
+      "cluster": "c82",
+      "sequenceSha256": "31c871f0f62862664d6fba8c0e50ac3d03a9f881d9ecf3810d175bd7a50366ab",
+      "nativeBestA": 0.339684348298895,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        2
+      ],
+      "bestLigandRmsdA": 1.2723486226224987,
+      "highestReportedIptm": 0.94,
+      "highestReportedIptmSeeds": [
+        0
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        0
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.2723486226224987,
+        "proteinCaRmsdA": 1.3792035326657965,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.2723486226224987,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.8786026535422886,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8pbo__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 66.57821688138633,
+      "similarityBin": 2,
+      "cluster": "c721",
+      "sequenceSha256": "6bdd55e0f05cb3ba03733bfce6e8b0fab58c51f172b546c3e0df6faa176feb6b",
+      "nativeBestA": 1.4770400678462552,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1
+      ],
+      "passingHitSeeds": [
+        0,
+        1
+      ],
+      "bestLigandRmsdA": 0.7704390725287006,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        1
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 0.858077784406057,
+        "proteinCaRmsdA": 0.6705339961518298,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 0.7704390725287006,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 0.858077784406057,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "7uad__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 61.56914415689032,
+      "similarityBin": 2,
+      "cluster": "c950",
+      "sequenceSha256": "d2345faf774c0870e5e47db0011a6cec8e47af93409780ab06ddf4c05949a283",
+      "nativeBestA": 0.37644250420604086,
+      "nativeHasStereoClashPassingHit": false,
+      "category": "geometric-hits-fail-limited-diagnostics",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 0.3640204213647604,
+      "highestReportedIptm": 0.99,
+      "highestReportedIptmSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 0.3640204213647604,
+        "proteinCaRmsdA": 1.1380251282731102,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 0.3640204213647604,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 0.42603475805434265,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 0.4765729210900012,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8u7w__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 68.19416840744066,
+      "similarityBin": 2,
+      "cluster": "c60",
+      "sequenceSha256": "c83243a980dd4c415a6de2561db8077db53c38da90f365ef4e1879000cee66c5",
+      "nativeBestA": 0.672842377919917,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.0174487061512467,
+      "highestReportedIptm": 0.95,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 1.0174487061512467,
+        "proteinCaRmsdA": 0.9601937110261372,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.3623352640691369,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.1492957104585784,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.0174487061512467,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8gcz__1__1-a__1-n",
+      "model": "boltz2",
+      "similarity": 62.54329672560063,
+      "similarityBin": 2,
+      "cluster": "c22",
+      "sequenceSha256": "3d7c62e7d13883a6a644342c959fd8d28a9496348b961e33b158af7c34f89d08",
+      "nativeBestA": 1.3289405597433748,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.698699660784333,
+      "highestReportedIptm": 0.96,
+      "highestReportedIptmSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 3.356479743904801,
+        "proteinCaRmsdA": 0.7086105151786534,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8px8__1__1-a__1-d",
+      "model": "boltz2",
+      "similarity": 62.22206957145832,
+      "similarityBin": 2,
+      "cluster": "c7",
+      "sequenceSha256": "88522f683ea7038d15ac640d9b899440f0be1fe9b5019397d47125ca11543b55",
+      "nativeBestA": 1.5357662895510362,
+      "nativeHasStereoClashPassingHit": false,
+      "category": "passing-hit-not-selected",
+      "rankingDetail": "passing-hit-tied-at-highest-reported-iptm",
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.4009122093946675,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        0,
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        1
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.4187549626325187,
+        "proteinCaRmsdA": 0.1802971250718788,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.4187549626325187,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.644045953655637,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.4009122093946675,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8q2y__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 61.226216567451594,
+      "similarityBin": 2,
+      "cluster": "c81",
+      "sequenceSha256": "f79d4c044957b283898bade6e9ac5da6aeef1f08a0c916560644dd3d963b49f4",
+      "nativeBestA": 0.5179735184751808,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 6.793254764601461,
+      "highestReportedIptm": 0.75,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 7.145283177455019,
+        "proteinCaRmsdA": 0.553229123858073,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "7szr__1__1-a__1-g",
+      "model": "boltz2",
+      "similarity": 64.90484472794725,
+      "similarityBin": 2,
+      "cluster": "c836",
+      "sequenceSha256": "56ca5df2a9f24c39381d71e97b85209e449435bc872d559610133e0cb0a6f2bd",
+      "nativeBestA": 0.441138924733686,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "geometric-hits-fail-limited-diagnostics",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 1.4411098284305877,
+      "highestReportedIptm": 0.99,
+      "highestReportedIptmSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.6328022932041149,
+        "proteinCaRmsdA": 4.834408558519325,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.6328022932041149,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.4610297742982328,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.4411098284305877,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "9f40__1__1-a__1-q",
+      "model": "boltz2",
+      "similarity": 74.07112737148283,
+      "similarityBin": 2,
+      "cluster": "c283",
+      "sequenceSha256": "2cd8e7d28ce63374faca06b142c2c205e0420b8a2a125a0ad847922f18174106",
+      "nativeBestA": 0.45239489244510117,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.4184154997229084,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 3.294122133123382,
+        "proteinCaRmsdA": 1.3611188267702357,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8crl__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 71.37311810155991,
+      "similarityBin": 2,
+      "cluster": "c207",
+      "sequenceSha256": "e25d2ce3c73e0e1ee946f8efdf74f2f11b9d179e2ac6ad42ba45c06d65ba40a5",
+      "nativeBestA": 1.3000431561564658,
+      "nativeHasStereoClashPassingHit": false,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 8.906612568080332,
+      "highestReportedIptm": 0.91,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 9.358204267247897,
+        "proteinCaRmsdA": 1.6007781493517879,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8jmo__1__1-a__1-d",
+      "model": "boltz2",
+      "similarity": 71.96749868729896,
+      "similarityBin": 2,
+      "cluster": "c434",
+      "sequenceSha256": "21b6bf2ed359f1b116ea625319a007518afb87e8e950f7bf084847aefe63f4e0",
+      "nativeBestA": 0.9395676615759638,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.2986456515315195,
+      "highestReportedIptm": 0.86,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 2.2986456515315195,
+        "proteinCaRmsdA": 0.7552230720392533,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8q34__1__1-a__1-f",
+      "model": "boltz2",
+      "similarity": 55.937476914537186,
+      "similarityBin": 2,
+      "cluster": "c7",
+      "sequenceSha256": "f0b38d6553e85bd34ddb0e47313994a188b268feffdc96149286a3b00bfaae46",
+      "nativeBestA": 1.703956470062121,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 7.021105642820032,
+      "highestReportedIptm": 0.91,
+      "highestReportedIptmSeeds": [
+        0,
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 7.047989865073969,
+        "proteinCaRmsdA": 0.5318819197700122,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8gdk__1__1-a__1-o",
+      "model": "boltz2",
+      "similarity": 58.026954930205086,
+      "similarityBin": 2,
+      "cluster": "c22",
+      "sequenceSha256": "3d7c62e7d13883a6a644342c959fd8d28a9496348b961e33b158af7c34f89d08",
+      "nativeBestA": 1.129452160216467,
+      "nativeHasStereoClashPassingHit": false,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 3.0240206712368063,
+      "highestReportedIptm": 0.96,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 3.3613911329460615,
+        "proteinCaRmsdA": 0.7527729235581283,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8bo3__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 74.85914177493858,
+      "similarityBin": 2,
+      "cluster": "c53",
+      "sequenceSha256": "3cca457501f4cc363b8b7a9be72f7c1148f5f9c8ab2e302a80085b134a8dfedb",
+      "nativeBestA": 0.6637101485786455,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 0.8261836717736073,
+      "highestReportedIptm": 0.99,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 0.8976167723630261,
+        "proteinCaRmsdA": 0.46914286759242435,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 0.8261836717736073,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 0.8516380018007808,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 0.8976167723630261,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8u7x__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 66.84693807440355,
+      "similarityBin": 2,
+      "cluster": "c60",
+      "sequenceSha256": "c83243a980dd4c415a6de2561db8077db53c38da90f365ef4e1879000cee66c5",
+      "nativeBestA": 0.5288390247028417,
+      "nativeHasStereoClashPassingHit": false,
+      "category": "passing-hit-not-selected",
+      "rankingDetail": "passing-hits-have-strictly-lower-reported-iptm",
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        1
+      ],
+      "bestLigandRmsdA": 0.9145951884863827,
+      "highestReportedIptm": 0.94,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 1.331340294525858,
+        "proteinCaRmsdA": 0.8794330353102965,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 0.9145951884863827,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.0146504486433565,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.331340294525858,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8i0d__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 71.17646917304904,
+      "similarityBin": 2,
+      "cluster": "c24",
+      "sequenceSha256": "ad9e3def2d7904bdda6be8a425ea325ce81d58d46954913fe972163addc2e1e5",
+      "nativeBestA": 1.0135718781656566,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 10.182534299620862,
+      "highestReportedIptm": 0.95,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 10.2998128422865,
+        "proteinCaRmsdA": 1.8906652981237893,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8efj__1__1-a__1-d",
+      "model": "boltz2",
+      "similarity": 70.43219978625473,
+      "similarityBin": 2,
+      "cluster": "c1004",
+      "sequenceSha256": "d6b56819a9eea7ec18a677e30a81a636e0da276e1af93d57149b50c7d7a4a389",
+      "nativeBestA": 0.9993584334358435,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.6986422535786183,
+      "highestReportedIptm": 0.98,
+      "highestReportedIptmSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        0,
+        1,
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.7721738009672012,
+        "proteinCaRmsdA": 2.1996402199873315,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.7721738009672012,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.6986422535786183,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.7965339229598065,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8iqt__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 97.13521273818846,
+      "similarityBin": 3,
+      "cluster": "c67",
+      "sequenceSha256": "89a8eaaf2e98f906301b2e0c9ac806458b520a4cc82c61bb40ea991f574d09e1",
+      "nativeBestA": 0.14742258869317892,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "passing-hit-not-selected",
+      "rankingDetail": "passing-hit-tied-at-highest-reported-iptm",
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.5229279559058877,
+      "highestReportedIptm": 0.99,
+      "highestReportedIptmSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        1,
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.5540853302775977,
+        "proteinCaRmsdA": 0.6473665436072795,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.5540853302775977,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.5231972307309278,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.5229279559058877,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8tti__1__1-a__1-e",
+      "model": "boltz2",
+      "similarity": 96.92620672616698,
+      "similarityBin": 3,
+      "cluster": "c258",
+      "sequenceSha256": "5344c8ade9d214b95de9b2f7b1181df7bf6409364ae4c193adefb821c8064d70",
+      "nativeBestA": 0.28986255561195495,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.407603672388311,
+      "highestReportedIptm": 0.92,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 2.407603672388311,
+        "proteinCaRmsdA": 0.585379216504099,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8t1y__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 91.98558171267041,
+      "similarityBin": 3,
+      "cluster": "c59",
+      "sequenceSha256": "aa92652c7ee2a32c3a1d45bfdc704b4ee81542a06a090954dd1da70b8ff0966b",
+      "nativeBestA": 0.4314492824987516,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 0.7307045058355226,
+      "highestReportedIptm": 0.99,
+      "highestReportedIptmSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        0,
+        1,
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 0.781971201492417,
+        "proteinCaRmsdA": 1.3333598276033805,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 0.781971201492417,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 0.7307045058355226,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 0.9198336359210805,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8jby__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 77.55203920028555,
+      "similarityBin": 3,
+      "cluster": "c773",
+      "sequenceSha256": "4ded001ec4f4d0b9f35a42d0aa6ea6a0c7bd102c765760c935779ceb79315c1b",
+      "nativeBestA": 0.2997086687867665,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 4.192922311005497,
+      "highestReportedIptm": 0.95,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 4.192922311005497,
+        "proteinCaRmsdA": 0.8159394325088777,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8q2u__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 75.34018123371548,
+      "similarityBin": 3,
+      "cluster": "c81",
+      "sequenceSha256": "f79d4c044957b283898bade6e9ac5da6aeef1f08a0c916560644dd3d963b49f4",
+      "nativeBestA": 0.6035040458710661,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.0592919435645363,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        1,
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 1.0592919435645363,
+        "proteinCaRmsdA": 0.4444504383396357,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.2174590076445158,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.0592919435645363,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.4262235648432853,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8a3a__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 85.26525529295843,
+      "similarityBin": 3,
+      "cluster": "c442",
+      "sequenceSha256": "1b60bc6a1be9b6f3deb46def951dbd3e3a6f6463beb114873517830a6ed5da14",
+      "nativeBestA": 0.21215623629550998,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "passing-hit-not-selected",
+      "rankingDetail": "passing-hits-have-strictly-lower-reported-iptm",
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        2
+      ],
+      "passingHitSeeds": [
+        2
+      ],
+      "bestLigandRmsdA": 0.8679366666627903,
+      "highestReportedIptm": 0.86,
+      "highestReportedIptmSeeds": [
+        0
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 6.817120646658228,
+        "proteinCaRmsdA": 0.6287640601167702,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 2,
+          "ligandRmsdA": 0.8679366666627903,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8sze__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 93.01359708496295,
+      "similarityBin": 3,
+      "cluster": "c253",
+      "sequenceSha256": "4746b7574d8d6614f2ae868a55bae2d7f2949b1602b22de4c874c5af3dcce33e",
+      "nativeBestA": 0.39583150080336377,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 0.6785434874839684,
+      "highestReportedIptm": 0.96,
+      "highestReportedIptmSeeds": [
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        1,
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 1.1030505798597363,
+        "proteinCaRmsdA": 0.7108428133438249,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 0.6785434874839684,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.1030505798597363,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 0.7573031163140838,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8hlj__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 89.25886654478741,
+      "similarityBin": 3,
+      "cluster": "c154",
+      "sequenceSha256": "ced1df7192008d0f69a39537189dfe489cc4f292846bb4ec3c38b322a3ea1c80",
+      "nativeBestA": 0.4914013018071303,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 0.9093447278670478,
+      "highestReportedIptm": 0.98,
+      "highestReportedIptmSeeds": [
+        0
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        0
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.0524746472312496,
+        "proteinCaRmsdA": 0.9551454533097244,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.0524746472312496,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.5191479334084927,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 0.9093447278670478,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8sx2__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 84.41950145224763,
+      "similarityBin": 3,
+      "cluster": "c170",
+      "sequenceSha256": "9269ac73813ca9fad67e33ca28e4b6168e5f82809a37c2c9b1505047ea8967a4",
+      "nativeBestA": 0.9050680030247664,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.35327741842347,
+      "highestReportedIptm": 0.93,
+      "highestReportedIptmSeeds": [
+        1,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 7.116798463277902,
+        "proteinCaRmsdA": 6.696332803104585,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "9f41__1__1-a__1-q",
+      "model": "boltz2",
+      "similarity": 76.9407939420012,
+      "similarityBin": 3,
+      "cluster": "c283",
+      "sequenceSha256": "2cd8e7d28ce63374faca06b142c2c205e0420b8a2a125a0ad847922f18174106",
+      "nativeBestA": 0.6981834514311942,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.748603494353524,
+      "highestReportedIptm": 0.98,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 2.896880284844172,
+        "proteinCaRmsdA": 1.1461509502443887,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8usm__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 79.94607563075242,
+      "similarityBin": 3,
+      "cluster": "c730",
+      "sequenceSha256": "3f0f43fbbf1e0e69d0e8651e67de6fd9bdfeef9c337ca48f39903a893fdffb99",
+      "nativeBestA": 0.4733859493221085,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "passing-hit-not-selected",
+      "rankingDetail": "passing-hit-tied-at-highest-reported-iptm",
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        2
+      ],
+      "passingHitSeeds": [
+        2
+      ],
+      "bestLigandRmsdA": 0.8065571742549456,
+      "highestReportedIptm": 0.93,
+      "highestReportedIptmSeeds": [
+        0,
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 4.6598826000917954,
+        "proteinCaRmsdA": 0.9948334217113581,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 2,
+          "ligandRmsdA": 0.8065571742549456,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8t27__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 90.23072622274212,
+      "similarityBin": 3,
+      "cluster": "c59",
+      "sequenceSha256": "2964063876caf3a64305d4292c76b61e70b888174b9a503aca86e75120461af5",
+      "nativeBestA": 0.5441858636901201,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "geometric-hits-fail-limited-diagnostics",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 1.0337478362855015,
+      "highestReportedIptm": 0.99,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 1.6272854730480437,
+        "proteinCaRmsdA": 2.7863429498487187,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.0337478362855015,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.6272854730480437,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.3685030326184608,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8b62__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 84.41998010440632,
+      "similarityBin": 3,
+      "cluster": "c187",
+      "sequenceSha256": "0e0155ec6e219ca9a2b92aff664ce4b255cdb94ff4f807e32690b2d03428daab",
+      "nativeBestA": 1.567297498727614,
+      "nativeHasStereoClashPassingHit": false,
+      "category": "geometric-hits-fail-limited-diagnostics",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        2
+      ],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 1.9864559365590868,
+      "highestReportedIptm": 0.94,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 1.9864559365590868,
+        "proteinCaRmsdA": 1.173295927394899,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.9864559365590868,
+          "stereochemicalIdentityMatches": false,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8a2p__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 89.54601281676176,
+      "similarityBin": 3,
+      "cluster": "c439",
+      "sequenceSha256": "1ea623892a3a46b00d5b81db1caa8af4be1637055f5412869cd84de948fdabb9",
+      "nativeBestA": 1.1923458490016634,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.5544727743492914,
+      "highestReportedIptm": 0.97,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        2
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 1.8125347043561848,
+        "proteinCaRmsdA": 0.7158568839430453,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.8094443183873814,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.5544727743492914,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.8125347043561848,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    },
+    {
+      "caseId": "8pp8__1__1-a__1-d",
+      "model": "boltz2",
+      "similarity": 77.67842462673491,
+      "similarityBin": 3,
+      "cluster": "c63",
+      "sequenceSha256": "d0810d040246675f41418f2c4246f2e44498e8b18f2ae7062baaff9c70d4428c",
+      "nativeBestA": 0.4198080230033869,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 4.287844805236108,
+      "highestReportedIptm": 0.93,
+      "highestReportedIptmSeeds": [
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 1,
+        "ligandRmsdA": 4.299371814866976,
+        "proteinCaRmsdA": 1.3832219357467668,
+        "stereochemicalIdentityMatches": false,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": false,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8t9v__1__1-a__1-b",
+      "model": "boltz2",
+      "similarity": 82.42267773755012,
+      "similarityBin": 3,
+      "cluster": "c75",
+      "sequenceSha256": "af90cf99b499ad6f209d9c79fe09194824a821641b28fea10d07959b07846d73",
+      "nativeBestA": 0.47449019294680844,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "no-geometric-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [],
+      "passingHitSeeds": [],
+      "bestLigandRmsdA": 2.771465926710824,
+      "highestReportedIptm": 0.86,
+      "highestReportedIptmSeeds": [
+        2
+      ],
+      "passingSeedsAtHighestReportedIptm": [],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 2,
+        "ligandRmsdA": 2.9523376548464753,
+        "proteinCaRmsdA": 1.12719982183514,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": false
+      },
+      "geometricHitDiagnostics": []
+    },
+    {
+      "caseId": "8gww__1__1-a__1-c",
+      "model": "boltz2",
+      "similarity": 89.15457845542322,
+      "similarityBin": 3,
+      "cluster": "c60",
+      "sequenceSha256": "aa90bacf4c56ab5c8ac08118c56af12ed844330686fc98c6a1e0b89b5f56ef2f",
+      "nativeBestA": 0.7588330353344801,
+      "nativeHasStereoClashPassingHit": true,
+      "category": "selected-passing-hit",
+      "rankingDetail": null,
+      "completePredictions": 3,
+      "executionFailures": 0,
+      "geometricHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "passingHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "bestLigandRmsdA": 1.1958751244445223,
+      "highestReportedIptm": 0.93,
+      "highestReportedIptmSeeds": [
+        0,
+        1
+      ],
+      "passingSeedsAtHighestReportedIptm": [
+        0,
+        1
+      ],
+      "confidenceComplete": true,
+      "lowestSeedTieChoice": {
+        "seed": 0,
+        "ligandRmsdA": 1.5990203586789746,
+        "proteinCaRmsdA": 0.9954800285657596,
+        "stereochemicalIdentityMatches": true,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "limitedValidityPass": true,
+        "passingHit": true
+      },
+      "geometricHitDiagnostics": [
+        {
+          "seed": 0,
+          "ligandRmsdA": 1.5990203586789746,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 1,
+          "ligandRmsdA": 1.1958751244445223,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        },
+        {
+          "seed": 2,
+          "ligandRmsdA": 1.2313212620748126,
+          "stereochemicalIdentityMatches": true,
+          "severeHeavyAtomPairsUnder1_2A": 0
+        }
+      ]
+    }
+  ],
+  "definitions": {
+    "confidence": "Archived reported ipTM, with lowest seed breaking ties, without crystal or diagnostic filtering. The pinned upstream archive writer rounds summary confidence to two decimals; this does not reconstruct unrounded model confidence.",
+    "diagnostics": "Existing limited stereochemical-identity and severe protein\u2013ligand clash checks. Categories describe observations; they do not establish the cause of a miss.",
+    "backbone": "All observed corresponding C-alpha atoms in the existing scoring frame. A small global C-alpha RMSD does not certify the binding pocket or local geometry.",
+    "failures": "All planned cases remain in the denominator, including failed executions. Unfinished prefixes are rejected.",
+    "scope": "Selected native-positive reconstruction cohort with related cases, unmatched native/browser preparation and sampling, and reconstructed native ligand topology. Not implementation parity or general predictive accuracy."
+  },
+  "planSha256": "797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349",
+  "scoresSha256": "2271d73b33fa598fea32086c4cbf55477f91679cea842057b0e37591533dcc93",
+  "scriptSha256": "cb7b820a4bdf0b2ba125c493bbdd4c3f8ff48f5e5b998879e9c129688495008d"
+}

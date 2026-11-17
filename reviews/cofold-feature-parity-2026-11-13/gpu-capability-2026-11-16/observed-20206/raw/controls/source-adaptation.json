@@ -1,0 +1,16 @@
+{
+  "parentSourceManifestSha256": "36a44e87c303140ef01fe2c35cac00a9c93725cdf8e9c194d3469244cfbd1e78",
+  "sourceManifestSha256": "2955767472d1a95a3481d2e2812bb818bd3485cbfccac989112644f2dc9bec96",
+  "changedSourceFiles": [
+    "verify_sources.py"
+  ],
+  "oldVerifierSha256": "3b305d55a30a5c6e04fb360226f32426cd0a60b1d7792b1d4e948615ff5d1e5b",
+  "newVerifierSha256": "d4aa718977dc4ac467a7306a5a649b7c1b65ad278f23c01fec81774944fae95d",
+  "onlyChange": {
+    "from": "parent = base / 'molarium-gpu-driver-binding-20261116-attempt002'",
+    "to": "parent = base / 'molarium-gpu-driver-binding-20261116-attempt003'"
+  },
+  "runtimeCapabilitySourceIdentical": true,
+  "newNativeForwards": 0,
+  "numericalGatesChanged": false
+}

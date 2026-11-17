@@ -1,0 +1,447 @@
+{
+  "status": "complete",
+  "plannedCases": 48,
+  "records": [
+    {
+      "caseId": "8cjg__1__1-a__1-d",
+      "startedAt": "2026-11-16T23:20:20.084905+00:00",
+      "status": "pass",
+      "reusedCompletedPreflight": true,
+      "resultSha256": "873cd5a78f16e6f52821a6963fa7bf8e3e1108cd3170c9d7039e6ef2421a346b",
+      "finishedAt": "2026-11-16T23:20:20.114056+00:00"
+    },
+    {
+      "caseId": "8ou2__1__1-a__1-c",
+      "startedAt": "2026-11-16T23:20:20.119948+00:00",
+      "status": "pass",
+      "childPid": 47871,
+      "exitCode": 0,
+      "resultSha256": "d9fbddc0ea8dd48649118867eccad6b45ed603543263c9f94b9447c86d177980",
+      "finishedAt": "2026-11-16T23:22:19.884345+00:00"
+    },
+    {
+      "caseId": "8j30__1__1-a__1-c",
+      "startedAt": "2026-11-16T23:22:19.894010+00:00",
+      "status": "pass",
+      "childPid": 48194,
+      "exitCode": 0,
+      "resultSha256": "0b6cc32fb22a4f9216b21e55fd2aacce3e846b509d5fa5939e49bbad7ccc4a95",
+      "finishedAt": "2026-11-16T23:24:15.030190+00:00"
+    },
+    {
+      "caseId": "8cij__1__1-a__1-b",
+      "startedAt": "2026-11-16T23:24:15.037487+00:00",
+      "status": "pass",
+      "childPid": 48423,
+      "exitCode": 0,
+      "resultSha256": "594c6c06de558f898a4b6e7522404936827c0f7ff7940c15319bdec8b486033f",
+      "finishedAt": "2026-11-16T23:26:13.165897+00:00"
+    },
+    {
+      "caseId": "8chc__1__1-a__1-b",
+      "startedAt": "2026-11-16T23:26:13.174216+00:00",
+      "status": "pass",
+      "childPid": 48721,
+      "exitCode": 0,
+      "resultSha256": "e38457493f05df3c04531a176fbeed39e16f757475c4fb56d028fe6b7be6363d",
+      "finishedAt": "2026-11-16T23:28:09.748354+00:00"
+    },
+    {
+      "caseId": "8aqf__1__1-a__1-b",
+      "startedAt": "2026-11-16T23:28:09.756020+00:00",
+      "status": "pass",
+      "childPid": 48990,
+      "exitCode": 0,
+      "resultSha256": "5aacb7ee84e3af6f0f897335f3a3deecfe3d05f23232d4921328b024b46b64be",
+      "finishedAt": "2026-11-16T23:30:04.117407+00:00"
+    },
+    {
+      "caseId": "8am2__1__1-a__1-d",
+      "startedAt": "2026-11-16T23:30:04.126388+00:00",
+      "status": "pass",
+      "childPid": 49150,
+      "exitCode": 0,
+      "resultSha256": "9c7b4d6bd01140f91c02cce9bde60991725d0508be1133ed3494add5618c0b99",
+      "finishedAt": "2026-11-16T23:32:06.367329+00:00"
+    },
+    {
+      "caseId": "7g00__1__1-a__1-q",
+      "startedAt": "2026-11-16T23:32:06.374472+00:00",
+      "status": "pass",
+      "childPid": 49448,
+      "exitCode": 0,
+      "resultSha256": "b3ddaa10570a4c2544148f3c7e6b78ebf9d4b2db3efa428730f320afaf64b488",
+      "finishedAt": "2026-11-16T23:34:09.111279+00:00"
+    },
+    {
+      "caseId": "8gev__1__1-a__1-b",
+      "startedAt": "2026-11-16T23:34:09.118036+00:00",
+      "status": "pass",
+      "childPid": 49825,
+      "exitCode": 0,
+      "resultSha256": "7083c2b8aca9e9fdb392ead4c4c9f898d77a55d859d9da72f8d51b37d3605a84",
+      "finishedAt": "2026-11-16T23:36:14.232984+00:00"
+    },
+    {
+      "caseId": "7u8x__1__1-a__1-b",
+      "startedAt": "2026-11-16T23:36:14.241979+00:00",
+      "status": "pass",
+      "childPid": 50432,
+      "exitCode": 0,
+      "resultSha256": "78524404b30d53ac9c26f47b1cd1c48c22f3b0d201d6b771ee1ad361be475b11",
+      "finishedAt": "2026-11-16T23:38:18.323537+00:00"
+    },
+    {
+      "caseId": "8i2n__1__1-a__1-c",
+      "startedAt": "2026-11-16T23:38:18.331427+00:00",
+      "status": "pass",
+      "childPid": 50748,
+      "exitCode": 0,
+      "resultSha256": "9cb4fb108c7fe8086f346aff79715c1700784ad3971d6fdb7e812777a8302cbe",
+      "finishedAt": "2026-11-16T23:40:09.963269+00:00"
+    },
+    {
+      "caseId": "8pqf__1__1-a__1-c",
+      "startedAt": "2026-11-16T23:40:09.971349+00:00",
+      "status": "pass",
+      "childPid": 51145,
+      "exitCode": 0,
+      "resultSha256": "3b2ce5ea4067347f497b54d124b29bf9d90e701a5fca099040be3b4175932ee2",
+      "finishedAt": "2026-11-16T23:42:11.380538+00:00"
+    },
+    {
+      "caseId": "8geu__1__1-a__1-b",
+      "startedAt": "2026-11-16T23:42:11.386898+00:00",
+      "status": "pass",
+      "childPid": 51453,
+      "exitCode": 0,
+      "resultSha256": "a1f0a3e090338f500cee575d20e9f31ec9c816343df18cd7b70e6ffd5f45e328",
+      "finishedAt": "2026-11-16T23:44:10.700683+00:00"
+    },
+    {
+      "caseId": "8swe__1__1-a__1-e",
+      "startedAt": "2026-11-16T23:44:10.709282+00:00",
+      "status": "pass",
+      "childPid": 51826,
+      "exitCode": 0,
+      "resultSha256": "9b2a3a77ae1cd97a4906da94b9e0d7592a14730d13a5e38e977b7ddaaf292f25",
+      "finishedAt": "2026-11-16T23:46:18.600062+00:00"
+    },
+    {
+      "caseId": "8pji__1__1-a__1-e",
+      "startedAt": "2026-11-16T23:46:18.607527+00:00",
+      "status": "pass",
+      "childPid": 52285,
+      "exitCode": 0,
+      "resultSha256": "c9bb8d3f001932f5d9336b2aec72b243b93570b9457853fc0867c3a9a21dbc1e",
+      "finishedAt": "2026-11-16T23:48:13.705537+00:00"
+    },
+    {
+      "caseId": "8pbo__1__1-a__1-c",
+      "startedAt": "2026-11-16T23:48:13.713078+00:00",
+      "status": "pass",
+      "childPid": 52531,
+      "exitCode": 0,
+      "resultSha256": "417a6d004e609d6d24c1f47f3868bd5aff49cec6caea4217526bbdc2dc16d840",
+      "finishedAt": "2026-11-16T23:50:08.393463+00:00"
+    },
+    {
+      "caseId": "7uad__1__1-a__1-b",
+      "startedAt": "2026-11-16T23:50:08.401316+00:00",
+      "status": "pass",
+      "childPid": 52891,
+      "exitCode": 0,
+      "resultSha256": "bbc618b78f7a5a58711845c7d45d0d47c1a52d05de71966dfb0f85eff8a924e3",
+      "finishedAt": "2026-11-16T23:52:10.785213+00:00"
+    },
+    {
+      "caseId": "8u7w__1__1-a__1-c",
+      "startedAt": "2026-11-16T23:52:10.794137+00:00",
+      "status": "pass",
+      "childPid": 53146,
+      "exitCode": 0,
+      "resultSha256": "e564c9701c6c1a159736bebb816abbd31c099b4f3c0278a7a0f55d8bc192032b",
+      "finishedAt": "2026-11-16T23:54:11.668618+00:00"
+    },
+    {
+      "caseId": "8gcz__1__1-a__1-n",
+      "startedAt": "2026-11-16T23:54:11.677898+00:00",
+      "status": "pass",
+      "childPid": 53500,
+      "exitCode": 0,
+      "resultSha256": "09131a8f23e333449d3725a766c348de5ab086441d18d9512e5d6e454019f85e",
+      "finishedAt": "2026-11-16T23:56:12.696925+00:00"
+    },
+    {
+      "caseId": "8px8__1__1-a__1-d",
+      "startedAt": "2026-11-16T23:56:12.703956+00:00",
+      "status": "pass",
+      "childPid": 53717,
+      "exitCode": 0,
+      "resultSha256": "aeb835608010687c21d5920583237a0b2ec8c30a79c5002d83437fa472754293",
+      "finishedAt": "2026-11-16T23:58:11.363343+00:00"
+    },
+    {
+      "caseId": "8q2y__1__1-a__1-c",
+      "startedAt": "2026-11-16T23:58:11.370805+00:00",
+      "status": "pass",
+      "childPid": 53991,
+      "exitCode": 0,
+      "resultSha256": "265cb5eda6a2836b46030883e6ecc0f040573711df2dd5510ec71f8af1307752",
+      "finishedAt": "2026-11-17T00:00:10.348633+00:00"
+    },
+    {
+      "caseId": "7szr__1__1-a__1-g",
+      "startedAt": "2026-11-17T00:00:10.356299+00:00",
+      "status": "pass",
+      "childPid": 54207,
+      "exitCode": 0,
+      "resultSha256": "c6488a700b3454cb3ff64a1aa8029529fdb83b8659632c56198c0a0b9871061e",
+      "finishedAt": "2026-11-17T00:02:02.419230+00:00"
+    },
+    {
+      "caseId": "9f40__1__1-a__1-q",
+      "startedAt": "2026-11-17T00:02:02.430761+00:00",
+      "status": "pass",
+      "childPid": 54389,
+      "exitCode": 0,
+      "resultSha256": "a604f8765ebc095f7807d536045c74d8ff9873e6e2fc68d14f781835c90456c7",
+      "finishedAt": "2026-11-17T00:04:02.582658+00:00"
+    },
+    {
+      "caseId": "8crl__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:04:02.590017+00:00",
+      "status": "pass",
+      "childPid": 54595,
+      "exitCode": 0,
+      "resultSha256": "78df5b36ec91cce0c79a4fc7e91332176d1ca41e6fa2b69715ea07845a83303b",
+      "finishedAt": "2026-11-17T00:05:59.925561+00:00"
+    },
+    {
+      "caseId": "8jmo__1__1-a__1-d",
+      "startedAt": "2026-11-17T00:05:59.933483+00:00",
+      "status": "pass",
+      "childPid": 54919,
+      "exitCode": 0,
+      "resultSha256": "f8dd1633fe3e5fb98554bbcdb4a001917a2db6230f35fb3c83b1a757d29be0eb",
+      "finishedAt": "2026-11-17T00:07:57.423217+00:00"
+    },
+    {
+      "caseId": "8q34__1__1-a__1-f",
+      "startedAt": "2026-11-17T00:07:57.430292+00:00",
+      "status": "pass",
+      "childPid": 55138,
+      "exitCode": 0,
+      "resultSha256": "9435574ba08923a7bba5880f6f6059befc8702b7292ea8e007f0970cf7500fe3",
+      "finishedAt": "2026-11-17T00:09:52.792395+00:00"
+    },
+    {
+      "caseId": "8gdk__1__1-a__1-o",
+      "startedAt": "2026-11-17T00:09:52.799627+00:00",
+      "status": "pass",
+      "childPid": 55545,
+      "exitCode": 0,
+      "resultSha256": "e72cf3b9125c5fa10936adba60da6c5f4067362d072aa3bae3baa3de1b5e09a2",
+      "finishedAt": "2026-11-17T00:11:55.569846+00:00"
+    },
+    {
+      "caseId": "8bo3__1__1-a__1-b",
+      "startedAt": "2026-11-17T00:11:55.576875+00:00",
+      "status": "pass",
+      "childPid": 56083,
+      "exitCode": 0,
+      "resultSha256": "19970b83c381cd9c768c6064570d6e16c78825594850938a0d24ae42d123d5ab",
+      "finishedAt": "2026-11-17T00:13:53.061434+00:00"
+    },
+    {
+      "caseId": "8u7x__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:13:53.071163+00:00",
+      "status": "pass",
+      "childPid": 56564,
+      "exitCode": 0,
+      "resultSha256": "ad46417e64571bc5916cf96c2c3cdfd90f4326072eb461e444c71aa1848e4e6b",
+      "finishedAt": "2026-11-17T00:15:42.514140+00:00"
+    },
+    {
+      "caseId": "8i0d__1__1-a__1-b",
+      "startedAt": "2026-11-17T00:15:42.522254+00:00",
+      "status": "pass",
+      "childPid": 56906,
+      "exitCode": 0,
+      "resultSha256": "b210c206693e9963c7395eec50fe389c0f152ebb6ab9eed2ca2eb2b2bd6b21fc",
+      "finishedAt": "2026-11-17T00:17:30.681063+00:00"
+    },
+    {
+      "caseId": "8efj__1__1-a__1-d",
+      "startedAt": "2026-11-17T00:17:30.688618+00:00",
+      "status": "pass",
+      "childPid": 57279,
+      "exitCode": 0,
+      "resultSha256": "d8994df73192a8eecbf9fcc11ee20699c69f63d07bef9859d3ef1b69d69d3aac",
+      "finishedAt": "2026-11-17T00:19:27.534609+00:00"
+    },
+    {
+      "caseId": "8iqt__1__1-a__1-b",
+      "startedAt": "2026-11-17T00:19:27.542415+00:00",
+      "status": "pass",
+      "childPid": 57596,
+      "exitCode": 0,
+      "resultSha256": "2d2c6005b635359df56e84829a547453a1c98098cebd89a1db0f4a179c8c1a69",
+      "finishedAt": "2026-11-17T00:21:21.541062+00:00"
+    },
+    {
+      "caseId": "8tti__1__1-a__1-e",
+      "startedAt": "2026-11-17T00:21:21.553706+00:00",
+      "status": "pass",
+      "childPid": 57925,
+      "exitCode": 0,
+      "resultSha256": "4d6517a2590221ad17f381ea392a5b8e9604d6221f3e61164c0672c7080ff17a",
+      "finishedAt": "2026-11-17T00:23:21.923919+00:00"
+    },
+    {
+      "caseId": "8t1y__1__1-a__1-b",
+      "startedAt": "2026-11-17T00:23:21.933395+00:00",
+      "status": "pass",
+      "childPid": 58462,
+      "exitCode": 0,
+      "resultSha256": "3c1600a2f976b52322f04eeb9d039a36c1d352c03bcf84b6b397f60889625398",
+      "finishedAt": "2026-11-17T00:25:20.528906+00:00"
+    },
+    {
+      "caseId": "8jby__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:25:20.538094+00:00",
+      "status": "pass",
+      "childPid": 58756,
+      "exitCode": 0,
+      "resultSha256": "f04117bbff9082f253d1025cfb98c285eb961c39803c3947114c34768f053811",
+      "finishedAt": "2026-11-17T00:27:24.968375+00:00"
+    },
+    {
+      "caseId": "8q2u__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:27:24.976100+00:00",
+      "status": "pass",
+      "childPid": 59234,
+      "exitCode": 0,
+      "resultSha256": "da310a4d2d05f8560ca7f1dafff0809bf98e1df0c44b0bf74abe1e59ff9ed72f",
+      "finishedAt": "2026-11-17T00:29:19.413901+00:00"
+    },
+    {
+      "caseId": "8a3a__1__1-a__1-b",
+      "startedAt": "2026-11-17T00:29:19.421132+00:00",
+      "status": "pass",
+      "childPid": 59764,
+      "exitCode": 0,
+      "resultSha256": "040edb53a53a950835057cd63c2a79cd02ea6402eda5c6edc2ee381f1277fa72",
+      "finishedAt": "2026-11-17T00:31:16.957729+00:00"
+    },
+    {
+      "caseId": "8sze__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:31:16.965491+00:00",
+      "status": "pass",
+      "childPid": 60323,
+      "exitCode": 0,
+      "resultSha256": "56dd73d81dc300781a1fa5298cbf7d0858c65d3e4e85ac8ecb2f8c8ef2756ab5",
+      "finishedAt": "2026-11-17T00:33:18.058700+00:00"
+    },
+    {
+      "caseId": "8hlj__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:33:18.067270+00:00",
+      "status": "pass",
+      "childPid": 60870,
+      "exitCode": 0,
+      "resultSha256": "478ad46bbf689ed2a42d9dd18c4f76638016eed69a067b9d9e4e2e35d93d367d",
+      "finishedAt": "2026-11-17T00:35:17.311656+00:00"
+    },
+    {
+      "caseId": "8sx2__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:35:17.318942+00:00",
+      "status": "pass",
+      "childPid": 61312,
+      "exitCode": 0,
+      "resultSha256": "7b627228f66e5c524cc064db287f989a129512a34b937259c50ef11418a5099c",
+      "finishedAt": "2026-11-17T00:37:13.913048+00:00"
+    },
+    {
+      "caseId": "9f41__1__1-a__1-q",
+      "startedAt": "2026-11-17T00:37:13.919679+00:00",
+      "status": "pass",
+      "childPid": 61730,
+      "exitCode": 0,
+      "resultSha256": "35a0855dde3b8b35131af41c8af56e3088900eb71df48e999c243dbdb6d003e5",
+      "finishedAt": "2026-11-17T00:39:13.382835+00:00"
+    },
+    {
+      "caseId": "8usm__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:39:13.388850+00:00",
+      "status": "pass",
+      "childPid": 62105,
+      "exitCode": 0,
+      "resultSha256": "681cc061a2b459ff0c12d091345ab58fc104055cdf4be1e5d52ade97b5f089bb",
+      "finishedAt": "2026-11-17T00:41:10.880533+00:00"
+    },
+    {
+      "caseId": "8t27__1__1-a__1-b",
+      "startedAt": "2026-11-17T00:41:10.899226+00:00",
+      "status": "pass",
+      "childPid": 62330,
+      "exitCode": 0,
+      "resultSha256": "ce4cbb8707d403282fe363440ee1f60eb0b73672e450f3a295b502b85ee9987f",
+      "finishedAt": "2026-11-17T00:43:15.322387+00:00"
+    },
+    {
+      "caseId": "8b62__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:43:15.330734+00:00",
+      "status": "pass",
+      "childPid": 62733,
+      "exitCode": 0,
+      "resultSha256": "133b7f035f241d75db8bb05364645e44d0616ded21c8bb769363a43f2ec238dc",
+      "finishedAt": "2026-11-17T00:45:22.502275+00:00"
+    },
+    {
+      "caseId": "8a2p__1__1-a__1-b",
+      "startedAt": "2026-11-17T00:45:22.511395+00:00",
+      "status": "pass",
+      "childPid": 63583,
+      "exitCode": 0,
+      "resultSha256": "280141ae6d8d533e08043799da4f157376e38270a7bd1fa5b5c84603c300ceb5",
+      "finishedAt": "2026-11-17T00:47:31.394315+00:00"
+    },
+    {
+      "caseId": "8pp8__1__1-a__1-d",
+      "startedAt": "2026-11-17T00:47:31.402551+00:00",
+      "status": "pass",
+      "childPid": 64053,
+      "exitCode": 0,
+      "resultSha256": "4d5fe6449bb06be96f748037eca707580e499789f7013aabf49c6e2f2dad2d04",
+      "finishedAt": "2026-11-17T00:49:32.622549+00:00"
+    },
+    {
+      "caseId": "8t9v__1__1-a__1-b",
+      "startedAt": "2026-11-17T00:49:32.629336+00:00",
+      "status": "pass",
+      "childPid": 64546,
+      "exitCode": 0,
+      "resultSha256": "9c37c206189ca4f0f81097b36052397c582f074b7c117967bb3945c7adc49ebc",
+      "finishedAt": "2026-11-17T00:51:33.432480+00:00"
+    },
+    {
+      "caseId": "8gww__1__1-a__1-c",
+      "startedAt": "2026-11-17T00:51:33.441744+00:00",
+      "status": "pass",
+      "childPid": 65006,
+      "exitCode": 0,
+      "resultSha256": "2cfc1af077e3cb3112475f7a9cb8cb3263534573a5dcd936decf44db001b584d",
+      "finishedAt": "2026-11-17T00:53:42.446333+00:00"
+    }
+  ],
+  "newNeuralForwards": 0,
+  "publicationActions": 0,
+  "deadline": "2026-11-17T02:00:00Z",
+  "passed": 48,
+  "failed": 0,
+  "finishedAt": "2026-11-17T00:53:42.447924+00:00",
+  "exportManifestSha256": "5e705e40f4f624160b1a8755836e98c29fd9c6deea0752ff10d56d3415c6848e",
+  "samplesPerCase": 6,
+  "sourcePlanSha256": "5458d4784d0523fa7034f0a9279e83286a60143f19453282c476f88a917e4a36",
+  "scope": "Actual file import, every pose page, exact note/preference persistence, original PDB/graph exports, shortlist and reference separation. Software WebGL; no inference or scientific preferences."
+}

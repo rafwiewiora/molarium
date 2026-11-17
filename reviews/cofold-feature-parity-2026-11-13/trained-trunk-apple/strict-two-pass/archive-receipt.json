@@ -1,0 +1,13 @@
+{
+  "schema": "molarium.trained-trunk-precision-controls-archive.v1",
+  "archive": "apple-trained-trunk-strict-two-pass-20261117.tar.gz",
+  "bytes": 602864142,
+  "sha256": "0838b50eb9f8633a1b0647c1bc2ff8e3000640658e5d112768d452b5bdc1c6a3",
+  "expandedBytes": 652376094,
+  "members": 237,
+  "evidenceManifestSha256": "bcc96da72e258872f957b3c1b68ef96c4180f543921bbf99c991c6268165ea29",
+  "streamVerified": true,
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newCompletePredictions": 0
+}

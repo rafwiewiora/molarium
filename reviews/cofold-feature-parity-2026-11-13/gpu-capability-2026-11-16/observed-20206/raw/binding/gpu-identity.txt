@@ -1,0 +1,2 @@
+name, uuid, driver_version
+NVIDIA L4, GPU-2d99dcb4-b494-4d24-d540-bf6cb05e2bbd, 550.90.07

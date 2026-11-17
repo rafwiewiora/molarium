@@ -1,0 +1,47 @@
+{
+  "schema": "molarium.ci-identical-retry-outcome.v1",
+  "runId": 44016665941,
+  "headSha": "f09ed1b6d47e988861f4ac74ffcba39a35cbe0d8",
+  "originalJobId": 133816230980,
+  "retryJobId": 133824840775,
+  "runAttempt": 2,
+  "retryConclusion": "success",
+  "retryStartedAt": "2026-11-17T04:45:23Z",
+  "retryCompletedAt": "2026-11-17T05:03:00Z",
+  "sourceHelperTimeoutsAndGatesChanged": false,
+  "maximumIdenticalRetries": 1,
+  "originalFailure": "Chrome page discovery timeout before storage assertions",
+  "causeOfOriginalTimeout": "Unproven; successful retry does not identify a cause.",
+  "newNativeCalls": 0,
+  "recordedAt": "2026-11-17T05:04:13.395677+00:00",
+  "files": {
+    "original-failure.log": {
+      "bytes": 3222,
+      "sha256": "b3679d721e91458e861abb42c8bc8a666bcf280fa64f47428f4dcd60b26fb467"
+    },
+    "original-job.json": {
+      "bytes": 6409,
+      "sha256": "ffb1c56145979a2fb2c6891497baeb4e4eb90ab5e25fea46eff5f668dfd51db6"
+    },
+    "original-run.json": {
+      "bytes": 14547,
+      "sha256": "5c622526f5ccde7c1012ef9059542a7f90df1277faec783861deb91e53af903d"
+    },
+    "retry-request.json": {
+      "bytes": 532,
+      "sha256": "d20ba428040f2c74457a7cb2c56a8c6ddb86bfe9799fc6c13dbae967f9159d0c"
+    },
+    "retry-job.json": {
+      "bytes": 5028,
+      "sha256": "c82d5372d316d5072903598b518cbed91f135bb9be51a682c39d9718a463ce2d"
+    },
+    "retry-run.json": {
+      "bytes": 13084,
+      "sha256": "0eaf44511104c8daa79c4cc61948abd6a1ac36f1993ed35ed8d6e773eae146d6"
+    },
+    "retry-success.log": {
+      "bytes": 160550,
+      "sha256": "bbfc8ee45b4ee00ea3d986489b22e7f7a537f4e2440552ee112bbaacffae5bdf"
+    }
+  }
+}

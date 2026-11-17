@@ -1,0 +1,44 @@
+{
+  "schema": "molarium.stock-localfold-evidence.v1",
+  "scoresSha256": "1679e234ab2886f856b057cd6c6329cfd2f6dfe2bb0cdbf1e232aa67ce303f38",
+  "archiveSha256": "8e8a756c200cdff7338c71ad2c30f4bbb93eff41126e80588eb658af62c457e3",
+  "archiveBytes": 120963431,
+  "members": 3249,
+  "expandedArchiveBytes": 264545949,
+  "archiveMembers": 3250,
+  "scope": "partial-snapshot",
+  "completed": 288,
+  "planned": 480,
+  "archiveParts": [
+    {
+      "file": "evidence.part-01.bin",
+      "bytes": 20971520,
+      "sha256": "d9fec531fd52dc4586bcd36c4e137676f352217c77ed65aa4f4fc9f703f6fa50"
+    },
+    {
+      "file": "evidence.part-02.bin",
+      "bytes": 20971520,
+      "sha256": "cb92472b66078a16d103a8a651bfcf2da55a86d69589189797814ca378b847a5"
+    },
+    {
+      "file": "evidence.part-03.bin",
+      "bytes": 20971520,
+      "sha256": "78ff8352de2fd9f482c690c16129eb3bd47d586dd95ed4c1e09ebf1ea284b7f0"
+    },
+    {
+      "file": "evidence.part-04.bin",
+      "bytes": 20971520,
+      "sha256": "c54b1984431c89434f12c755f86b6015d13bf50338af2bc1a1bf9bf6a626c094"
+    },
+    {
+      "file": "evidence.part-05.bin",
+      "bytes": 20971520,
+      "sha256": "24217a5170f30a6c63907de675dad004aa093ba66c8b9f126d01112797f3b412"
+    },
+    {
+      "file": "evidence.part-06.bin",
+      "bytes": 16105831,
+      "sha256": "551d9290cf665ebd76a7a06f161037a6aa11953d073a9cf8c60678d1b23fd72d"
+    }
+  ]
+}

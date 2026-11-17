@@ -1,0 +1,1 @@
+{"status":"failed","seams":0,"error":"Error: SyntaxError: Unexpected token ']'\n    at evaluate (/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-strict-fp32-20261117-attempt001/frozen/scripts/headless-chrome.mjs:121:21)\n    at processTicksAndRejections (native:7:39)"}

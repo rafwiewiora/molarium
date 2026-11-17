@@ -1,0 +1,28 @@
+{
+  "parentSourceManifestSha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff",
+  "parentProbeSha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc",
+  "currentProbeSha256": "41c85b6c0bd7845cdaa44df496cc5f22c129b5ddb1ccb9794e0ebf2b58d1e08b",
+  "reversibleReplacements": [
+    {
+      "from": "import {startMolariumBrowser}",
+      "to": "import {startMolariumBrowser, DevToolsClient}"
+    },
+    {
+      "from": "let browser, result;",
+      "to": "let browser, browserTarget, result;"
+    },
+    {
+      "from": "  const system = await browser.client.call('SystemInfo.getInfo').catch(error=>({unavailable:String(error)}));",
+      "to": "  const stderr = await readFile(process.env.MOLARIUM_PROBE_ROOT + '/chrome-stderr.log', 'utf8');\n  const endpoint = stderr.match(/DevTools listening on (ws:\\/\\/[^\\s]+)/)?.[1];\n  if (!endpoint) throw Error('Actual browser-target endpoint missing from consumed Chrome log');\n  browserTarget = new DevToolsClient(endpoint); await browserTarget.open();\n  const system = await browserTarget.call('SystemInfo.getInfo');\n  const browserVersion = await browserTarget.call('Browser.getVersion');"
+    },
+    {
+      "from": "result={status:webgpu.adapterAvailable&&webgpu.integerProbe===7?'complete':'no-adapter',system,webgpu};",
+      "to": "result={status:webgpu.adapterAvailable&&webgpu.integerProbe===7?'complete':'no-adapter',system,browserVersion,webgpu,systemAfter:await browserTarget.call('SystemInfo.getInfo')};"
+    },
+    {
+      "from": "finally {await browser?.close();server.stop(true);}",
+      "to": "finally {browserTarget?.close();await browser?.close();server.stop(true);}"
+    }
+  ],
+  "scope": "Observe real browser-target GPU info, not unsupported page-target SystemInfo. Existing physical-NVIDIA and integer7 gates unchanged; no model calls."
+}

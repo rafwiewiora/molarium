@@ -1,0 +1,197 @@
+{
+  "schema": "molarium.numerical-control-status.v1",
+  "asOf": "2026-11-16T20:34:05Z",
+  "scope": "Preserved control-stage status; browser startup/adapter failures are not numerical-comparison failures. No new native pose predictions.",
+  "controls": [
+    {
+      "jobId": 19246,
+      "state": "FAILED",
+      "exitCode": "1:0",
+      "elapsed": "00:00:36",
+      "stage": "NVIDIA transition browser",
+      "measurement": "none",
+      "error": "Timed out waiting for Chrome page"
+    },
+    {
+      "jobId": 19248,
+      "state": "COMPLETED",
+      "exitCode": "0:0",
+      "elapsed": "00:03:38",
+      "stage": "YTHDF2 same-SMILES native features and strict-FP32 trained input embedder",
+      "featureReport": "comparison-32qy-a1keo-processed-smiles.json",
+      "embedderForwardCalls": 1,
+      "fullModelForwardCalls": 0,
+      "trainedReceipt": {
+        "schema": "molarium.native-feature-capture-receipt.v1",
+        "status": "complete",
+        "scope": "Exposed feature capture plus one trained official input-embedder call; full-model forward, trunk, sampling, confidence and pose prediction are forbidden.",
+        "startedAt": "2026-11-16T19:42:41Z",
+        "scriptSha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79",
+        "inputSha256": "1e1a972e3ab32843114df934b1e840f3d77822f4f7be7624d589e75e59d71fca",
+        "inputResolverSha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282",
+        "referenceNativeReceiptSha256": "bfd4efe31431ef8fe5359ee51b116626cd3966f85b03c6eafef247957a88a48f",
+        "inputFiles": {
+          "openbind-query.json": "f843a7cfc11cfdd02f3b41b1b1feb0b230a0fe526d7203f7d216151dc8ce0e6b",
+          "openbind-torch-standard.yaml": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364",
+          "openbind-standard.yaml": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0",
+          "comparison.json": "1e1a972e3ab32843114df934b1e840f3d77822f4f7be7624d589e75e59d71fca",
+          "boltz/compound_000.yaml": "facbbd54d464ac900760a6b692ff5bccf580efcd64d146aea9b7e70b14755c9d",
+          "msa/colabfold_main.a3m": "7bd8c016923fddb4bcad9d1266ae08c030a9014dfb4d5da10703ee3bfefb66bc"
+        },
+        "checkpointSha256": "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4",
+        "captureRunnerSha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36",
+        "resolvedQuerySha256": "cfd462f6a28760851bac88d532ca20f8e77be490d81eb615bb521aaaffcdf561",
+        "processedSmilesControl": {
+          "originalSmiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+          "processedSmiles": "Cc1cc(=O)c2c(-c3ccc(=O)[nH]c3)[nH]nc2[nH]1",
+          "sameIsomericChemicalState": true,
+          "purpose": "Only the SMILES spelling changes; a new diagnostic control, not a replacement for the original prediction protocol.",
+          "sourceLibrarySha256": "7b92f86b370e1d51eafb7e5fe454009243b7056b42145bc66b30ef28c7ccf0f3"
+        },
+        "seedSubset": [
+          0
+        ],
+        "dataSeed": 42,
+        "slurmJobId": "19248",
+        "environment": {
+          "python": "3.12.13",
+          "gpu": "NVIDIA L4",
+          "packages": {
+            "torch": "2.5.1",
+            "openfold3": "0.5.1",
+            "numpy": "2.4.6",
+            "rdkit": "2025.9.3",
+            "biotite": "2.0.0"
+          }
+        },
+        "sourceFiles": {
+          "projects/of3_all_atom/model.py": "83bc031a323691f7f93c865ffa927b743b916768ae6dcfd945278528ad93642b",
+          "projects/of3_all_atom/runner.py": "70f1089988fac0de5f117d2566dd9a103a727d808c2f4f2bfc8341e67094ecac"
+        },
+        "capturedBatches": 1,
+        "forwardCalls": 0,
+        "observerSourceSha256": "7db6e70eb2faba7fb4e38655edc193521f099963e2965304134c81f02ad83d69",
+        "parentFeatureControlReceiptSha256": "3a1b8dec02682cf5fdc93139458a53d8838f93a4434d5a6845198b084090c365",
+        "trainedEmbedder": {
+          "scope": "Trained official input embedder only; strict FP32. Not a full-model parity verdict.",
+          "embedderForwardCalls": 1,
+          "fullModelForwardCalls": 0,
+          "strictPrecision": {
+            "matmul": "highest",
+            "cudaTf32": false,
+            "cudnnTf32": false,
+            "parameterDtypes": [
+              "torch.float32"
+            ]
+          },
+          "cudaSynchronizedEmbedderForwardSeconds": 0.7647159889999671,
+          "sourceFiles": {
+            "core/model/feature_embedders/input_embedders.py": "bfc601bc2399559efeeefda6ddf71b17611c187426ac69cc4f65ea48473cd157",
+            "core/model/layers/sequence_local_atom_attention.py": "e078e02ff2101f6ad64c7667f13a48cbf913c974fa356a58957e41318e4d0027",
+            "core/utils/relpos.py": "4ff29e22a84ad3b694fbdc0ac6f2a11e4277fac485c28947ab62486d966cf4ff"
+          },
+          "maxRelativeIndex": 32,
+          "maxRelativeChain": 2,
+          "weightsBlobSha256": "a184766be1063d51d6773505df722b45eb763fe1e824d12fb78e5075d72b1c3d",
+          "outputsBlobSha256": "a76183dbae1b45dfd8c40eec2d98547d2cd3ea72349b7259fe2b79351e36761b",
+          "files": [
+            {
+              "path": "trained-embedder/outputs/features.bin",
+              "bytes": 37168724,
+              "sha256": "a76183dbae1b45dfd8c40eec2d98547d2cd3ea72349b7259fe2b79351e36761b"
+            },
+            {
+              "path": "trained-embedder/outputs/features.json",
+              "bytes": 2205,
+              "sha256": "dde0a474c4e3846e47c7b69fee07d6ca498f998ae2ab8bc43957d14552f4b0b9"
+            },
+            {
+              "path": "trained-embedder/weights/features.bin",
+              "bytes": 5382272,
+              "sha256": "a184766be1063d51d6773505df722b45eb763fe1e824d12fb78e5075d72b1c3d"
+            },
+            {
+              "path": "trained-embedder/weights/features.json",
+              "bytes": 53778,
+              "sha256": "2b9456f7e286e934016eb8a63064a79d4f02c5a619528361d1e16c30ed409c73"
+            }
+          ]
+        },
+        "capturedArrays": 39,
+        "unserializedMetadata": [
+          {
+            "path": "batch/atom_array/0",
+            "type": "biotite.structure.AtomArray"
+          }
+        ],
+        "matmulPrecisionAtCapture": "highest",
+        "outputs": [
+          {
+            "path": "features/features.bin",
+            "sha256": "7a68d1ec69c71a95eb205fd5d1e906a9d3075f73d4b2a938f085b47c273e8a14",
+            "bytes": 2973121
+          },
+          {
+            "path": "features/features.json",
+            "sha256": "172bd8e7913f620b2a1d3b7a9a5a46ce41b4216a5a52da33cdd657555bf55577",
+            "bytes": 16717
+          },
+          {
+            "path": "features/layout.json",
+            "sha256": "a4f2013f7c7a2a87dd71e5b3f0ca4399c1f76c87484b60a05283a656083106cf",
+            "bytes": 39340
+          }
+        ],
+        "elapsedSeconds": 57.10394430499997,
+        "finishedAt": "2026-11-16T19:43:07Z"
+      },
+      "rawNativeOutputPreservation": {
+        "localVerificationSha256": "6228324d0006356fbd3e1033cae356e2e220ddf74c0009e2d608013cd2f9e11e",
+        "snapshots": [
+          {
+            "path": "canonical/features",
+            "arrays": 39,
+            "blobSha256": "7a68d1ec69c71a95eb205fd5d1e906a9d3075f73d4b2a938f085b47c273e8a14",
+            "allFinite": true
+          },
+          {
+            "path": "trained/features",
+            "arrays": 39,
+            "blobSha256": "7a68d1ec69c71a95eb205fd5d1e906a9d3075f73d4b2a938f085b47c273e8a14",
+            "allFinite": true
+          },
+          {
+            "path": "trained/trained-embedder/weights",
+            "arrays": 98,
+            "blobSha256": "a184766be1063d51d6773505df722b45eb763fe1e824d12fb78e5075d72b1c3d",
+            "allFinite": true
+          },
+          {
+            "path": "trained/trained-embedder/outputs",
+            "arrays": 4,
+            "blobSha256": "a76183dbae1b45dfd8c40eec2d98547d2cd3ea72349b7259fe2b79351e36761b",
+            "allFinite": true
+          }
+        ],
+        "browserComparison": "not yet measured"
+      }
+    },
+    {
+      "jobId": 19250,
+      "state": "FAILED",
+      "exitCode": "1:0",
+      "elapsed": "00:00:47",
+      "stage": "NVIDIA trained trunk browser",
+      "measuredSeams": 0,
+      "error": "No compatible WebGPU adapter was found"
+    }
+  ],
+  "nextDiagnostic": {
+    "jobId": 20182,
+    "stateAtSubmission": "PENDING",
+    "purpose": "Pinned-runtime browser/NVIDIA capability and logging only; no model calls",
+    "sourceManifestSha256": "64bbb3c47deb0920a4aca1f73fc57e9f13a6dca9edb5083b78e096d6bd4cdfbc",
+    "normalPriority": true,
+    "retentionDeadline": "2026-11-20T22:30:00Z"
+  }
+}

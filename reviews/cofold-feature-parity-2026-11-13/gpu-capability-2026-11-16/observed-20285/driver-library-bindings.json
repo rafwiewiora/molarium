@@ -1,0 +1,366 @@
+{
+  "scope": "Read-only per-job binding of existing host NVIDIA driver files; no installation or global configuration change.",
+  "availableIcdLibraries": [
+    "libGLX_nvidia.so.0",
+    "libEGL_nvidia.so.0"
+  ],
+  "libraries": [
+    {
+      "soname": "libEGL_nvidia.so.0",
+      "source": "/usr/lib64/libEGL_nvidia.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libEGL_nvidia.so.0",
+      "sourceBytes": 1341568,
+      "sha256": "d455ea11bc192ffb39e1c78f4dd71c6a6f821dc250635e70e8e2f8f27898247a"
+    },
+    {
+      "soname": "libEGL_nvidia.so.550.90.07",
+      "source": "/usr/lib64/libEGL_nvidia.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libEGL_nvidia.so.550.90.07",
+      "sourceBytes": 1341568,
+      "sha256": "d455ea11bc192ffb39e1c78f4dd71c6a6f821dc250635e70e8e2f8f27898247a"
+    },
+    {
+      "soname": "libGLX_nvidia.so.0",
+      "source": "/usr/lib64/libGLX_nvidia.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libGLX_nvidia.so.0",
+      "sourceBytes": 1203776,
+      "sha256": "7c097241727bba4e76c519f99a3fb8f61102d02429369c807001729eec0a1916"
+    },
+    {
+      "soname": "libGLX_nvidia.so.550.90.07",
+      "source": "/usr/lib64/libGLX_nvidia.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libGLX_nvidia.so.550.90.07",
+      "sourceBytes": 1203776,
+      "sha256": "7c097241727bba4e76c519f99a3fb8f61102d02429369c807001729eec0a1916"
+    },
+    {
+      "soname": "libcuda.so",
+      "source": "/usr/lib64/libcuda.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libcuda.so",
+      "sourceBytes": 28581024,
+      "sha256": "83126a9e00095007c191c0448e786731a9f84cace54371c5cf15a95cd6bb1f64"
+    },
+    {
+      "soname": "libcuda.so.1",
+      "source": "/usr/lib64/libcuda.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libcuda.so.1",
+      "sourceBytes": 28581024,
+      "sha256": "83126a9e00095007c191c0448e786731a9f84cace54371c5cf15a95cd6bb1f64"
+    },
+    {
+      "soname": "libnvidia-allocator.so",
+      "source": "/usr/lib64/libnvidia-allocator.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-allocator.so",
+      "sourceBytes": 168776,
+      "sha256": "8213664debbccfffcb6ad5819ee38db3c944591601db5dc5050de8a77242841f"
+    },
+    {
+      "soname": "libnvidia-allocator.so.1",
+      "source": "/usr/lib64/libnvidia-allocator.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-allocator.so.1",
+      "sourceBytes": 168776,
+      "sha256": "8213664debbccfffcb6ad5819ee38db3c944591601db5dc5050de8a77242841f"
+    },
+    {
+      "soname": "libnvidia-allocator.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-allocator.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-allocator.so.550.90.07",
+      "sourceBytes": 168776,
+      "sha256": "8213664debbccfffcb6ad5819ee38db3c944591601db5dc5050de8a77242841f"
+    },
+    {
+      "soname": "libnvidia-api.so.1",
+      "source": "/usr/lib64/libnvidia-api.so.1",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-api.so.1",
+      "sourceBytes": 661928,
+      "sha256": "7b3814c980729b27ef799a5acadeed1401377a0cd8f6865d029a3b3fcee6cdf0"
+    },
+    {
+      "soname": "libnvidia-cfg.so",
+      "source": "/usr/lib64/libnvidia-cfg.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-cfg.so",
+      "sourceBytes": 398968,
+      "sha256": "02f940d2e0cb5d59c6a743c812e7e1ae082b5c265ed37e3827f84df1c9010399"
+    },
+    {
+      "soname": "libnvidia-cfg.so.1",
+      "source": "/usr/lib64/libnvidia-cfg.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-cfg.so.1",
+      "sourceBytes": 398968,
+      "sha256": "02f940d2e0cb5d59c6a743c812e7e1ae082b5c265ed37e3827f84df1c9010399"
+    },
+    {
+      "soname": "libnvidia-cfg.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-cfg.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-cfg.so.550.90.07",
+      "sourceBytes": 398968,
+      "sha256": "02f940d2e0cb5d59c6a743c812e7e1ae082b5c265ed37e3827f84df1c9010399"
+    },
+    {
+      "soname": "libnvidia-egl-gbm.so.1",
+      "source": "/usr/lib64/libnvidia-egl-gbm.so.1.1.1",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-egl-gbm.so.1",
+      "sourceBytes": 22768,
+      "sha256": "7d4af9efcbda22988e7cd9c3269bdb5fc0d827134f9831e741ba9722a02fcfd3"
+    },
+    {
+      "soname": "libnvidia-egl-gbm.so.1.1.1",
+      "source": "/usr/lib64/libnvidia-egl-gbm.so.1.1.1",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-egl-gbm.so.1.1.1",
+      "sourceBytes": 22768,
+      "sha256": "7d4af9efcbda22988e7cd9c3269bdb5fc0d827134f9831e741ba9722a02fcfd3"
+    },
+    {
+      "soname": "libnvidia-egl-wayland.so.1",
+      "source": "/usr/lib64/libnvidia-egl-wayland.so.1.1.13",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-egl-wayland.so.1",
+      "sourceBytes": 69024,
+      "sha256": "214c45f6b61653be007000044ec652c6a2e3448eeca6f88cee14ef8bdce2f91b"
+    },
+    {
+      "soname": "libnvidia-egl-wayland.so.1.1.13",
+      "source": "/usr/lib64/libnvidia-egl-wayland.so.1.1.13",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-egl-wayland.so.1.1.13",
+      "sourceBytes": 69024,
+      "sha256": "214c45f6b61653be007000044ec652c6a2e3448eeca6f88cee14ef8bdce2f91b"
+    },
+    {
+      "soname": "libnvidia-eglcore.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-eglcore.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-eglcore.so.550.90.07",
+      "sourceBytes": 30352200,
+      "sha256": "b5d9372139739e5502e7011506d17a73dc30ec77a49df9b4e8ffa626fd571053"
+    },
+    {
+      "soname": "libnvidia-encode.so",
+      "source": "/usr/lib64/libnvidia-encode.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-encode.so",
+      "sourceBytes": 277152,
+      "sha256": "24709fb22bee416b5cd26e3eff3a09f363e0262cd7e4a22a2bcf11a830d5a5a1"
+    },
+    {
+      "soname": "libnvidia-encode.so.1",
+      "source": "/usr/lib64/libnvidia-encode.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-encode.so.1",
+      "sourceBytes": 277152,
+      "sha256": "24709fb22bee416b5cd26e3eff3a09f363e0262cd7e4a22a2bcf11a830d5a5a1"
+    },
+    {
+      "soname": "libnvidia-encode.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-encode.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-encode.so.550.90.07",
+      "sourceBytes": 277152,
+      "sha256": "24709fb22bee416b5cd26e3eff3a09f363e0262cd7e4a22a2bcf11a830d5a5a1"
+    },
+    {
+      "soname": "libnvidia-fbc.so",
+      "source": "/usr/lib64/libnvidia-fbc.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-fbc.so",
+      "sourceBytes": 137824,
+      "sha256": "0ffbd0c0f92d3206f9103d88d21b71a060cc48eddec4ccdc61a5dcc647dd063f"
+    },
+    {
+      "soname": "libnvidia-fbc.so.1",
+      "source": "/usr/lib64/libnvidia-fbc.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-fbc.so.1",
+      "sourceBytes": 137824,
+      "sha256": "0ffbd0c0f92d3206f9103d88d21b71a060cc48eddec4ccdc61a5dcc647dd063f"
+    },
+    {
+      "soname": "libnvidia-fbc.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-fbc.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-fbc.so.550.90.07",
+      "sourceBytes": 137824,
+      "sha256": "0ffbd0c0f92d3206f9103d88d21b71a060cc48eddec4ccdc61a5dcc647dd063f"
+    },
+    {
+      "soname": "libnvidia-glcore.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-glcore.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-glcore.so.550.90.07",
+      "sourceBytes": 32464992,
+      "sha256": "70710d92e4c516c71b13899f5ba4fe70ed316d6fb11fc44e851d9a7a034919e5"
+    },
+    {
+      "soname": "libnvidia-glsi.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-glsi.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-glsi.so.550.90.07",
+      "sourceBytes": 582808,
+      "sha256": "929909fb4cd932b8c1d8ded7ff6753cec6b906823dfb176d81788c3ab5591978"
+    },
+    {
+      "soname": "libnvidia-glvkspirv.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-glvkspirv.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-glvkspirv.so.550.90.07",
+      "sourceBytes": 9062480,
+      "sha256": "62d61d228ab1a673f9ae02a9c738b6921fec2b116ca5d6e2ec26dddc95daefa7"
+    },
+    {
+      "soname": "libnvidia-gpucomp.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-gpucomp.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-gpucomp.so.550.90.07",
+      "sourceBytes": 43659040,
+      "sha256": "97055cd75c8856fdbb6b658fb2b8a7715cbf751fdb62d153f9eb4211f8647753"
+    },
+    {
+      "soname": "libnvidia-gtk2.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-gtk2.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-gtk2.so.550.90.07",
+      "sourceBytes": 1379720,
+      "sha256": "9c4abfb5e93e943de1d99fa57698dab8acf0650d1f46700378f873050a21a4ff"
+    },
+    {
+      "soname": "libnvidia-gtk3.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-gtk3.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-gtk3.so.550.90.07",
+      "sourceBytes": 1388424,
+      "sha256": "e6688ea717bf598933f641afb25aae6f12af3302e5285df4d6f007553fdef820"
+    },
+    {
+      "soname": "libnvidia-ml.so",
+      "source": "/usr/lib64/libnvidia-ml.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-ml.so",
+      "sourceBytes": 2078360,
+      "sha256": "03d713a02c4b20b08b00f4c67ea03956dd2a48d1b4ca930dffb6024387157f16"
+    },
+    {
+      "soname": "libnvidia-ml.so.1",
+      "source": "/usr/lib64/libnvidia-ml.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-ml.so.1",
+      "sourceBytes": 2078360,
+      "sha256": "03d713a02c4b20b08b00f4c67ea03956dd2a48d1b4ca930dffb6024387157f16"
+    },
+    {
+      "soname": "libnvidia-ml.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-ml.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-ml.so.550.90.07",
+      "sourceBytes": 2078360,
+      "sha256": "03d713a02c4b20b08b00f4c67ea03956dd2a48d1b4ca930dffb6024387157f16"
+    },
+    {
+      "soname": "libnvidia-ngx.so.1",
+      "source": "/usr/lib64/libnvidia-ngx.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-ngx.so.1",
+      "sourceBytes": 4562136,
+      "sha256": "14f7c03a060945f31a602f2083de5fa6e8d00d2a6c99bbcef3ae1fadc4baf187"
+    },
+    {
+      "soname": "libnvidia-ngx.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-ngx.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-ngx.so.550.90.07",
+      "sourceBytes": 4562136,
+      "sha256": "14f7c03a060945f31a602f2083de5fa6e8d00d2a6c99bbcef3ae1fadc4baf187"
+    },
+    {
+      "soname": "libnvidia-nvvm.so",
+      "source": "/usr/lib64/libnvidia-nvvm.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-nvvm.so",
+      "sourceBytes": 86842616,
+      "sha256": "fa784dc1c896cb5e24ba7d3f1ba426b2108491ee8454812be02504563557139f"
+    },
+    {
+      "soname": "libnvidia-nvvm.so.4",
+      "source": "/usr/lib64/libnvidia-nvvm.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-nvvm.so.4",
+      "sourceBytes": 86842616,
+      "sha256": "fa784dc1c896cb5e24ba7d3f1ba426b2108491ee8454812be02504563557139f"
+    },
+    {
+      "soname": "libnvidia-nvvm.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-nvvm.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-nvvm.so.550.90.07",
+      "sourceBytes": 86842616,
+      "sha256": "fa784dc1c896cb5e24ba7d3f1ba426b2108491ee8454812be02504563557139f"
+    },
+    {
+      "soname": "libnvidia-opencl.so.1",
+      "source": "/usr/lib64/libnvidia-opencl.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-opencl.so.1",
+      "sourceBytes": 23494344,
+      "sha256": "567fce7bb4f58a74fdfcdd90091a35db593d4cb328dc3b4c5938c3fb893193a0"
+    },
+    {
+      "soname": "libnvidia-opencl.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-opencl.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-opencl.so.550.90.07",
+      "sourceBytes": 23494344,
+      "sha256": "567fce7bb4f58a74fdfcdd90091a35db593d4cb328dc3b4c5938c3fb893193a0"
+    },
+    {
+      "soname": "libnvidia-opticalflow.so",
+      "source": "/usr/lib64/libnvidia-opticalflow.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-opticalflow.so",
+      "sourceBytes": 67704,
+      "sha256": "b5ebb9609fac65cbd86c3a714f9cf2736bc0dbd5a45ed49a415e1c779a3b8ced"
+    },
+    {
+      "soname": "libnvidia-opticalflow.so.1",
+      "source": "/usr/lib64/libnvidia-opticalflow.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-opticalflow.so.1",
+      "sourceBytes": 67704,
+      "sha256": "b5ebb9609fac65cbd86c3a714f9cf2736bc0dbd5a45ed49a415e1c779a3b8ced"
+    },
+    {
+      "soname": "libnvidia-opticalflow.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-opticalflow.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-opticalflow.so.550.90.07",
+      "sourceBytes": 67704,
+      "sha256": "b5ebb9609fac65cbd86c3a714f9cf2736bc0dbd5a45ed49a415e1c779a3b8ced"
+    },
+    {
+      "soname": "libnvidia-pkcs11-openssl3.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-pkcs11-openssl3.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-pkcs11-openssl3.so.550.90.07",
+      "sourceBytes": 10176,
+      "sha256": "55554467949cecb9268fa418d90bf4a4f13e3c8f7465f27e6f05988fbd25faea"
+    },
+    {
+      "soname": "libnvidia-pkcs11.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-pkcs11.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-pkcs11.so.550.90.07",
+      "sourceBytes": 10168,
+      "sha256": "5cac16e2c40fa47f9d03a6948c67b925c847555c51498b7eaa99a9d9f8328713"
+    },
+    {
+      "soname": "libnvidia-ptxjitcompiler.so",
+      "source": "/usr/lib64/libnvidia-ptxjitcompiler.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-ptxjitcompiler.so",
+      "sourceBytes": 28674464,
+      "sha256": "3b450cfb6d46d9a1689cb36f64af0ba3bbae8e676fea3a081b4fdf304b3588cd"
+    },
+    {
+      "soname": "libnvidia-ptxjitcompiler.so.1",
+      "source": "/usr/lib64/libnvidia-ptxjitcompiler.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-ptxjitcompiler.so.1",
+      "sourceBytes": 28674464,
+      "sha256": "3b450cfb6d46d9a1689cb36f64af0ba3bbae8e676fea3a081b4fdf304b3588cd"
+    },
+    {
+      "soname": "libnvidia-ptxjitcompiler.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-ptxjitcompiler.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-ptxjitcompiler.so.550.90.07",
+      "sourceBytes": 28674464,
+      "sha256": "3b450cfb6d46d9a1689cb36f64af0ba3bbae8e676fea3a081b4fdf304b3588cd"
+    },
+    {
+      "soname": "libnvidia-rtcore.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-rtcore.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-rtcore.so.550.90.07",
+      "sourceBytes": 76336528,
+      "sha256": "2d2c391c4383e15e241f5eb58b669e77947f4d9255cf17ccc35d9e933803edd9"
+    },
+    {
+      "soname": "libnvidia-tls.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-tls.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-tls.so.550.90.07",
+      "sourceBytes": 18632,
+      "sha256": "6d1417faf40fb14dfe46d476dd559f522a273edffd28b285bbc8b6166945157d"
+    },
+    {
+      "soname": "libnvidia-wayland-client.so.550.90.07",
+      "source": "/usr/lib64/libnvidia-wayland-client.so.550.90.07",
+      "target": "/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/graphics-libs/libnvidia-wayland-client.so.550.90.07",
+      "sourceBytes": 10088,
+      "sha256": "32424413e833393dcb644abbbfdc2d27cd8c5e0649cd398d6942048281b66e80"
+    }
+  ]
+}

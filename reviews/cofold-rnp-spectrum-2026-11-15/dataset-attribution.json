@@ -1,0 +1,13 @@
+{
+  "title": "Have protein-ligand cofolding methods moved beyond memorisation? — Runs N’ Poses",
+  "source": "https://zenodo.org/records/18366081",
+  "license": "CC BY 4.0",
+  "creators": [
+    "Peter Škrinjar",
+    "Jérôme Eberhardt",
+    "Gerardo Tauriello",
+    "Torsten Schwede",
+    "Janani Durairaj"
+  ],
+  "modifications": "Molarium selected a native-positive diagnostic cohort, prepared portable experimental scoring references, and generated original stock LocalFold browser predictions. These review exports preserve the existing prediction PDB strings and explicit ligand graphs; experimental references are separately labelled. No AlphaFold3 coordinate output is redistributed."
+}

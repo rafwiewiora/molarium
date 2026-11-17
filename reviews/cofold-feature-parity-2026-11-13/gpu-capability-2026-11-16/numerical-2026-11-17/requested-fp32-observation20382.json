@@ -1,0 +1,136 @@
+{
+  "checkedAt": "2026-11-17T03:14:43.561331+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "task": {
+    "job": 20382,
+    "name": "qualified-controls",
+    "root": "/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt001",
+    "sourcePin": "eee88d6cb051e9010069a8eca8df7cbb407a72b3773eefbf791d905275f23ee8"
+  },
+  "accounting": "20382|NODE_FAIL|0:0|00:00:24|2026-11-17T03:03:37|2026-11-17T03:04:01|psigreen-l4spotnodeset-31\n",
+  "started": false,
+  "controlsStarted": false,
+  "files": {
+    "runner-adaptations.json": {
+      "bytes": 2785,
+      "sha256": "8ab6a008de2c7b0264cb128b0f43173e3108efb534da937aff87bd86152efaa7"
+    },
+    "probe-adaptation.json": {
+      "bytes": 1850,
+      "sha256": "27c5dbd8e90e35d69ea8733a2fc9cb255da110ae1829a81a7eb66094c3d8159e"
+    },
+    "submission.json": {
+      "bytes": 4891,
+      "sha256": "d1ff1de56780e2ec59944a7a8264f6b4a0e3c6b79707a7b667073a55a3a258fc"
+    },
+    "source-manifest.json": {
+      "bytes": 1383,
+      "sha256": "eee88d6cb051e9010069a8eca8df7cbb407a72b3773eefbf791d905275f23ee8"
+    },
+    "trunk-readiness-fix.json": {
+      "bytes": 1328,
+      "sha256": "61da204be309fcad61156bb866b3746b06933f0bb3474d0f3c99cb8ed765308b"
+    }
+  },
+  "receipts": {
+    "runner-adaptations.json": {
+      "scope": "Exact public readiness fix plus task-local paths and browser-target GPU-information warmup. No numerical kernel, fixture, precision or acceptance change. Both controls still require actual physical NVIDIA adapters.",
+      "trunkPublicSourceSha256": "9f67f23ffe0b446b17aa248d3dff71b34d3ba1ea8da0adc71fa9504c3c47d4b4",
+      "trunkReplacements": [
+        {
+          "from": "from './web-bundle-dependencies.mjs'",
+          "to": "from '/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo/scripts/web-bundle-dependencies.mjs'"
+        },
+        {
+          "from": "from './headless-chrome.mjs'",
+          "to": "from '/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo/scripts/headless-chrome.mjs'"
+        },
+        {
+          "from": "const root = resolve(import.meta.dirname, '..');",
+          "to": "const root = resolve('/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/browser-repo');"
+        },
+        {
+          "from": "import {createHash, randomUUID} from 'node:crypto';",
+          "to": "import {createHash, randomUUID} from 'node:crypto';\nimport {warmNvidiaBrowser} from './warm-browser.mjs';"
+        },
+        {
+          "from": "  const fixtureProbe=await browser.evaluate(",
+          "to": "  await warmNvidiaBrowser();\n  const fixtureProbe=await browser.evaluate("
+        }
+      ],
+      "transitionOriginalSha256": "02f0422e39d4ef52dfd664acec1cb5c1fcb6ee90ff832407326d247db2c8d783",
+      "trunkOutputSha256": "e141416006e3f8f5b7921352eb2c7065f39b3b274abfd0d40bea41098a0a44ce",
+      "transitionOutputSha256": "d58026d1b0d0756610364392459e34e2d16a9843cdf167ec8557ed90f9cf1caa",
+      "sharedHelperChanged": false,
+      "transitionReplacements": [
+        {
+          "from": "from'./headless-chrome.mjs'",
+          "to": "from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs'"
+        },
+        {
+          "from": "from'./web-bundle-dependencies.mjs'",
+          "to": "from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/web-bundle-dependencies.mjs'"
+        },
+        {
+          "from": "const root=resolve(import.meta.dirname,'..'),",
+          "to": "const root=resolve('/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001'),"
+        },
+        {
+          "from": "import {startMolariumBrowser,waitFor}from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs';",
+          "to": "import {startMolariumBrowser,waitFor}from'/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261115-attempt001/scripts/headless-chrome.mjs';\nimport {warmNvidiaBrowser} from './warm-browser.mjs';"
+        },
+        {
+          "from": "),20000,'diagnostic navigation');",
+          "to": "),20000,'diagnostic navigation');\n await warmNvidiaBrowser();"
+        }
+      ]
+    },
+    "probe-adaptation.json": {
+      "parentSourceManifestSha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff",
+      "parentProbeSha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc",
+      "currentProbeSha256": "41c85b6c0bd7845cdaa44df496cc5f22c129b5ddb1ccb9794e0ebf2b58d1e08b",
+      "reversibleReplacements": [
+        {
+          "from": "import {startMolariumBrowser}",
+          "to": "import {startMolariumBrowser, DevToolsClient}"
+        },
+        {
+          "from": "let browser, result;",
+          "to": "let browser, browserTarget, result;"
+        },
+        {
+          "from": "  const system = await browser.client.call('SystemInfo.getInfo').catch(error=>({unavailable:String(error)}));",
+          "to": "  const stderr = await readFile(process.env.MOLARIUM_PROBE_ROOT + '/chrome-stderr.log', 'utf8');\n  const endpoint = stderr.match(/DevTools listening on (ws:\\/\\/[^\\s]+)/)?.[1];\n  if (!endpoint) throw Error('Actual browser-target endpoint missing from consumed Chrome log');\n  browserTarget = new DevToolsClient(endpoint); await browserTarget.open();\n  const system = await browserTarget.call('SystemInfo.getInfo');\n  const browserVersion = await browserTarget.call('Browser.getVersion');"
+        },
+        {
+          "from": "result={status:webgpu.adapterAvailable&&webgpu.integerProbe===7?'complete':'no-adapter',system,webgpu};",
+          "to": "result={status:webgpu.adapterAvailable&&webgpu.integerProbe===7?'complete':'no-adapter',system,browserVersion,webgpu,systemAfter:await browserTarget.call('SystemInfo.getInfo')};"
+        },
+        {
+          "from": "finally {await browser?.close();server.stop(true);}",
+          "to": "finally {browserTarget?.close();await browser?.close();server.stop(true);}"
+        }
+      ],
+      "scope": "Observe real browser-target GPU info, not unsupported page-target SystemInfo. Existing physical-NVIDIA and integer7 gates unchanged; no model calls."
+    },
+    "trunk-readiness-fix.json": {
+      "finding": "TRUNK-PAGE-01",
+      "originalHarnessSha256": "ca089051615c0a285ab1962047ca79e689e51aa891fba11ff64cdf819bb87e52",
+      "fixedHarnessSha256": "9f67f23ffe0b446b17aa248d3dff71b34d3ba1ea8da0adc71fa9504c3c47d4b4",
+      "onlyChange": {
+        "from": "  await waitFor(()=>browser.evaluate(`document.readyState==='complete'`),20000,'trunk fixture');",
+        "to": "  const context=()=>browser.evaluate(`({href:location.href,baseURI:document.baseURI,title:document.title,readyState:document.readyState,userAgent:navigator.userAgent})`);\n  result.startupContextBefore=await context();\n  await waitFor(()=>browser.evaluate(`location.href===${JSON.stringify(browser.appUrl)}&&document.title==='Stock-trained trunk comparison'&&document.readyState==='complete'`),20000,'exact loaded trunk fixture page');\n  result.startupContextReady=await context();\n  const fixtureProbe=await browser.evaluate(`(async()=>{const r=await fetch('/fixture/receipt.json');return{status:r.status,receipt:await r.json()};})()`);\n  if(fixtureProbe.status!==200||fixtureProbe.receipt.schema!=='molarium.trained-trunk-fixture.v1')throw Error('Wrong actual fixture endpoint');"
+      },
+      "numericalPathChanged": false,
+      "sharedHeadlessHelperChanged": false,
+      "observedProof": "measurement-receipt.json startupContextBefore/Ready and all32capturedboundaries"
+    }
+  },
+  "newJobs": 0,
+  "newModelCalls": 0
+}

@@ -1,0 +1,62 @@
+{
+  "status": "pass",
+  "sourceExportManifestSha256": "5545ee35c7196fb0542f5226c99334255641b8bc8e529431202449406fb7057c",
+  "caseId": "8swe__1__1-a__1-e",
+  "fileImport": true,
+  "parsedViewers": 4,
+  "localPreferencePersisted": true,
+  "referenceViewSeparate": true,
+  "copiedDecisions": 0,
+  "isolatedInferenceTimingInvented": false,
+  "webgpuRequests": 0,
+  "newNeuralForwards": 0,
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)",
+  "predictionPages": [
+    [
+      "8swe__1__1-a__1-e::stock-seed-0",
+      "8swe__1__1-a__1-e::stock-seed-1",
+      "8swe__1__1-a__1-e::stock-seed-2",
+      "8swe__1__1-a__1-e::stock-seed-3"
+    ],
+    [
+      "8swe__1__1-a__1-e::stock-seed-4",
+      "8swe__1__1-a__1-e::stock-seed-5",
+      "8swe__1__1-a__1-e::stock-seed-6",
+      "8swe__1__1-a__1-e::stock-seed-7"
+    ],
+    [
+      "8swe__1__1-a__1-e::stock-seed-8",
+      "8swe__1__1-a__1-e::stock-seed-9"
+    ]
+  ],
+  "referencePages": [
+    [
+      "8swe__1__1-a__1-e::experimental",
+      "8swe__1__1-a__1-e::stock-seed-0",
+      "8swe__1__1-a__1-e::stock-seed-1",
+      "8swe__1__1-a__1-e::stock-seed-2"
+    ],
+    [
+      "8swe__1__1-a__1-e::stock-seed-3",
+      "8swe__1__1-a__1-e::stock-seed-4",
+      "8swe__1__1-a__1-e::stock-seed-5",
+      "8swe__1__1-a__1-e::stock-seed-6"
+    ],
+    [
+      "8swe__1__1-a__1-e::stock-seed-7",
+      "8swe__1__1-a__1-e::stock-seed-8",
+      "8swe__1__1-a__1-e::stock-seed-9"
+    ]
+  ],
+  "renderedUniquePredictions": 10,
+  "renderedReferenceInclusiveRecords": 11,
+  "exactPoseNotePersisted": true,
+  "exportPreservesOriginalPdbAndGraph": true,
+  "shortlistContainsExactSelectedPose": true,
+  "predictionNumbersStableWithReference": true,
+  "experimentalReferenceHasNoPredictionMetadata": true,
+  "pdbExportsPreserveOriginalCoordinates": true,
+  "referenceDownloadLabelExplicit": true,
+  "syntheticEarlierFailure": null,
+  "testDecisionIsScientificJudgement": false
+}

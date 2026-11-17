@@ -1,0 +1,11 @@
+{
+  "analysisSha256": "212f420b9013190615c020717dc4f1b01d99f771372f72866fb855168f51551c",
+  "scriptSha256": "ca70f7e8abf48788faf79aec099024cdd066667f82b4565fdae8943e16118269",
+  "matplotlibVersion": "3.10.7",
+  "completedUniformBudget": 10,
+  "plannedBudget": 10,
+  "outputs": {
+    "sampling-and-time.svg": "127983a99ddfad7efd9931d7f63022006045cd6fb8600b8cf1e7dde843e8b0e9",
+    "sampling-and-time.png": "34904db9e873a320d29191548d4935f72b72a74d93ecee57f04f1c8dda70024c"
+  }
+}

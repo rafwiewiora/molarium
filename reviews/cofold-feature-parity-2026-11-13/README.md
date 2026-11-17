@@ -3,20 +3,65 @@
 The [270-prediction protocol comparison](../cofold-recent-pdb-2026-11-13/README.md)
 does not establish fixed-input numerical agreement. These captures locate input
 differences before attributing pose differences to kernels or quantization.
-**Both original native captures and the same-SMILES control are complete. The
+**Both original native captures and both same-SMILES controls are complete. The
 [first matched trained atom-feature stage](trained-target/README.md) now passes on
 production CPU/WebGPU against stock native FP32. Full-model numerical agreement
 remains untested.** Production folding mathematics is unchanged.
 
+The separate [YTHDF2 JavaScript CPU control](trained-target-ythdf2-cpu/README.md)
+also passes at matched inputs and FP32 weights, with 1.46 × 10⁻⁷ relative RMS in
+the learned channels. That call ran under Bun with GPU requests blocked; it does
+not add a browser/WebGPU or complete-model parity result.
+
+The [relative-position CPU reference](relative-encoding/README.md) also reproduces
+all 12,630,791 captured native one-hot values exactly across both systems,
+including original browser indices and all ligand pair classes. This is a
+non-learned feature check; the fused WebGPU gather/projection remains untested.
+
 The [next-stage plan](trunk-audit-plan.json) freezes a four-cycle stock-native
 trunk observation and 32 production-GPU seam comparisons with predeclared
 tolerances. Its CPU preflight matched all [38 native source pins](trunk-native-source-pins.json).
-The GPU measurements remain queued; this plan is not a result. The
+The native capture and conversion are complete. The NVIDIA browser attempt
+stopped before its first measured seam because Chrome found no compatible WebGPU
+adapter. A separate transition control timed out during browser startup. These
+are environment failures, not numerical-comparison results. The
+[16 November control ledger](control-status-2026-11-16.json) preserves the terminal
+states and the separate capability-only diagnostic. The
+[capability attempt history](gpu-capability-2026-11-16/README.md) preserves its
+pre-payload Spot node failure and source-identical, deadline-bounded retry. The
 [tools and timing correction CAP-01](../../folding/comparison/README.md)
 document the exact scope and preserve historical receipts. Two
 [Spot startup failures](spot-startup-failures.json) occurred before either task
 script began; their unchanged science payloads were resubmitted in separate
 immutable attempts through the regular/L4 managed queues.
+
+The earlier explicit-binding capability attempt, **20206**, also found no adapter:
+GLX lacked the instance entry point; EGL exposed it but Chrome still returned
+null. Its dependent numerical job **20207** cancelled without allocation.
+[Actual terminal outputs](gpu-capability-2026-11-16/observed-20206/observation.json)
+contain no measured transition cases or trunk seams.
+
+A later [physical NVIDIA L4 capability probe](gpu-capability-2026-11-16/observed-20285/README.md)
+completed successfully with integer probe 7 and zero model calls. The [separate numerical jobs](gpu-capability-2026-11-16/numerical-2026-11-17/README.md)
+preserve the pre-payload Spot loss and the demonstrated absolute-symlink mount
+failure. Both corrected payloads now open the existing fixture in the actual
+container before submission, without regenerating it. Subsequent T4 setup attempts
+stopped at hardware/identity gates before numerical work. Those L4-only jobs (20400 and 20402) then lost their Spot nodes before payload.
+Source-identical replacements 20534 and 20535 use the verified regular L4 pool
+at normal priority, preserving the gates and saved inputs; no NVIDIA numerical
+pass is claimed.
+
+The [physical-Apple four-cycle trunk controls](trained-trunk-apple/README.md)
+capture all 32 fixed-input boundaries. The original requested-FP32 configuration
+left default half-arithmetic pair paths enabled and passed 8/32 combined gates.
+Correcting that producer setting and checking all generated shaders gives 14/32
+combined passes: all 32 pass the relative-error gate, while 18 still fail the
+unchanged absolute gate. All outputs are finite. The full 2×2 precision/variance
+control retains the same 14/32 strict-precision combined passes with two-pass
+variance; that option did not resolve the absolute discrepancies. Exact arrays are publicly archived.
+Producer readiness and precision findings are linked to fixes, with failed stages
+retained. No complete-model parity or pose-error cause is inferred; production
+folding defaults are unchanged.
 
 Two diagnostic systems were selected before capture: STARD4 (9T51), with
 0.48 Å seed-paired mean browser/native ligand disagreement, and YTHDF2 (32QY),
@@ -70,7 +115,7 @@ maps remain explicit; the table's coordinate diagnostic uses the reported lexico
 map, not an allegedly unique atom assignment. None of these findings establishes the
 cause of the pose discrepancy.
 
-## Same-spelling control result
+## Same-spelling control results
 
 The [completed STARD4 control](comparison-9t51-a1jtm-processed-smiles.json),
 job 15717 on L4, uses the exact browser processed SMILES. It captures one batch
@@ -84,7 +129,9 @@ Three checked raw fields differ: token indices, entity labels and reference coor
 pairwise token-index difference is identical (native indices are uniformly one lower),
 and every pairwise entity-equality relation is identical. Entity labels themselves
 are permuted, not uniformly shifted; their numerical differences need not agree.
-This is an integer-input diagnostic, not execution of the neural relative-position module.
+The later [direct encoding check](relative-encoding/README.md) confirms exact
+agreement with captured native one-hot outputs using the port's CPU reference.
+The fused WebGPU projection and its trained weights still require measurement.
 
 Generated reference positions still differ. Protein within-space pair-distance RMS
 remains 0.561 Å; the ligand diagnostic is 1.303 Å in known identity parser order.
@@ -94,6 +141,25 @@ then passes in production CPU/WebGPU, at approximately 1.5 × 10⁻⁷ relative 
 the learned channels, using the same generated reference inputs and trained weights. No bound crystal
 coordinates are used. **Neither the control nor the original comparisons establish
 trained-model or trajectory parity.**
+
+The [YTHDF2 same-spelling control](comparison-32qy-a1keo-processed-smiles.json)
+also completed, in job 19248 on an NVIDIA L4. All 1,381 atom-name encodings now
+agree, eliminating the nine ligand-name mismatches in its original comparison.
+The [integer relationships](processed-smiles-numbering-32qy-a1keo.json) match the
+STARD4 findings: token-index differences and entity-equality relations agree,
+while the raw labels differ. Generated reference coordinates still differ:
+protein within-space pair-distance RMS is 0.590 Å and ligand RMS is 0.205 Å.
+These diagnostics isolate the spelling-dependent name difference; they do not
+show that it caused the original pose discrepancy.
+
+The same job captured one strict-FP32 trained native input-embedder call with
+zero full-model forwards. Its canonical and trained feature snapshots are
+byte-identical, and all captured native tensors were verified finite after
+transfer. Complete native outputs and consumed sources now accompany the
+[matched-input CPU measurement](trained-target-ythdf2-cpu/README.md);
+**a browser trained-stage result for YTHDF2 is still pending**.
+No native pose prediction was repeated, and the separate pristine LocalFold
+experimental-pose benchmark retains its original inputs and protocol.
 
 ## Capture boundaries and preserved evidence
 

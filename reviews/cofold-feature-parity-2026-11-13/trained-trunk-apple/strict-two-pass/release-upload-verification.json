@@ -1,0 +1,14 @@
+{
+  "verifiedAt": "2026-11-17T03:45:38.420309+00:00",
+  "releaseId": 448040291,
+  "url": "https://github.com/rafwiewiora/molarium/releases/tag/cofold-trained-trunk-2026-11-17",
+  "asset": {
+    "id": 757502137,
+    "name": "apple-trained-trunk-strict-two-pass-20261117.tar.gz",
+    "size": 602864142,
+    "digest": "sha256:0838b50eb9f8633a1b0647c1bc2ff8e3000640658e5d112768d452b5bdc1c6a3",
+    "browser_download_url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/apple-trained-trunk-strict-two-pass-20261117.tar.gz"
+  },
+  "serverDigestVerified": true,
+  "originalArraysPreservedLocally": true
+}

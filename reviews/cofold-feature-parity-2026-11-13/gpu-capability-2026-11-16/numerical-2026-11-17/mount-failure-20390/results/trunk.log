@@ -1,0 +1,8 @@
+ENOENT: no such file or directory, open '/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/receipt.json'
+    path: "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261115-attempt001/results/fixture/receipt.json",
+ syscall: "open",
+   errno: -2,
+    code: "ENOENT"
+
+
+Bun v1.3.14 (Linux x64)

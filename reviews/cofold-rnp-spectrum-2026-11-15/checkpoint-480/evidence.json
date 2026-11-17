@@ -1,0 +1,64 @@
+{
+  "schema": "molarium.stock-localfold-evidence.v1",
+  "scoresSha256": "219f98c1ddd057dd699c4b00ae32593340744ee3b9d04737fbf23b2b599b95ca",
+  "archiveSha256": "6443a685f64dbb6948e42973e2ccac9fe6d5a12008541bc5abff33bb0c75ae93",
+  "archiveBytes": 194615615,
+  "members": 4977,
+  "expandedArchiveBytes": 397343077,
+  "archiveMembers": 4978,
+  "scope": "complete",
+  "completed": 480,
+  "planned": 480,
+  "archiveParts": [
+    {
+      "file": "evidence.part-01.bin",
+      "bytes": 20971520,
+      "sha256": "44f4ee08fe8e893dafd8056ed2bf67c6127245a3ae5fbbb3e42c8704487a2144"
+    },
+    {
+      "file": "evidence.part-02.bin",
+      "bytes": 20971520,
+      "sha256": "80bd8a4ceaba3c2ee5dbd2bd17487b110ae4a2e9c2f7c6690da1772032b457fd"
+    },
+    {
+      "file": "evidence.part-03.bin",
+      "bytes": 20971520,
+      "sha256": "b809e8a76da14b547a706f900b2540907c68f536762fd99425466fd8b423656e"
+    },
+    {
+      "file": "evidence.part-04.bin",
+      "bytes": 20971520,
+      "sha256": "6d9e6cd7c2b44bc1b96a119635c6c54b08d4c2ef0ce107bef8cde639f08fa567"
+    },
+    {
+      "file": "evidence.part-05.bin",
+      "bytes": 20971520,
+      "sha256": "2d9bdb786eb64bfc1656dc1e688a017326eb944593c433b157629ba4bbece20b"
+    },
+    {
+      "file": "evidence.part-06.bin",
+      "bytes": 20971520,
+      "sha256": "5ebddc2362a01bca7e341aa5793d9545109e83693652ccd5dbc160d898ee1c79"
+    },
+    {
+      "file": "evidence.part-07.bin",
+      "bytes": 20971520,
+      "sha256": "773623aec90230c930f4b9af5d6388a49b0907d19e914d81c9199d507c21dc78"
+    },
+    {
+      "file": "evidence.part-08.bin",
+      "bytes": 20971520,
+      "sha256": "83575e0a57cb9db7dc0966336266ee942b7552844fc04f144f3d93832d9b9e40"
+    },
+    {
+      "file": "evidence.part-09.bin",
+      "bytes": 20971520,
+      "sha256": "eeb3c353557606935ec2fce29f21491aff14f669f8972de112ec0b04d9bd6c2d"
+    },
+    {
+      "file": "evidence.part-10.bin",
+      "bytes": 5871935,
+      "sha256": "bfa4decae985b2c6e24e7db370dd654f6b3f2e7394c1042ba8bd7fb1c7379f4a"
+    }
+  ]
+}

@@ -1,0 +1,662 @@
+{
+  "schema": "molarium.rnp-publication-preparation.v1",
+  "status": "prepared-for-review",
+  "newNeuralForwards": 0,
+  "sourceFinalizerVerificationSha256": "6b54b7d2d9cb0b9680361ecd11212abb955c9fb5df065ec1ae5527325057b6a7",
+  "sourceScoresSha256": "219f98c1ddd057dd699c4b00ae32593340744ee3b9d04737fbf23b2b599b95ca",
+  "reportPreparerSha256": "4da5e4a89769d38eb236fbc6752f6f606af2237eb0590ac91a5901ddeb6a685b",
+  "publicationActions": 0,
+  "reviewRequired": "Inspect final tables, diagnostics, plots and browser workflow before PR readiness/merge.",
+  "files": [
+    {
+      "path": "checkpoint-480/README.md",
+      "bytes": 3426,
+      "sha256": "6dcd870996e38d21bf13136e6673f3ffdb8af0a3485dccdea299a6d44081a2aa"
+    },
+    {
+      "path": "checkpoint-480/assembly-README.md",
+      "bytes": 9208,
+      "sha256": "c3a01f82d1ae3099901eb5a288797e998029e8ae15695b3030a9880f042e5e97"
+    },
+    {
+      "path": "checkpoint-480/diagnostics-first10/README.md",
+      "bytes": 5986,
+      "sha256": "d179073020d3530c5579e0b36837f4f66e0c82073152f2dda318a861af0a3155"
+    },
+    {
+      "path": "checkpoint-480/diagnostics-first10/diagnostics.json",
+      "bytes": 104509,
+      "sha256": "7e7e0c98827eb64c9876ef998fb97c83c465dd10f7b59276745e49d007b200a2"
+    },
+    {
+      "path": "checkpoint-480/diagnostics-first3/README.md",
+      "bytes": 5192,
+      "sha256": "45726872a471debd19c39451f8822ef0e38e69852e19e3e9c495ba94d0b68bfe"
+    },
+    {
+      "path": "checkpoint-480/diagnostics-first3/diagnostics.json",
+      "bytes": 69763,
+      "sha256": "d97eff0844c1d9d585d47a84715ebab5bab50bb19aa540887cd50aa94cfa2b03"
+    },
+    {
+      "path": "checkpoint-480/diagnostics-first6/README.md",
+      "bytes": 5524,
+      "sha256": "b1617477a6c3c2be171f97907b015704d457e3718ccdd05aeaa2e58ea29a3c59"
+    },
+    {
+      "path": "checkpoint-480/diagnostics-first6/diagnostics.json",
+      "bytes": 85092,
+      "sha256": "b25f7abba11c4cbe393fbd824a3649c213fa4c476d61d407034ffcfbfd2c65f3"
+    },
+    {
+      "path": "checkpoint-480/evidence.json",
+      "bytes": 2013,
+      "sha256": "21dafa22dd84d9ee127d5e2bc9e00f2c279be47d50f4349bc3595943bf867d8c"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-01.bin",
+      "bytes": 20971520,
+      "sha256": "44f4ee08fe8e893dafd8056ed2bf67c6127245a3ae5fbbb3e42c8704487a2144"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-02.bin",
+      "bytes": 20971520,
+      "sha256": "80bd8a4ceaba3c2ee5dbd2bd17487b110ae4a2e9c2f7c6690da1772032b457fd"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-03.bin",
+      "bytes": 20971520,
+      "sha256": "b809e8a76da14b547a706f900b2540907c68f536762fd99425466fd8b423656e"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-04.bin",
+      "bytes": 20971520,
+      "sha256": "6d9e6cd7c2b44bc1b96a119635c6c54b08d4c2ef0ce107bef8cde639f08fa567"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-05.bin",
+      "bytes": 20971520,
+      "sha256": "2d9bdb786eb64bfc1656dc1e688a017326eb944593c433b157629ba4bbece20b"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-06.bin",
+      "bytes": 20971520,
+      "sha256": "5ebddc2362a01bca7e341aa5793d9545109e83693652ccd5dbc160d898ee1c79"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-07.bin",
+      "bytes": 20971520,
+      "sha256": "773623aec90230c930f4b9af5d6388a49b0907d19e914d81c9199d507c21dc78"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-08.bin",
+      "bytes": 20971520,
+      "sha256": "83575e0a57cb9db7dc0966336266ee942b7552844fc04f144f3d93832d9b9e40"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-09.bin",
+      "bytes": 20971520,
+      "sha256": "eeb3c353557606935ec2fce29f21491aff14f669f8972de112ec0b04d9bd6c2d"
+    },
+    {
+      "path": "checkpoint-480/evidence.part-10.bin",
+      "bytes": 5871935,
+      "sha256": "bfa4decae985b2c6e24e7db370dd654f6b3f2e7394c1042ba8bd7fb1c7379f4a"
+    },
+    {
+      "path": "checkpoint-480/final-summary.json",
+      "bytes": 5516,
+      "sha256": "2cba10159140f8ff54b69c164a073ecd4c5bd3d9c1031beb2cca17f792d5bff6"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/7g00__1__1-a__1-q.predictions.library.json",
+      "bytes": 891357,
+      "sha256": "34146d84159ea312f3e7945ce5472f493a4ffeaa9b579e76aadcf9746863c119"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/7g00__1__1-a__1-q.with-reference.library.json",
+      "bytes": 977727,
+      "sha256": "d5e59952f1cdfc101d4c9f3f39f351ea446d23ed3ceee456f3711f2d13a0e027"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/7szr__1__1-a__1-g.predictions.library.json",
+      "bytes": 2254225,
+      "sha256": "a3c54b2f76ae6b294350ac4369bb41341e5171b8246fde55ae2abe57c1f10435"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/7szr__1__1-a__1-g.with-reference.library.json",
+      "bytes": 2461197,
+      "sha256": "a0da3558d6fed56b01f7e27139bbcade0041e96fbe32d169c504003a1a9f3b7a"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/7u8x__1__1-a__1-b.predictions.library.json",
+      "bytes": 3196612,
+      "sha256": "259d5b4d98799fa9b1d5fc1fd36a194d70ea8ab7a411fd1567a2c596cae73fb2"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/7u8x__1__1-a__1-b.with-reference.library.json",
+      "bytes": 3489844,
+      "sha256": "bb3ecfa1fe55d6e1ae80e4a4cbc2a94c163f4128dbc4c47b64855a24a6102080"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/7uad__1__1-a__1-b.predictions.library.json",
+      "bytes": 2208845,
+      "sha256": "f6f36c723d2ca9c501eb338ac3f5c062c7d50f49a448c377fc165a67ec903c48"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/7uad__1__1-a__1-b.with-reference.library.json",
+      "bytes": 2397101,
+      "sha256": "0f3f85f7102ed6b68b8d6bf49532080b0b22a60fc3c2b6ada1971f4dbf0014a2"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8a2p__1__1-a__1-b.predictions.library.json",
+      "bytes": 2711521,
+      "sha256": "f4f1d97978c3012646b4ef2f090aa1cc92e51daaf50bd6dd6044ce2f1ae92d5b"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8a2p__1__1-a__1-b.with-reference.library.json",
+      "bytes": 2956420,
+      "sha256": "388efbcac00ff24766854e71986c7e08946d4b76a17a5e966abd419530119f3d"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8a3a__1__1-a__1-b.predictions.library.json",
+      "bytes": 1083043,
+      "sha256": "fc3a6583f10c45d71bad2593a848df2d5fbef76e0d9fff0ee823abec3bfb447f"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8a3a__1__1-a__1-b.with-reference.library.json",
+      "bytes": 1187940,
+      "sha256": "72f0cc5a49db3f77fa1a2c81eadbd29cf5951c94528f0057f72d24a12f91dad2"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8am2__1__1-a__1-d.predictions.library.json",
+      "bytes": 3464846,
+      "sha256": "c994fef63617251261d1892b5ce66522545917c0a0c693d8f636c17bb147374e"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8am2__1__1-a__1-d.with-reference.library.json",
+      "bytes": 3808862,
+      "sha256": "f8855212c51d657bf6141c72fda6d9a482106928ce2fa0825df6f9ef6ab8d9b8"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8aqf__1__1-a__1-b.predictions.library.json",
+      "bytes": 2085817,
+      "sha256": "2421ba23dca3179cc955561bef0850246c006a42db6f113426d0badf3a387090"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8aqf__1__1-a__1-b.with-reference.library.json",
+      "bytes": 2272831,
+      "sha256": "6d8d3280b3d81bd43facfbf067ce9072778ab9bee1637d3a387df817494ae9a7"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8b62__1__1-a__1-c.predictions.library.json",
+      "bytes": 2467909,
+      "sha256": "45c81d2cf3230f9ff8edc41b07ad5a0298335790ecb2f7b675eb608afa5a35e5"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8b62__1__1-a__1-c.with-reference.library.json",
+      "bytes": 2707161,
+      "sha256": "5bbb41c45c52c62a52e8728df54847461b6306f8726d86ec62764abb0b77984f"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8bo3__1__1-a__1-b.predictions.library.json",
+      "bytes": 1616511,
+      "sha256": "b87ea6fa2b85707f6493443bd0df218a29642ad5f4a9d53bbf71d2860f68f51f"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8bo3__1__1-a__1-b.with-reference.library.json",
+      "bytes": 1775815,
+      "sha256": "00bc6ec5cdf77b58a3269317786485f6ad68e01b1edca89d0391f63dbd3ec735"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8chc__1__1-a__1-b.predictions.library.json",
+      "bytes": 3271501,
+      "sha256": "72495bc9140b486d085eaf3e527eb08ed3fc2c3cb8efb1d54582b92e88cd36e3"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8chc__1__1-a__1-b.with-reference.library.json",
+      "bytes": 3582972,
+      "sha256": "f33f5133c4868902a73be05c19fa2193b938691bec5ac3185465be949e340f18"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8cij__1__1-a__1-b.predictions.library.json",
+      "bytes": 2032868,
+      "sha256": "e739cbfc77367c1c727d3effa45e0af52b604faeeda018681955f7522a37909a"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8cij__1__1-a__1-b.with-reference.library.json",
+      "bytes": 2209221,
+      "sha256": "8d01a00613b2df9f42e1a69ed9093baefd1c57cf7f8c0fe88558d9234e57ff76"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8cjg__1__1-a__1-d.predictions.library.json",
+      "bytes": 4412661,
+      "sha256": "40fcbb922534949aa2b7179466cc45b31b29b33f1f39d1fef3356ecd21b1d144"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8cjg__1__1-a__1-d.with-reference.library.json",
+      "bytes": 4839600,
+      "sha256": "aa2badfaa591bca5f8e99ed8fd18558ea6ec86b132140405420dbba94d50d287"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8crl__1__1-a__1-c.predictions.library.json",
+      "bytes": 2248259,
+      "sha256": "2d2252ea5a0b45610cfba752b2bfa904868aa42c3b1f5adae9643e739e392fe1"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8crl__1__1-a__1-c.with-reference.library.json",
+      "bytes": 2461046,
+      "sha256": "84404c696ce19336712334157e7744fd2a359c9b1f25df7b459efaee95183a8f"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8efj__1__1-a__1-d.predictions.library.json",
+      "bytes": 2460877,
+      "sha256": "7e4cb431e3fd35564fcf21ba2bacd46e2b618cab3bec93ba52b03c57e320c4a5"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8efj__1__1-a__1-d.with-reference.library.json",
+      "bytes": 2691895,
+      "sha256": "ba314909fb50d6a6ad9fe0788b21689f844be67e7cba70f84566ca241295bd76"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8gcz__1__1-a__1-n.predictions.library.json",
+      "bytes": 2285723,
+      "sha256": "24deaf8af1cfba0e03137d93e8690139ceb48d3373594d0b6f07bc7c0c6b1d81"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8gcz__1__1-a__1-n.with-reference.library.json",
+      "bytes": 2505725,
+      "sha256": "fb7295f52fbcf577c5c1e4a754891d0ba80669191834b668e15189e35d3a327f"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8gdk__1__1-a__1-o.predictions.library.json",
+      "bytes": 2290114,
+      "sha256": "1cce845b637127daf42c89dbdc342ff59082dd7d3467f42bff4c6a1e482933df"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8gdk__1__1-a__1-o.with-reference.library.json",
+      "bytes": 2511315,
+      "sha256": "5872f2b8465e2c52f5d9351d2ef67f9f7b614d44beb41da73ef1111e8ee502c1"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8geu__1__1-a__1-b.predictions.library.json",
+      "bytes": 1010929,
+      "sha256": "13d8846e98b3d30602677cdbd690244b52ceb71537d3ac4c1740fb996bd61a8f"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8geu__1__1-a__1-b.with-reference.library.json",
+      "bytes": 1109502,
+      "sha256": "a2a9696b3b16477454eb83cff20247ff6cd2a9e330fab0719d77a49c69a82788"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8gev__1__1-a__1-b.predictions.library.json",
+      "bytes": 1013125,
+      "sha256": "e947e2209c3631411f547e513bb73319badf45d3c70b236344b6764800172575"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8gev__1__1-a__1-b.with-reference.library.json",
+      "bytes": 1110214,
+      "sha256": "0d084fe347f962978a4f2e51d1ed4b588ec3099119d7c1d709e2b7b42fb0dd6d"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8gww__1__1-a__1-c.predictions.library.json",
+      "bytes": 3467080,
+      "sha256": "4f2cad3c898be7fe93ae46568bfd11509a99b53b0571411aa780aecf388e7976"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8gww__1__1-a__1-c.with-reference.library.json",
+      "bytes": 3768216,
+      "sha256": "59f4eba5b87c65cd8b64521a369d430eda09ebfbe1c6eeac77cf9fcee7e25b9a"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8hlj__1__1-a__1-c.predictions.library.json",
+      "bytes": 2329554,
+      "sha256": "8001391df8bfd85db7501c513730506b1d9b70e5db44434068aa0fe443ab36ee"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8hlj__1__1-a__1-c.with-reference.library.json",
+      "bytes": 2559562,
+      "sha256": "c517897a78e1f1e7b4a8de08c55c7caad3f07f9e65d345128011d6181964a82a"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8i0d__1__1-a__1-b.predictions.library.json",
+      "bytes": 2938413,
+      "sha256": "1dec1b0d4e87bac0469962d2fcd9aa3a7e53d1ad215d9770cebe77f366938462"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8i0d__1__1-a__1-b.with-reference.library.json",
+      "bytes": 3224638,
+      "sha256": "64f4d543c53fe8ff008e0686ad79fc39c98e5eaed3eaaa04a0ef540a22c38321"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8i2n__1__1-a__1-c.predictions.library.json",
+      "bytes": 1969634,
+      "sha256": "e2634fe53360063a7572cae458d087e462c98ee49532eebf6614789587699542"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8i2n__1__1-a__1-c.with-reference.library.json",
+      "bytes": 2153311,
+      "sha256": "42b214cd63575d6f0003c7b2adecf0e284eab3c54d8df9d0a50fec29febdffa2"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8iqt__1__1-a__1-b.predictions.library.json",
+      "bytes": 2006636,
+      "sha256": "c538720b8098614e6ff3ef985dde0834c3b11529295b95dde9db3fd13239f4de"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8iqt__1__1-a__1-b.with-reference.library.json",
+      "bytes": 2175668,
+      "sha256": "795467265092eb64114b4a1cc3fd146e956cee84fb1eae1fb1715c58b24a4811"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8j30__1__1-a__1-c.predictions.library.json",
+      "bytes": 4130673,
+      "sha256": "5b348593bd544b7f6b5f704e0aec8d006ecc0010f2542012c1034e7f67cf3d02"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8j30__1__1-a__1-c.with-reference.library.json",
+      "bytes": 4528083,
+      "sha256": "5bebcf5fc7fda4ab15aa2960d43a935f9ce96e1964151740b66f821b2d18cd7c"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8jby__1__1-a__1-c.predictions.library.json",
+      "bytes": 1976057,
+      "sha256": "0c1fde1894f1f0042b6fe075222a6f62207252b766296b680b3dd7c31800f69e"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8jby__1__1-a__1-c.with-reference.library.json",
+      "bytes": 2168862,
+      "sha256": "e93ce90d4d6e27638953a303f8c4dddbf7820397b37faf8db91f85081e6bf385"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8jmo__1__1-a__1-d.predictions.library.json",
+      "bytes": 1620303,
+      "sha256": "83f24c6c67f8ca8e7efe4e8d276cd77e4f9888cae41f1d5cb76367bfd99a8010"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8jmo__1__1-a__1-d.with-reference.library.json",
+      "bytes": 1780604,
+      "sha256": "ecc1d03c20c101c29ad36c1502068b6831de473d5e1359f9c2df4b6fcc7d8e25"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8ou2__1__1-a__1-c.predictions.library.json",
+      "bytes": 910231,
+      "sha256": "9544278b74f53704afe679373f6c113799be5875c55c14fda518037ef6b1ffda"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8ou2__1__1-a__1-c.with-reference.library.json",
+      "bytes": 999863,
+      "sha256": "d7fa51140e52d2ecad2fc9db85b3ca83de4bb0de0c93ce2bdda639cd0cb89cbd"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8pbo__1__1-a__1-c.predictions.library.json",
+      "bytes": 1845794,
+      "sha256": "017f0be0fcfe13f1cf5a37d6eb57847b9042b0f114b2afd58dfb12b595afad60"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8pbo__1__1-a__1-c.with-reference.library.json",
+      "bytes": 2022702,
+      "sha256": "705843b2cbd45941cc2e5099bea512ba20d5359c0c64f1cd62bbe66f52ec1233"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8pji__1__1-a__1-e.predictions.library.json",
+      "bytes": 1084148,
+      "sha256": "ab12644a5736fc0d1084389bc0224f8648843d6f9b3a37007f0fcb845e76b355"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8pji__1__1-a__1-e.with-reference.library.json",
+      "bytes": 1182027,
+      "sha256": "cc84e0eec5ecc10451fa76fa51ab3476db0def12e50a2ce54bbc18639f38f227"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8pp8__1__1-a__1-d.predictions.library.json",
+      "bytes": 1857170,
+      "sha256": "1972b64e25d2c122e7d4826ccd51aecfe80494a2e638846eb3cd785a1ac7a8a7"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8pp8__1__1-a__1-d.with-reference.library.json",
+      "bytes": 2036318,
+      "sha256": "809a893ebeb948d3d8eb3ccf9dda8e0cd186f761f6a7cf568425f1c087f34034"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8pqf__1__1-a__1-c.predictions.library.json",
+      "bytes": 2198930,
+      "sha256": "f42eb1d6ed8704b53aef7bb541da3d25e7d62dce75e6390d7e7d5e72845ae20b"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8pqf__1__1-a__1-c.with-reference.library.json",
+      "bytes": 2392485,
+      "sha256": "4ee5deafc6e511ab4e216e6f26c75648ea025f9951279613e0533ec8b6161cf8"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8px8__1__1-a__1-d.predictions.library.json",
+      "bytes": 831940,
+      "sha256": "c868ec44ea8780bc688828521889e44a515fc7bd65af4ed1fd5fb0be53f9c9eb"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8px8__1__1-a__1-d.with-reference.library.json",
+      "bytes": 911486,
+      "sha256": "b6b5f06106bc86686ed01fd7d3ffd019916dfb375f5fb3577a5fd5dd57c894a1"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8q2u__1__1-a__1-c.predictions.library.json",
+      "bytes": 1117246,
+      "sha256": "78652cff1bfc516a08941d320f734e719b979f22ecb6825444b7ecb09da00b06"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8q2u__1__1-a__1-c.with-reference.library.json",
+      "bytes": 1222403,
+      "sha256": "083400247f6acdf275f501cfba38b7f70bf382e080432bf15cba7a94c1283bb1"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8q2y__1__1-a__1-c.predictions.library.json",
+      "bytes": 1123861,
+      "sha256": "f5ac7d5c7b576f7400ae4672d737b55a243f08c3df15a637b0036f3767380f0b"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8q2y__1__1-a__1-c.with-reference.library.json",
+      "bytes": 1230656,
+      "sha256": "42876b19ec53c9109934ccdcf99602f9155ce333880ac639e15849013e42f332"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8q34__1__1-a__1-f.predictions.library.json",
+      "bytes": 924935,
+      "sha256": "2bd74f4ea10d3be9e3aba4039ea2f47e12a81431c15aba0c79542742562734d5"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8q34__1__1-a__1-f.with-reference.library.json",
+      "bytes": 1014600,
+      "sha256": "9710a0c3ada705674eb41a76b9f76f10959911e7ed18d77273b391048af93e1b"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8swe__1__1-a__1-e.predictions.library.json",
+      "bytes": 2101979,
+      "sha256": "0601b4a9480c9bfbdb6bf781615f39b4e202ce4aaa627803d5de149ae4c77ffc"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8swe__1__1-a__1-e.with-reference.library.json",
+      "bytes": 2290952,
+      "sha256": "3a662c53a1a6001c8c7865e56c84ee105cb3bcf0737e76a25ade16de68f561ed"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8sx2__1__1-a__1-c.predictions.library.json",
+      "bytes": 2189190,
+      "sha256": "5c3e979f76325a747076c9b8e2095d1188143434e50b67f1c7a52f7a63343d2e"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8sx2__1__1-a__1-c.with-reference.library.json",
+      "bytes": 2394046,
+      "sha256": "4e6e771d8289a406d093591975022738799ca5c806bc1a8eb45e52b0229217c9"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8sze__1__1-a__1-c.predictions.library.json",
+      "bytes": 1091529,
+      "sha256": "1abe469089aa49a8b7065a7480b7707265fc5dac4a2a2f2b12117bd2991a2776"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8sze__1__1-a__1-c.with-reference.library.json",
+      "bytes": 1191928,
+      "sha256": "b977fda0fa3b55e186bbf5b383ae881758da125ea432c356b02eb481d7b79ef5"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8t1y__1__1-a__1-b.predictions.library.json",
+      "bytes": 3245931,
+      "sha256": "5c8d25233ae92b4c48b6d2e7981a6bbe6c957caca076acfe9c474467d6c24a90"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8t1y__1__1-a__1-b.with-reference.library.json",
+      "bytes": 3556096,
+      "sha256": "4011a5be7b7d2725cc8fb86a302df3b9dad17835f845e83a9de90c6763fc1897"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8t27__1__1-a__1-b.predictions.library.json",
+      "bytes": 3245775,
+      "sha256": "71a610ecec4b2add76937e0b40e8538250d04c5f2f28c06e28c6595f07a4af58"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8t27__1__1-a__1-b.with-reference.library.json",
+      "bytes": 3561854,
+      "sha256": "98cd9ffafd48549744940a45f019b9ee55e3e7d94f7be53e86d61094704ce105"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8t9v__1__1-a__1-b.predictions.library.json",
+      "bytes": 1686746,
+      "sha256": "ca310a57b561333ffb9c5c1f14226f8bc2b22cc1b2d99fb3f05935dbe6b4fce9"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8t9v__1__1-a__1-b.with-reference.library.json",
+      "bytes": 1854540,
+      "sha256": "6ce565827693d0489777ffc2e3890629a307a7552d616148b8fc7e0a6f8af49f"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8tti__1__1-a__1-e.predictions.library.json",
+      "bytes": 3447358,
+      "sha256": "056dbde9b2f4eb48b48392298a55c1978a66b0b30e70f3a331e00fc2f3bb114e"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8tti__1__1-a__1-e.with-reference.library.json",
+      "bytes": 3786125,
+      "sha256": "eec0cceee27f5f9943630ded951d97e2fa3457e357b71432874b586ec81bea89"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8u7w__1__1-a__1-c.predictions.library.json",
+      "bytes": 3569768,
+      "sha256": "c990a8b041bd9706f52a641175f37ac71d7cb89bed5b6cfee16ded3933e64402"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8u7w__1__1-a__1-c.with-reference.library.json",
+      "bytes": 3895539,
+      "sha256": "a8321334ce77aba28f1244c3855548b897bac70448dbfb4f2c7f80f7308bc4ee"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8u7x__1__1-a__1-c.predictions.library.json",
+      "bytes": 3579096,
+      "sha256": "a81b1e656a221e876d54136a0fd49070334ef96702c617510aef9286bfb8c3dd"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8u7x__1__1-a__1-c.with-reference.library.json",
+      "bytes": 3904100,
+      "sha256": "dc57b875887042ca8d5890b0546085314b6637b22be1598829bb4b0bb33e68f3"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8usm__1__1-a__1-c.predictions.library.json",
+      "bytes": 1097257,
+      "sha256": "e6f4c24a1e80129291b0ebbda52553fce4b48ea4fdabce5f533a8adfd54d1efd"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/8usm__1__1-a__1-c.with-reference.library.json",
+      "bytes": 1195601,
+      "sha256": "a36f446b781c4ff877344504ef07ccdd97fbf86f247ad3468fcd0c2e785cbdd5"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/9f40__1__1-a__1-q.predictions.library.json",
+      "bytes": 1633024,
+      "sha256": "dd78dd85472b9ffa01be5c37a5cf01ff9dd6d2f58f42f7d96da5821c7f84b2a0"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/9f40__1__1-a__1-q.with-reference.library.json",
+      "bytes": 1778692,
+      "sha256": "95fafc5010c6249c8807660178c36d12482e5003d7b99687a932acb3000e8e44"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/9f41__1__1-a__1-q.predictions.library.json",
+      "bytes": 1630734,
+      "sha256": "6cc7b102fdd3f06c96591d1088b2a74061e859cad34a7437fa05519de99845ce"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/9f41__1__1-a__1-q.with-reference.library.json",
+      "bytes": 1776200,
+      "sha256": "ea6a04e5a5f06d4c5c38f4bd537e7a38368681793560158b04ae0122b6d81298"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/README.md",
+      "bytes": 7379,
+      "sha256": "fd0d551a12c621624c674ae0377f4a7bcc7e2520b45acb428c290da56019c07e"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/alignment-check.json",
+      "bytes": 259,
+      "sha256": "39f5a559defbda91f8b00ff132b5c8c8cc0935c0f12af62da07572d76219c5bf"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/cohort-selection.json",
+      "bytes": 1692,
+      "sha256": "f5bf0bba13fccc679f0a95a51d92f310471c09abdb43ef975cd8ca1c4b739020"
+    },
+    {
+      "path": "checkpoint-480/review-libraries/manifest.json",
+      "bytes": 32828,
+      "sha256": "5545ee35c7196fb0542f5226c99334255641b8bc8e529431202449406fb7057c"
+    },
+    {
+      "path": "checkpoint-480/sampling-plots/manifest.json",
+      "bytes": 478,
+      "sha256": "ce1bd55cad816a78784eee30046d185660e92967aca6b637c07daef453bd26ec"
+    },
+    {
+      "path": "checkpoint-480/sampling-plots/sampling-and-time.png",
+      "bytes": 248635,
+      "sha256": "34904db9e873a320d29191548d4935f72b72a74d93ecee57f04f1c8dda70024c"
+    },
+    {
+      "path": "checkpoint-480/sampling-plots/sampling-and-time.svg",
+      "bytes": 141974,
+      "sha256": "127983a99ddfad7efd9931d7f63022006045cd6fb8600b8cf1e7dde843e8b0e9"
+    },
+    {
+      "path": "checkpoint-480/scores.json",
+      "bytes": 6422898,
+      "sha256": "219f98c1ddd057dd699c4b00ae32593340744ee3b9d04737fbf23b2b599b95ca"
+    },
+    {
+      "path": "checkpoint-480/selection-analysis.json",
+      "bytes": 1109178,
+      "sha256": "212f420b9013190615c020717dc4f1b01d99f771372f72866fb855168f51551c"
+    },
+    {
+      "path": "checkpoint-480/similarity-plots/first-10.png",
+      "bytes": 301275,
+      "sha256": "95869ccca6cec32b00f97399a38391699ae5db5d052ef9c5fcd1543c752d3d42"
+    },
+    {
+      "path": "checkpoint-480/similarity-plots/first-10.svg",
+      "bytes": 154062,
+      "sha256": "78cffa334ad38a385f6e7f408ae232dbca29220563d477f4e1f64cac4ccea1b0"
+    },
+    {
+      "path": "checkpoint-480/similarity-plots/manifest.json",
+      "bytes": 608,
+      "sha256": "8902e799703c45bb2eea9d76ba9fda3b3c366072c62e5a467fd72a2e2781549f"
+    },
+    {
+      "path": "checkpoint-480/similarity-summary.json",
+      "bytes": 5516,
+      "sha256": "2cba10159140f8ff54b69c164a073ecd4c5bd3d9c1031beb2cca17f792d5bff6"
+    },
+    {
+      "path": "source-verification.json",
+      "bytes": 270,
+      "sha256": "6b54b7d2d9cb0b9680361ecd11212abb955c9fb5df065ec1ae5527325057b6a7"
+    }
+  ]
+}

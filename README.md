@@ -37,11 +37,17 @@ pass energy and every force component's aggregate gates on **22/22 supported cas
 on M1 Pro and L4, with **25 explicitly unsupported cases**. They include single-replica
 job timings and do not depend on treating the WASM bridge as fully native-validated.
 
-For structure prediction, the [80-run original LocalFold page control](./reviews/cofold-stock-localfold-2026-11-13/results-200x10/README.md)
-tests seven crystal complexes on M1 Pro, with ten seeds and 200 diffusion steps
-for each of eight model/system pairs. Every selected pair already has a native
-pose below 2 Å. All poses, chemical-validity failures and direct native comparisons
-are preserved; this selected diagnostic cohort is not a general accuracy estimate.
+For structure prediction, the [completed 480-prediction LocalFold benchmark](./reviews/cofold-rnp-spectrum-2026-11-15/README.md)
+tests 48 native-positive systems across the published training-similarity spectrum,
+with ten seeds, 200 diffusion steps and four trunk passes on physical Apple WebGPU.
+Independent replay finds a <2 Å pose in 31/48 cases, or 26/48 (54.17%) when limited
+stereo/clash checks must also pass. Highest archived ipTM selection gives 17/48
+(35.42%) passing hits. [All original poses and human-review files](./reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries/README.md),
+confidence ties, sampling/time plots and source hashes are public. This selected
+native-positive reconstruction study does not establish population accuracy or
+fixed-input implementation parity. The earlier
+[80-prediction original-page control](./reviews/cofold-stock-localfold-2026-11-13/results-200x10/README.md)
+remains preserved as a separate cohort.
 
 The preserved [Astra adversarial review and remediation log](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md)
 documents known boundaries, reproducible probes, fixes, and remaining validation work.
@@ -497,6 +503,23 @@ stereo/clash checks. WDR5 first crosses the threshold on seed 9; FKBP12 remains
 above 6 Å even at the best of ten. The report preserves every pose and compares
 them directly with the three original native seeds. This is a workflow control;
 matched-tensor implementation parity remains a separate question.
+The [larger Runs N’ Poses follow-up](reviews/cofold-rnp-spectrum-2026-11-15/README.md)
+has independently qualified native hits and frozen 48 systems across the published
+training-similarity spectrum. Its native evidence, exclusions, chemical-state
+gates and selection shortfalls are public. All 480 stock predictions are complete
+and independently replayed. Across ten samples per system, 31/48 cases contain
+a geometric <2 Å pose and 26/48 (54.17%) contain one passing limited stereo/clash
+checks; highest archived ipTM selection gives 17/48 (35.42%) passing hits under
+the fixed lowest-seed tie rule. Rounded-score ties remain explicit.
+[Sampling curves, launcher-time measurements and original output archives](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/README.md)
+retain the complete experiment and historical prefixes.
+[All 48 systems in portable Foldarium libraries](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries/README.md)
+are available for local human inspection, with optional separate references and
+exportable pose preferences. Actual six-sample and final ten-sample browser
+sweeps both passed all 48 systems. The final sweep covers 480 predictions,
+48 separate references and 288 grid pages, including exact exports and
+preference persistence after reopening. [Saved receipts replay in CI](reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/README.md).
+
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree
 closely, but a near-constant stress input exposes nonfinite fast-variance output.
@@ -504,6 +527,18 @@ The [expanded audit](reviews/cofold-layer-parity-2026-11-13/production/README.md
 checks 126 fused, in-place and split configurations and the actual GPU int5
 upload. A corrected row-shift candidate passes the component precision gates;
 it remains experimental pending direct implementation and full-model qualification.
+A [matched trained atom-feature audit](reviews/cofold-feature-parity-2026-11-13/README.md)
+passes for STARD4 in browser CPU/WebGPU and separately for YTHDF2 in JavaScript
+CPU under Bun. Raw native arrays, controlled inputs/weights and offline replays
+are public. A [relative-position check](reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
+also exactly reproduces 12.63 million captured native one-hot values with the
+port's CPU reference, using original browser indices on both systems. The fused
+WebGPU projection remains untested. The [trained four-cycle trunk controls](reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple/README.md)
+now retain all 32 boundaries and exact raw-array releases. Enforcing actual strict
+FP32 gives 32/32 relative-gate passes and 14/32 combined passes; absolute failures
+remain under the original gates. The producer's precision omission is fixed and
+its original measurements are preserved. These component controls do not
+establish complete-model agreement.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

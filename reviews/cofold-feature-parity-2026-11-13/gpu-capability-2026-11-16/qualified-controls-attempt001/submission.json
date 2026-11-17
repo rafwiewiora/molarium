@@ -1,0 +1,32 @@
+{
+  "schema": "molarium.qualified-nvidia-controls-submission.v1",
+  "jobId": 20203,
+  "submittedAt": "2026-11-16T22:07:42.314630+00:00",
+  "owner": "rafal",
+  "cluster": "psigreen",
+  "controller": "psigreen-controller",
+  "guestInstanceId": "3894148826269628555",
+  "sourceManifestSha256": "36a44e87c303140ef01fe2c35cac00a9c93725cdf8e9c194d3469244cfbd1e78",
+  "dependencyParent": 20198,
+  "dependencyArguments": [
+    "--dependency=afterok:20198",
+    "--kill-on-invalid-dep=yes"
+  ],
+  "purpose": "Existing transition harness plus four-cycle32-seamstock-trainedtrunk on genuine NVIDIA only after Vulkan capability success. Own fresh allocation rechecks capability. Completed native captures/conversion reused read-only; no complete pose prediction.",
+  "newNativeForwards": 0,
+  "browserTrunkCyclesPlanned": 4,
+  "expectedTrunkSeams": 32,
+  "completePosePredictionsPlanned": 0,
+  "cpu": 4,
+  "memory": "14G",
+  "gpuCount": 1,
+  "timeLimit": "30min",
+  "nice": 0,
+  "partitions": [
+    "gpu",
+    "l4spot"
+  ],
+  "retentionDeadline": "2026-11-20T22:30:00Z",
+  "slurmDeadline": "2026-11-20T22:30:00Z",
+  "standaloneVmActions": []
+}

@@ -1,0 +1,13 @@
+{
+  "startedAt": "2026-11-16T19:21:18.894048+00:00",
+  "sources": {
+    "scripts/stock-cofold-review.browser.mjs": "918f9b136bd491bcee82bdabb502c11cf2677cf2e846789a5cb416655de9ad37",
+    "scripts/headless-chrome.mjs": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13",
+    "vendor/foldarium/library-review.js": "255c58005b040c07dbf4c9032a1fda857911a873f8cb4c3d1c402f5b930dd0f8",
+    "vendor/foldarium/library-store.js": "a378bbca2420acb17be4ba44c45689ad1b57b2de450630945e74acc6ec848f9b",
+    "vendor/foldarium/library-format.js": "cd0e34fdffba257984e30b9a50e57b13d64d15e1515a22baef51b4b3f88562d3",
+    "vendor/foldarium/library-alignment.js": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65",
+    "vendor/foldarium/library-chemistry.js": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd"
+  },
+  "purpose": "Final attributed public export, real file import and local preference persistence, software rendering only, no inference."
+}

@@ -1,0 +1,18 @@
+{
+  "status": "measured-gates-failed",
+  "startedAt": "2026-11-17T03:28:04.672881+00:00",
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newSlurmJobs": 0,
+  "plannedBrowserTrunkCycles": 4,
+  "plannedBoundaries": 32,
+  "planSha256": "80296beda120cbecc3285a2cb208afd6bab58f09813da458e21ee803a7b8dbce",
+  "browserPid": 81398,
+  "measurementExitCode": 0,
+  "measuredBrowserTrunkCycles": 4,
+  "capturedBoundaries": 32,
+  "analysisExitCode": 1,
+  "analysisSha256": "14df4dbe58ca87fb0204a47c38b919fad0a73eaa4627a726b900166632f040fd",
+  "measurementReceiptSha256": "cb1e25200d7f442143252aefeb42b1a446d2912a32f1f77dbbed44d6dad6a9c6",
+  "finishedAt": "2026-11-17T03:28:29.002948+00:00"
+}

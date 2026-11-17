@@ -204,3 +204,40 @@ CAP-01 also exposed feature receipts whose wall-clock start was created after
 imports while elapsed time included imports. Bind the clocks to one start and
 state the measured scope; retain the old receipts. Synchronized module timings,
 CLI elapsed time and instrumented seam captures answer different questions.
+
+## Requested precision is not executed precision
+
+The [four-cycle trunk audit](reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple/README.md)
+requested FP32 storage, weights and accumulation while an independent pair-kernel
+policy still enabled half arithmetic. Correcting that test configuration reduced
+cycle-0 MSA relative error about 712-fold. Observe generated shader sources and
+record the actual precision policy; a dtype label or full-FP32 weight file cannot
+certify the arithmetic of every operation. Preserve the original measurement
+and its source when correcting the producer. Production folding defaults were
+not changed by this audit fix.
+
+The strict control passed all 32 relative-error gates but only 14 combined gates.
+Absolute failures remain under the predeclared threshold. Distinguish numerical
+scale, representable-value spacing, implementation acceptance and structural
+accuracy; explaining a residual does not turn a failed gate into a historical
+pass. A matched component control also cannot explain the separate Boltz-2
+pose benchmark without further evidence.
+
+## A completed document may still be the wrong page
+
+The same audit recorded `about:blank` with `readyState=complete` before the
+requested fixture page arrived. A readiness predicate must bind the expected
+URL, page identity and actual data endpoint. Keep the observed startup contexts
+with the resulting calculation receipt. The original zero-seam failure and
+exact readiness-only correction remain linked as TRUNK-PAGE-01.
+
+## More samples and a selectable hit answer different questions
+
+The [480-prediction native-positive study](reviews/cofold-rnp-spectrum-2026-11-15/README.md)
+increased limited-valid any-hit coverage from 25/48 at six samples to 26/48 at
+ten; highest archived ipTM selection stayed at 17/48. Retrospective any-hit
+selection uses the experimental answer, while prospective selection needs a
+declared rule. Preserve rounded confidence ties and every planned denominator.
+Portable review files should carry every original pose, explicit chemistry and
+empty human decisions. A software UI test can verify export and persistence;
+it cannot provide scientific selections or validate binding poses.

@@ -1,0 +1,17 @@
+{
+  "status": "preserved-for-review",
+  "sourceSha256": "876cfbdef50f9eb72ada940a5d180ed568e64cdb1498ba1f7946b7afca80ae7e",
+  "observationSha256": "f49abba1490a934b675aaebe5bc4cfd45c77c82b37ed38f2cac40b61e6289d2d",
+  "archive": {
+    "file": "terminal-results.tar.gz",
+    "bytes": 28752,
+    "sha256": "9c844f1e7580b769b13f178e5d898d67e573e4acdd91182d8de6ffa6f3e71204"
+  },
+  "files": 32,
+  "expandedBytes": 147117,
+  "newNeuralForwards": 0,
+  "newJobs": 0,
+  "publicationActions": 0,
+  "reviewRequired": "Inspect actual capability and numerical outputs, independently analyze raw seams, then publish verified results.",
+  "finishedAt": "2026-11-17T00:55:56.450467+00:00"
+}

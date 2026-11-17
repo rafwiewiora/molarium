@@ -1,0 +1,77 @@
+{
+  "schema": "molarium.native-feature-capture-receipt.v1",
+  "status": "complete",
+  "scope": "Feature-only capture; no model forward, sampling, confidence evaluation or pose prediction.",
+  "startedAt": "2026-11-16T19:41:36Z",
+  "scriptSha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79",
+  "inputSha256": "1e1a972e3ab32843114df934b1e840f3d77822f4f7be7624d589e75e59d71fca",
+  "inputResolverSha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282",
+  "referenceNativeReceiptSha256": "bfd4efe31431ef8fe5359ee51b116626cd3966f85b03c6eafef247957a88a48f",
+  "inputFiles": {
+    "openbind-query.json": "f843a7cfc11cfdd02f3b41b1b1feb0b230a0fe526d7203f7d216151dc8ce0e6b",
+    "openbind-torch-standard.yaml": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364",
+    "openbind-standard.yaml": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0",
+    "comparison.json": "1e1a972e3ab32843114df934b1e840f3d77822f4f7be7624d589e75e59d71fca",
+    "boltz/compound_000.yaml": "facbbd54d464ac900760a6b692ff5bccf580efcd64d146aea9b7e70b14755c9d",
+    "msa/colabfold_main.a3m": "7bd8c016923fddb4bcad9d1266ae08c030a9014dfb4d5da10703ee3bfefb66bc"
+  },
+  "checkpointSha256": "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4",
+  "captureRunnerSha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36",
+  "resolvedQuerySha256": "cfd462f6a28760851bac88d532ca20f8e77be490d81eb615bb521aaaffcdf561",
+  "processedSmilesControl": {
+    "originalSmiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+    "processedSmiles": "Cc1cc(=O)c2c(-c3ccc(=O)[nH]c3)[nH]nc2[nH]1",
+    "sameIsomericChemicalState": true,
+    "purpose": "Only the SMILES spelling changes; a new diagnostic control, not a replacement for the original prediction protocol.",
+    "sourceLibrarySha256": "7b92f86b370e1d51eafb7e5fe454009243b7056b42145bc66b30ef28c7ccf0f3"
+  },
+  "seedSubset": [
+    0
+  ],
+  "dataSeed": 42,
+  "slurmJobId": "19248",
+  "environment": {
+    "python": "3.12.13",
+    "gpu": "NVIDIA L4",
+    "packages": {
+      "torch": "2.5.1",
+      "openfold3": "0.5.1",
+      "numpy": "2.4.6",
+      "rdkit": "2025.9.3",
+      "biotite": "2.0.0"
+    }
+  },
+  "sourceFiles": {
+    "projects/of3_all_atom/model.py": "83bc031a323691f7f93c865ffa927b743b916768ae6dcfd945278528ad93642b",
+    "projects/of3_all_atom/runner.py": "70f1089988fac0de5f117d2566dd9a103a727d808c2f4f2bfc8341e67094ecac"
+  },
+  "capturedBatches": 1,
+  "forwardCalls": 0,
+  "capturedArrays": 39,
+  "unserializedMetadata": [
+    {
+      "path": "batch/atom_array/0",
+      "type": "biotite.structure.AtomArray"
+    }
+  ],
+  "matmulPrecisionAtCapture": "high",
+  "outputs": [
+    {
+      "path": "features/features.bin",
+      "sha256": "7a68d1ec69c71a95eb205fd5d1e906a9d3075f73d4b2a938f085b47c273e8a14",
+      "bytes": 2973121
+    },
+    {
+      "path": "features/features.json",
+      "sha256": "172bd8e7913f620b2a1d3b7a9a5a46ce41b4216a5a52da33cdd657555bf55577",
+      "bytes": 16717
+    },
+    {
+      "path": "features/layout.json",
+      "sha256": "a4f2013f7c7a2a87dd71e5b3f0ca4399c1f76c87484b60a05283a656083106cf",
+      "bytes": 39340
+    }
+  ],
+  "elapsedSeconds": 153.45175470200002,
+  "finishedAt": "2026-11-16T19:42:06Z"
+}

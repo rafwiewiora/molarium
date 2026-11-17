@@ -1,0 +1,8 @@
+{
+  "measurementComplete": true,
+  "analysisExitCode": 1,
+  "analysisSha256": "0b8ced18499371bd1e2aa830fa57f90020c064649adc689948a3225223290d29",
+  "records": 32,
+  "passes": 8,
+  "newNeuralForwards": 0
+}

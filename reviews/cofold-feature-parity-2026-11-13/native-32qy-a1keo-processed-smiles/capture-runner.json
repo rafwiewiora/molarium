@@ -1,0 +1,42 @@
+{
+  "data_module_args": {
+    "num_workers": 0,
+    "num_workers_validation": 0,
+    "data_seed": 42
+  },
+  "experiment_settings": {
+    "seeds": [
+      0
+    ]
+  },
+  "pl_trainer_args": {
+    "devices": 1,
+    "num_nodes": 1,
+    "precision": "32-true"
+  },
+  "model_update": {
+    "presets": [
+      "predict"
+    ],
+    "custom": {
+      "architecture": {
+        "shared": {
+          "num_recycles": 3,
+          "diffusion": {
+            "no_full_rollout_steps": 200
+          }
+        }
+      },
+      "settings": {
+        "memory": {
+          "eval": {
+            "use_triton_triangle_kernels": false
+          }
+        }
+      }
+    }
+  },
+  "output_writer_settings": {
+    "write_full_confidence_scores": false
+  }
+}

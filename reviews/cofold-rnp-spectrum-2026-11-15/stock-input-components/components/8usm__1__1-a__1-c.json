@@ -1,0 +1,472 @@
+{
+  "code": "LIG",
+  "atoms": [
+    {
+      "name": "C1",
+      "element": 6,
+      "charge": 0,
+      "x": 1.503,
+      "y": 4.022,
+      "z": -1.792,
+      "leaving": false
+    },
+    {
+      "name": "C2",
+      "element": 6,
+      "charge": 0,
+      "x": 2.45,
+      "y": 3.642,
+      "z": -0.666,
+      "leaving": false
+    },
+    {
+      "name": "O1",
+      "element": 8,
+      "charge": 0,
+      "x": 3.485,
+      "y": 4.216,
+      "z": -0.336,
+      "leaving": false
+    },
+    {
+      "name": "N1",
+      "element": 7,
+      "charge": 0,
+      "x": 1.982,
+      "y": 2.488,
+      "z": -0.002,
+      "leaving": false
+    },
+    {
+      "name": "C3",
+      "element": 6,
+      "charge": 0,
+      "x": 2.454,
+      "y": 1.347,
+      "z": -0.56,
+      "leaving": false
+    },
+    {
+      "name": "C4",
+      "element": 6,
+      "charge": 0,
+      "x": 1.533,
+      "y": 0.379,
+      "z": -1.18,
+      "leaving": false
+    },
+    {
+      "name": "O2",
+      "element": 8,
+      "charge": 0,
+      "x": 0.383,
+      "y": 0.463,
+      "z": -0.441,
+      "leaving": false
+    },
+    {
+      "name": "C5",
+      "element": 6,
+      "charge": 0,
+      "x": -0.018,
+      "y": -0.723,
+      "z": 0.116,
+      "leaving": false
+    },
+    {
+      "name": "C6",
+      "element": 6,
+      "charge": 0,
+      "x": 0.845,
+      "y": -1.785,
+      "z": 0.342,
+      "leaving": false
+    },
+    {
+      "name": "C7",
+      "element": 6,
+      "charge": 0,
+      "x": 0.447,
+      "y": -2.988,
+      "z": 0.89,
+      "leaving": false
+    },
+    {
+      "name": "C8",
+      "element": 6,
+      "charge": 0,
+      "x": -0.885,
+      "y": -3.093,
+      "z": 1.209,
+      "leaving": false
+    },
+    {
+      "name": "C9",
+      "element": 6,
+      "charge": 0,
+      "x": -1.801,
+      "y": -2.039,
+      "z": 0.994,
+      "leaving": false
+    },
+    {
+      "name": "C10",
+      "element": 6,
+      "charge": 0,
+      "x": -3.163,
+      "y": -2.421,
+      "z": 1.391,
+      "leaving": false
+    },
+    {
+      "name": "F1",
+      "element": 9,
+      "charge": 0,
+      "x": -4.008,
+      "y": -1.637,
+      "z": 1.991,
+      "leaving": false
+    },
+    {
+      "name": "F2",
+      "element": 9,
+      "charge": 0,
+      "x": -3.244,
+      "y": -3.624,
+      "z": 2.054,
+      "leaving": false
+    },
+    {
+      "name": "F3",
+      "element": 9,
+      "charge": 0,
+      "x": -3.668,
+      "y": -2.694,
+      "z": 0.131,
+      "leaving": false
+    },
+    {
+      "name": "C11",
+      "element": 6,
+      "charge": 0,
+      "x": -1.383,
+      "y": -0.838,
+      "z": 0.452,
+      "leaving": false
+    },
+    {
+      "name": "C12",
+      "element": 6,
+      "charge": 0,
+      "x": -2.372,
+      "y": 0.26,
+      "z": 0.251,
+      "leaving": false
+    },
+    {
+      "name": "C13",
+      "element": 6,
+      "charge": 0,
+      "x": -3.382,
+      "y": 0.48,
+      "z": 1.164,
+      "leaving": false
+    },
+    {
+      "name": "C14",
+      "element": 6,
+      "charge": 0,
+      "x": -4.35,
+      "y": 1.453,
+      "z": 1.053,
+      "leaving": false
+    },
+    {
+      "name": "C15",
+      "element": 6,
+      "charge": 0,
+      "x": -4.23,
+      "y": 2.243,
+      "z": -0.109,
+      "leaving": false
+    },
+    {
+      "name": "F4",
+      "element": 9,
+      "charge": 0,
+      "x": -5.17,
+      "y": 3.195,
+      "z": -0.253,
+      "leaving": false
+    },
+    {
+      "name": "C16",
+      "element": 6,
+      "charge": 0,
+      "x": -3.227,
+      "y": 2.067,
+      "z": -1.056,
+      "leaving": false
+    },
+    {
+      "name": "C17",
+      "element": 6,
+      "charge": 0,
+      "x": -2.255,
+      "y": 1.058,
+      "z": -0.903,
+      "leaving": false
+    },
+    {
+      "name": "O3",
+      "element": 8,
+      "charge": 0,
+      "x": 2.081,
+      "y": -0.781,
+      "z": -1.592,
+      "leaving": false
+    },
+    {
+      "name": "C18",
+      "element": 6,
+      "charge": 0,
+      "x": 3.146,
+      "y": -1.221,
+      "z": -0.88,
+      "leaving": false
+    },
+    {
+      "name": "C19",
+      "element": 6,
+      "charge": 0,
+      "x": 3.238,
+      "y": -2.677,
+      "z": -0.57,
+      "leaving": false
+    },
+    {
+      "name": "O4",
+      "element": 8,
+      "charge": 0,
+      "x": 3.011,
+      "y": -3.351,
+      "z": -1.813,
+      "leaving": false
+    },
+    {
+      "name": "C20",
+      "element": 6,
+      "charge": 0,
+      "x": 4.07,
+      "y": -0.311,
+      "z": -0.224,
+      "leaving": false
+    },
+    {
+      "name": "O5",
+      "element": 8,
+      "charge": 0,
+      "x": 4.01,
+      "y": -0.246,
+      "z": 1.187,
+      "leaving": false
+    },
+    {
+      "name": "C21",
+      "element": 6,
+      "charge": 0,
+      "x": 3.879,
+      "y": 1.102,
+      "z": -0.798,
+      "leaving": false
+    },
+    {
+      "name": "O6",
+      "element": 8,
+      "charge": 0,
+      "x": 4.641,
+      "y": 2.015,
+      "z": -0.051,
+      "leaving": false
+    }
+  ],
+  "bonds": [
+    {
+      "from": 0,
+      "to": 1,
+      "order": 1
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "order": 2
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "order": 1
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "order": 1
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "order": 1
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "order": 1
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "order": 1
+    },
+    {
+      "from": 7,
+      "to": 8,
+      "order": 4
+    },
+    {
+      "from": 8,
+      "to": 9,
+      "order": 4
+    },
+    {
+      "from": 9,
+      "to": 10,
+      "order": 4
+    },
+    {
+      "from": 10,
+      "to": 11,
+      "order": 4
+    },
+    {
+      "from": 11,
+      "to": 12,
+      "order": 1
+    },
+    {
+      "from": 12,
+      "to": 13,
+      "order": 1
+    },
+    {
+      "from": 12,
+      "to": 14,
+      "order": 1
+    },
+    {
+      "from": 12,
+      "to": 15,
+      "order": 1
+    },
+    {
+      "from": 11,
+      "to": 16,
+      "order": 4
+    },
+    {
+      "from": 16,
+      "to": 7,
+      "order": 4
+    },
+    {
+      "from": 16,
+      "to": 17,
+      "order": 1
+    },
+    {
+      "from": 17,
+      "to": 18,
+      "order": 4
+    },
+    {
+      "from": 18,
+      "to": 19,
+      "order": 4
+    },
+    {
+      "from": 19,
+      "to": 20,
+      "order": 4
+    },
+    {
+      "from": 20,
+      "to": 21,
+      "order": 1
+    },
+    {
+      "from": 20,
+      "to": 22,
+      "order": 4
+    },
+    {
+      "from": 22,
+      "to": 23,
+      "order": 4
+    },
+    {
+      "from": 23,
+      "to": 17,
+      "order": 4
+    },
+    {
+      "from": 5,
+      "to": 24,
+      "order": 1
+    },
+    {
+      "from": 24,
+      "to": 25,
+      "order": 1
+    },
+    {
+      "from": 25,
+      "to": 26,
+      "order": 1
+    },
+    {
+      "from": 26,
+      "to": 27,
+      "order": 1
+    },
+    {
+      "from": 25,
+      "to": 28,
+      "order": 1
+    },
+    {
+      "from": 28,
+      "to": 29,
+      "order": 1
+    },
+    {
+      "from": 28,
+      "to": 30,
+      "order": 1
+    },
+    {
+      "from": 30,
+      "to": 4,
+      "order": 1
+    },
+    {
+      "from": 30,
+      "to": 31,
+      "order": 1
+    }
+  ],
+  "smiles": "CC(=O)N[C@H]1[C@H](Oc2cccc(C(F)(F)F)c2-c2ccc(F)cc2)O[C@H](CO)[C@H](O)[C@@H]1O",
+  "conformerError": 0.04746552111352199,
+  "attempts": 16,
+  "stereo": {
+    "centres": 5,
+    "doubleBonds": 0
+  }
+}

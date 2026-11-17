@@ -1,0 +1,367 @@
+{
+  "checkedAt": "2026-11-17T05:00:01.130653+00:00",
+  "project": "psivant-prod",
+  "regularRunningL4Nodes": [
+    {
+      "name": "psigreen-gpunodeset-0",
+      "instanceId": "7300496201999795256",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-1",
+      "instanceId": "4454007962310616056",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-10",
+      "instanceId": "1508547140497619289",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-11",
+      "instanceId": "5328823389539449177",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-12",
+      "instanceId": "5483074270937099108",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-13",
+      "instanceId": "5396022739910353631",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-14",
+      "instanceId": "8286199447063978719",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-15",
+      "instanceId": "2437263144570763609",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-16",
+      "instanceId": "9123968689715712045",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-17",
+      "instanceId": "7256560907059866468",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-18",
+      "instanceId": "8160266268596382564",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-19",
+      "instanceId": "8042710831861347509",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-2",
+      "instanceId": "4420673058974083302",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-20",
+      "instanceId": "1047157585780288356",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-21",
+      "instanceId": "7853922056852280952",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-22",
+      "instanceId": "3022319273189643896",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-23",
+      "instanceId": "2048720160793630328",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-24",
+      "instanceId": "9150991159359459196",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-25",
+      "instanceId": "2078439028084512376",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-26",
+      "instanceId": "6599304973740742264",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-27",
+      "instanceId": "4904077147171788408",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-28",
+      "instanceId": "1101401665519031928",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-29",
+      "instanceId": "780331582875047544",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-3",
+      "instanceId": "6863434252580124864",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-30",
+      "instanceId": "7635206357746521720",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-31",
+      "instanceId": "2539164550793071317",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-32",
+      "instanceId": "854835401306323289",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-33",
+      "instanceId": "8095859626220259978",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-34",
+      "instanceId": "2529654123105162871",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-35",
+      "instanceId": "853635928609700185",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-36",
+      "instanceId": "1847362687978879321",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-37",
+      "instanceId": "6015967875717207671",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-38",
+      "instanceId": "3341810392711739737",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-39",
+      "instanceId": "7239852225853045081",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-4",
+      "instanceId": "5525924403735002424",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-40",
+      "instanceId": "5036118722617194841",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-41",
+      "instanceId": "783234147543595353",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-42",
+      "instanceId": "8254902436989777077",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-43",
+      "instanceId": "5884900776811870553",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-44",
+      "instanceId": "7062271511600216409",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-45",
+      "instanceId": "9142376382675466585",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-46",
+      "instanceId": "4450664970220910937",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-47",
+      "instanceId": "3021331606805330265",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-48",
+      "instanceId": "1295893903694281049",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-49",
+      "instanceId": "8385703475557451048",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-5",
+      "instanceId": "3339068391100575506",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-50",
+      "instanceId": "1489957431118838105",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-51",
+      "instanceId": "8801387603217224608",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-52",
+      "instanceId": "1192753064399518041",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-53",
+      "instanceId": "2035702686150211929",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-54",
+      "instanceId": "1442220308437842265",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-55",
+      "instanceId": "6365525256664912800",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-56",
+      "instanceId": "7261255220415084889",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-57",
+      "instanceId": "6870996169570040153",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-58",
+      "instanceId": "7830738450453805401",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-59",
+      "instanceId": "3862201888859142489",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-6",
+      "instanceId": "6855345746830080345",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-7",
+      "instanceId": "4941501662533062880",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-8",
+      "instanceId": "3282674482661639560",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    },
+    {
+      "name": "psigreen-gpunodeset-9",
+      "instanceId": "1342564921003129177",
+      "zone": "us-central1-c",
+      "accelerator": "nvidia-l4"
+    }
+  ],
+  "newVmActions": []
+}

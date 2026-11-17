@@ -1,0 +1,65 @@
+{
+  "at": "2026-11-17T01:22:21.783228+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "newJobs": 0,
+  "accounting": "20230|NODE_FAIL|0:0|00:00:17|2026-11-17T01:18:16|2026-11-17T01:18:33|psigreen-l4spotnodeset-30\n",
+  "nodes": {
+    "psigreen-l4spotnodeset-26": "NodeName=psigreen-l4spotnodeset-26 Arch=x86_64 CoresPerSocket=2  CPUAlloc=4 CPUEfctv=4 CPUTot=4 CPULoad=1.01 AvailableFeatures=(null) ActiveFeatures=(null) Gres=gpu:1 NodeAddr=10.0.0.42 NodeHostName=psigreen-l4spotnodeset-26 Version=23.11.8 OS=Linux 4.18.0-553.94.1+2.1.el8_10_ciq.x86_64 #1 SMP Fri Jan 30 12:31:49 UTC 2026  RealMemory=15504 AllocMem=15504 FreeMem=270 Sockets=1 Boards=1 State=ALLOCATED+CLOUD ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=l4spot  BootTime=2026-11-17T00:52:38 SlurmdStartTime=2026-11-17T00:53:20 LastBusyTime=2026-11-17T00:54:43 ResumeAfterTime=None CfgTRES=cpu=4,mem=15504M,billing=4 AllocTRES=cpu=4,mem=15504M CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a\n",
+    "psigreen-l4spotnodeset-30": "NodeName=psigreen-l4spotnodeset-30 Arch=x86_64 CoresPerSocket=2  CPUAlloc=0 CPUEfctv=4 CPUTot=4 CPULoad=0.00 AvailableFeatures=(null) ActiveFeatures=(null) Gres=gpu:1 NodeAddr=psigreen-l4spotnodeset-30 NodeHostName=psigreen-l4spotnodeset-30 Version=23.11.8 OS=Linux 4.18.0-553.94.1+2.1.el8_10_ciq.x86_64 #1 SMP Fri Jan 30 12:31:49 UTC 2026  RealMemory=15504 AllocMem=0 FreeMem=299 Sockets=1 Boards=1 State=DOWN+CLOUD+NOT_RESPONDING+POWERING_UP ThreadsPerCore=2 TmpDisk=0 Weight=1 Owner=N/A MCS_label=N/A Partitions=l4spot  BootTime=None SlurmdStartTime=2026-11-17T00:30:55 LastBusyTime=2026-11-17T01:18:33 ResumeAfterTime=None CfgTRES=cpu=4,mem=15504M,billing=4 AllocTRES= CapWatts=n/a CurrentWatts=0 AveWatts=0 ExtSensorsJoules=n/a ExtSensorsWatts=0 ExtSensorsTemp=n/a Reason=GCP Error: ZONE_RESOURCE_POOL_EXHAUSTED_WITH_DETAILS: The zone 'projects/psivant-prod/zones/us-central1-c' does not have enough resources available to fulfill the request.  '(resource type:compute)'. [slurm@2026-11-17T01:18:33]\n"
+  },
+  "gpuQueue": "PARTITION|AVAIL|STATE|NODES\ngpu*|up|idle~|15\ngpu*|up|alloc|60\nl4spot|up|down#|3\nl4spot|up|down*|2\nl4spot|up|alloc|27\n",
+  "files": {
+    "vulkan_devices.py": {
+      "bytes": 3747,
+      "sha256": "13476c5fa373a39519906417a44dd33d93e573270a78b0546fb31b4eb708e9ad"
+    },
+    "collect_driver_libraries.py": {
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    "probe-adaptation.json": {
+      "bytes": 1850,
+      "sha256": "27c5dbd8e90e35d69ea8733a2fc9cb255da110ae1829a81a7eb66094c3d8159e"
+    },
+    "container.sh": {
+      "bytes": 218,
+      "sha256": "3077582737b3eb60bf2268fb8103e668428ea709de1fc097454a38b568022c64"
+    },
+    "gpu.sh": {
+      "bytes": 3538,
+      "sha256": "565be051747c66e408ee76bd12573eabf6f796a02ebc8c9ee105572acbd946f8"
+    },
+    "submission.json": {
+      "bytes": 11309,
+      "sha256": "0341a519e8125619ee890cc43ab0a604b2edb54b7075e4983d7fea2ac895a7d3"
+    },
+    "source-manifest.json": {
+      "bytes": 630,
+      "sha256": "1af42b5bea4500493215274907b492442927cb6f97166f443beafbc39bbe84f0"
+    },
+    "chrome-wrapper.sh": {
+      "bytes": 472,
+      "sha256": "d83935fa804672e1d466b06c0a18e9b2667f97c64d2c9dc131b275144c364e1b"
+    },
+    "probe.mjs": {
+      "bytes": 4510,
+      "sha256": "41c85b6c0bd7845cdaa44df496cc5f22c129b5ddb1ccb9794e0ebf2b58d1e08b"
+    },
+    "source-sha256.txt": {
+      "bytes": 578,
+      "sha256": "41355f5cf25174405506f68d3f6677c0e1cde6f4cacdcc5823b5334b2859462f"
+    }
+  },
+  "markers": {
+    "gpu-started": false,
+    "gpu-identity.txt": false,
+    "result.json": false,
+    "original": false,
+    "enable-gpu": false
+  }
+}

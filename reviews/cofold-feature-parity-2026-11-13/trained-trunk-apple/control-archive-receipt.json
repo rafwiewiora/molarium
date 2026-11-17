@@ -1,0 +1,13 @@
+{
+  "schema": "molarium.trained-trunk-precision-controls-archive.v1",
+  "archive": "apple-trained-trunk-precision-controls-20261117.tar.gz",
+  "bytes": 1208862374,
+  "sha256": "ec5b302d10e0ac036858bff174c6a6f681cb1e5c9b60ebdda45a8102e633f7e8",
+  "expandedBytes": 1317524942,
+  "members": 815,
+  "evidenceManifestSha256": "4787bf089e065e284020431f61258db0ca112cbad9151619b0fba733a1ec99bc",
+  "streamVerified": true,
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newCompletePredictions": 0
+}

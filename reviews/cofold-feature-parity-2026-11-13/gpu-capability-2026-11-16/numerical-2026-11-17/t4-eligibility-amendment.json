@@ -1,0 +1,161 @@
+{
+  "checkedAt": "2026-11-17T03:57:08.362963+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "t4Nodes": [
+    {
+      "NodeName": "psigreen-t4spotnodeset-0",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-1",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-2",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-3",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-4",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN",
+      "BootTime": "2026-11-13T17:18:18"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-5",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-6",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN",
+      "BootTime": "2026-11-13T17:10:11"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-7",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN",
+      "BootTime": "2026-11-13T17:05:50"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-8",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-9",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-10",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-11",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-12",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN",
+      "BootTime": "2026-11-13T17:23:45"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-13",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-14",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    },
+    {
+      "NodeName": "psigreen-t4spotnodeset-15",
+      "RealMemory": "14510",
+      "CPUTot": "4",
+      "Gres": "gpu:1",
+      "State": "IDLE+CLOUD+POWERED_DOWN+NOT_RESPONDING",
+      "BootTime": "None"
+    }
+  ],
+  "records": [
+    {
+      "jobId": 20398,
+      "before": "JobId=20398 JobName=molarium-qualified-controls UserId=rafal_wiewiora_psivant_com(1706645947) GroupId=rafal_wiewiora_psivant_com(1706645947) MCS_label=N/A Priority=1 Nice=0 Account=(null) QOS=normal JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-11-17T03:41:07 EligibleTime=2026-11-17T03:41:07 AccrueTime=2026-11-17T03:41:07 StartTime=2026-11-20T22:56:20 EndTime=2026-11-20T23:26:20 Deadline=2026-11-20T22:30:00 SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-17T03:56:48 Scheduler=Backfill:* Partition=gpu,l4spot AllocNode:Sid=psigreen-login-001:2512634 ReqNodeList=(null) ExcNodeList=psigreen-gpunodeset-[60-74],psigreen-l4spotnodeset-[21,30] NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=14G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=14G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003/gpu.sh WorkDir=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003 Comment=project:molarium,experiment:nvidia-fixed-input-controls,owner:rafal  StdErr=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003/logs/gpu-20398.log StdIn=/dev/null StdOut=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003/logs/gpu-20398.log Power= TresPerNode=gres/gpu:1 TresPerTask=cpu:4 \n",
+      "after": "JobId=20398 JobName=molarium-qualified-controls UserId=rafal_wiewiora_psivant_com(1706645947) GroupId=rafal_wiewiora_psivant_com(1706645947) MCS_label=N/A Priority=1 Nice=0 Account=(null) QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-11-17T03:41:07 EligibleTime=2026-11-17T03:41:07 AccrueTime=2026-11-17T03:41:07 StartTime=2026-11-20T22:56:20 EndTime=2026-11-20T23:26:20 Deadline=2026-11-20T22:30:00 SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-17T03:56:48 Scheduler=Backfill:* Partition=gpu,l4spot,t4spot AllocNode:Sid=psigreen-login-001:2512634 ReqNodeList=(null) ExcNodeList=psigreen-gpunodeset-[60-74],psigreen-l4spotnodeset-[21,30] NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=14G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=14G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003/gpu.sh WorkDir=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003 Comment=project:molarium,experiment:nvidia-fixed-input-controls,owner:rafal  StdErr=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003/logs/gpu-20398.log StdIn=/dev/null StdOut=/workspacenfs/rafal_wiewiora/molarium-nvidia-qualified-controls-20261117-attempt003/logs/gpu-20398.log Power= TresPerNode=gres/gpu:1 TresPerTask=cpu:4 \n",
+      "action": "Extended existing pending job to normal managed T4 Spot eligibility; no source, CPU/memory/GPU, priority, deadline, gate or autoscaling-configuration change.",
+      "sourceManifestSha256": "2ce3a1e80a7232735fc1e77810bc66958c34aba5fb12b6f8cb236d14578a9876",
+      "capabilityClaim": "No T4 allocation or WebGPU qualification claimed. Worker still requires actual physical NVIDIA adapter and all original scientific gates."
+    },
+    {
+      "jobId": 20399,
+      "before": "JobId=20399 JobName=molarium-strict-trunk UserId=rafal_wiewiora_psivant_com(1706645947) GroupId=rafal_wiewiora_psivant_com(1706645947) MCS_label=N/A Priority=1 Nice=0 Account=(null) QOS=normal JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-11-17T03:42:11 EligibleTime=2026-11-17T03:42:11 AccrueTime=2026-11-17T03:42:11 StartTime=2026-11-20T22:56:20 EndTime=2026-11-20T23:26:20 Deadline=2026-11-20T22:30:00 SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-17T03:57:08 Scheduler=Main Partition=gpu,l4spot AllocNode:Sid=psigreen-login-001:2513102 ReqNodeList=(null) ExcNodeList=psigreen-gpunodeset-[60-74],psigreen-l4spotnodeset-[21,30] NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=14G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=14G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002/gpu.sh WorkDir=/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002 Comment=project:molarium,experiment:nvidia-fixed-input-controls,owner:rafal  StdErr=/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002/logs/gpu-20399.log StdIn=/dev/null StdOut=/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002/logs/gpu-20399.log Power= TresPerNode=gres/gpu:1 TresPerTask=cpu:4 \n",
+      "after": "JobId=20399 JobName=molarium-strict-trunk UserId=rafal_wiewiora_psivant_com(1706645947) GroupId=rafal_wiewiora_psivant_com(1706645947) MCS_label=N/A Priority=1 Nice=0 Account=(null) QOS=normal JobState=PENDING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A SubmitTime=2026-11-17T03:42:11 EligibleTime=2026-11-17T03:42:11 AccrueTime=2026-11-17T03:42:11 StartTime=2026-11-20T22:56:20 EndTime=2026-11-20T23:26:20 Deadline=2026-11-20T22:30:00 SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-17T03:57:08 Scheduler=Main Partition=gpu,l4spot,t4spot AllocNode:Sid=psigreen-login-001:2513102 ReqNodeList=(null) ExcNodeList=psigreen-gpunodeset-[60-74],psigreen-l4spotnodeset-[21,30] NodeList= NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=4,mem=14G,node=1,billing=4 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=4 MinMemoryNode=14G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002/gpu.sh WorkDir=/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002 Comment=project:molarium,experiment:nvidia-fixed-input-controls,owner:rafal  StdErr=/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002/logs/gpu-20399.log StdIn=/dev/null StdOut=/workspacenfs/rafal_wiewiora/molarium-nvidia-strict-trunk-20261117-attempt002/logs/gpu-20399.log Power= TresPerNode=gres/gpu:1 TresPerTask=cpu:4 \n",
+      "action": "Extended existing pending job to normal managed T4 Spot eligibility; no source, CPU/memory/GPU, priority, deadline, gate or autoscaling-configuration change.",
+      "sourceManifestSha256": "bb74286ee381037fd0d7fa2120e3f46a5beac0388d8ff9026ee74142613bd482",
+      "capabilityClaim": "No T4 allocation or WebGPU qualification claimed. Worker still requires actual physical NVIDIA adapter and all original scientific gates."
+    }
+  ],
+  "newJobs": 0,
+  "standaloneVmActions": [],
+  "managedConfigurationChanges": [],
+  "automaticRetries": 0
+}
