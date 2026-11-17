@@ -81,6 +81,9 @@ gates and strict-FP32 shader guard. It supplies the shipped values through the
 validated host decoder, exposing the same captured names/shapes and logical
 FP32 representation. This isolates parameter rounding from the device INT5
 upload and half-arithmetic paths.
+The new allocation must also record its GPU, driver and shader hashes for
+comparison with the saved baseline before output differences are attributed
+solely to parameter rounding.
 
 The [producer adaptation](next-control/producer-adaptation.json) reverses exactly
 to the measured native-weight producer; its actual interpolated browser expression
