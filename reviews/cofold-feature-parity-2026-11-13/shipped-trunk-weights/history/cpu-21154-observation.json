@@ -1,0 +1,48 @@
+{
+  "observedAt": "2026-11-17T20:15:37.245364+00:00",
+  "jobId": 21154,
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "accounting": "21154|FAILED|1:0|00:00:00|2026-11-17T20:13:03|2026-11-17T20:13:03|psigreen-computenodeset-6",
+  "state": "FAILED",
+  "terminal": true,
+  "auditStarted": false,
+  "analysisExists": false,
+  "reencodingExists": false,
+  "newModelCalls": 0,
+  "gpuRequests": 0,
+  "files": {
+    "plan.json": {
+      "bytes": 2947,
+      "sha256": "4be4ff75b4ae1b0eb33e9a217e8ce028a93b8e41ee63d85ae4c983fd6a0c592f"
+    },
+    "source-manifest.json": {
+      "bytes": 1326,
+      "sha256": "398d72403cb65f80da6d06aa430841921a49e994333fbb167e941f228f8d1f1c"
+    },
+    "submission.json": {
+      "bytes": 3610,
+      "sha256": "6fd1452f5e965ad5ccc1161719a71d3aca2268a50becf930dce33e2ff6114f64"
+    },
+    "preflight.json": {
+      "bytes": 1768,
+      "sha256": "a84163ae173bf20f7f31ef6f5d8e50630637164350679677a9f8d0ae4aba3437"
+    },
+    "logs/cpu-21154.log": {
+      "bytes": 88,
+      "sha256": "16b9f46e759b5fcfc0695e5bf2097dc3db7a036e1dd52c0a90e196eee31996b5"
+    },
+    "parent-21153/launcher-error-outcome.json": {
+      "bytes": 499,
+      "sha256": "6fe0333cd4d5d7597f8d9224f9e84e957f6a1713a733bfe89fff313a1eb57691"
+    },
+    "parent-21153/launcher-error-stopped.json": {
+      "bytes": 526,
+      "sha256": "26dad9aa5c4772edbc635756ef535cb5949833abd4af80ada24818115d0050b3"
+    }
+  }
+}

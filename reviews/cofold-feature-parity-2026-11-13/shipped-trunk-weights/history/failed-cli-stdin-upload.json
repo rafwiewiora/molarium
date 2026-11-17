@@ -1,0 +1,14 @@
+{
+  "schema": "molarium.native-weight-blob-upload-verification.v1",
+  "status": "uploading",
+  "startedAt": "2026-11-17T20:34:26.026045+00:00",
+  "releaseId": 448040291,
+  "archiveBytes": 604789504,
+  "archiveSha256": "46df3199346512b29321a7e7dece80b9d701ef695eb24880b217287a812bd709",
+  "maximumRamPartBytes": 83886080,
+  "largeLocalFilesWritten": 0,
+  "parts": [],
+  "supportingAssets": [],
+  "newModelCalls": 0,
+  "newConversions": 0
+}

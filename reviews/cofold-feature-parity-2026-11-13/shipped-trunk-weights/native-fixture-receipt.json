@@ -1,0 +1,366 @@
+{
+  "schema": "molarium.trained-trunk-fixture.v1",
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "nativeReceiptSha256": "f2bbd6b47b800af95675ee1f5f48dffcc237f59655b058f5a42e2d8e7ee505d2",
+  "trunkReceiptSha256": "158b2ca5e3017de57436f6304d4cd2236adfab9e571ffa7088efcb53536dbbfa",
+  "targetSha256": "fd83e0729585cdf4ce8399c1533006df1aa7a6b7a1a66622c0dc088c739e4b5c",
+  "weightConverterRevision": "e68d628df1d815cccb48bb1118d8763a594bfa23",
+  "weightConverterFiles": {
+    "common.py": "2ce60315eec67571154d5b7238df28132b74870c31c51ddef4382bfa0c4a3dd0",
+    "openfold3.py": "1d8843c8ca57ad0780bb8d6be740f56beb852c37d4b3d652791f37179f67283d"
+  },
+  "cycles": 4,
+  "expectedSeams": {
+    "cycle-0.tap.z_init_generic": {
+      "file": "cycle-0.tap.z_init_generic.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "d6d1e2d95b7c371bf8fda1a9339ccd756ed1fedbb37427f417599687c896c6d9",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-0.tap.template_term": {
+      "file": "cycle-0.tap.template_term.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "bc1fa12e27b041cba65890aba760f1d2382545653fd0989a5d00787ddc9fa4f3",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-0.tap.z_after_template": {
+      "file": "cycle-0.tap.z_after_template.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "43ee7be6ab93d71cffd3fe961b957c744d8cfe7e0519dd06f505f5f75ab1e8a3",
+      "derivation": "FP32 sum of observed template-input z and observed template output, matching the stock run_trunk add."
+    },
+    "cycle-0.tap.msa_activations": {
+      "file": "cycle-0.tap.msa_activations.bin",
+      "shape": [
+        257,
+        238,
+        64
+      ],
+      "bytes": 15658496,
+      "sha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-0.tap.z_after_msa": {
+      "file": "cycle-0.tap.z_after_msa.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "75b2eb6bdc7f804b2e290f2bfc5cbec070087b481f4b63e785eb3fe37b4380b8",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-0.tap.trunk_in_single": {
+      "file": "cycle-0.tap.trunk_in_single.bin",
+      "shape": [
+        238,
+        384
+      ],
+      "bytes": 365568,
+      "sha256": "22530b3d7f703a6c1497afc0d3892df2edccb48b6f719b177de3436850ac1b51",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-0.tap.trunk_out_pair": {
+      "file": "cycle-0.tap.trunk_out_pair.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "d18ecc7869a1d6debbd6f2ae4eb10505d49060ff31aa4db1ed2b1f2f83a69074",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-0.trunk-output-single": {
+      "file": "cycle-0.trunk-output-single.bin",
+      "shape": [
+        238,
+        384
+      ],
+      "bytes": 365568,
+      "sha256": "8c11481fdb96d06d1520400fcf8aeff978bde802f2a64435dbc238017a49d8cb",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-1.tap.z_init_generic": {
+      "file": "cycle-1.tap.z_init_generic.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "a54895c63bc94e86b711da661bf698047182ff1cbf68011c7bcf8c53baf0de25",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-1.tap.template_term": {
+      "file": "cycle-1.tap.template_term.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "42f04f4d9957b3190a2b04dfdd97a9d81125baa82de1eec5adb5da2954fa36fe",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-1.tap.z_after_template": {
+      "file": "cycle-1.tap.z_after_template.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "81a01efedc16718e4bdc823f4e82686d340a29d2f5bdb98e480f6eb6557d093a",
+      "derivation": "FP32 sum of observed template-input z and observed template output, matching the stock run_trunk add."
+    },
+    "cycle-1.tap.msa_activations": {
+      "file": "cycle-1.tap.msa_activations.bin",
+      "shape": [
+        257,
+        238,
+        64
+      ],
+      "bytes": 15658496,
+      "sha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-1.tap.z_after_msa": {
+      "file": "cycle-1.tap.z_after_msa.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "84a29f0bfe1bcfd5cd9ab23da9fbcdae0ae0b1d45d8477d0bb0bb4759be9a3c1",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-1.tap.trunk_in_single": {
+      "file": "cycle-1.tap.trunk_in_single.bin",
+      "shape": [
+        238,
+        384
+      ],
+      "bytes": 365568,
+      "sha256": "d1100d420cfa78d1f5b52ccfc5e3fd19fef684741659e6403afbc137c4cf9728",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-1.tap.trunk_out_pair": {
+      "file": "cycle-1.tap.trunk_out_pair.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "b184646c7da4e8da0a905eec537204fce0a37b57932bc654c2972200f1964417",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-1.trunk-output-single": {
+      "file": "cycle-1.trunk-output-single.bin",
+      "shape": [
+        238,
+        384
+      ],
+      "bytes": 365568,
+      "sha256": "4ea20d3f5484c6ee6ea5384a543971ee8385c711379f711b4bfb8cdd1d9e4d3a",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-2.tap.z_init_generic": {
+      "file": "cycle-2.tap.z_init_generic.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "742a0c4a0e1247d90a21734be54491a8a30c3ce65405686f3e585406e4a7e22d",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-2.tap.template_term": {
+      "file": "cycle-2.tap.template_term.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "c4a8600d69e6fa0a5f8561f1e9005275e299eb6d8e83cafbbfc7650d657e7b7b",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-2.tap.z_after_template": {
+      "file": "cycle-2.tap.z_after_template.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "acc27c561cbbd846ff32d3619c63eb31911d03580db923ec86d0aa03e2f8e69b",
+      "derivation": "FP32 sum of observed template-input z and observed template output, matching the stock run_trunk add."
+    },
+    "cycle-2.tap.msa_activations": {
+      "file": "cycle-2.tap.msa_activations.bin",
+      "shape": [
+        257,
+        238,
+        64
+      ],
+      "bytes": 15658496,
+      "sha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-2.tap.z_after_msa": {
+      "file": "cycle-2.tap.z_after_msa.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "de6c93ff3c33086310fc046d32225795391d75b7c6f34c62c36390aa3f5a4ad9",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-2.tap.trunk_in_single": {
+      "file": "cycle-2.tap.trunk_in_single.bin",
+      "shape": [
+        238,
+        384
+      ],
+      "bytes": 365568,
+      "sha256": "68f39d2c1455e18c776c8c5995a6c9f0d121479205a79a5ad56bb6a5373bcb65",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-2.tap.trunk_out_pair": {
+      "file": "cycle-2.tap.trunk_out_pair.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "e08d18bea85114e962e5177fb351e9487df27702da11788088f1adb17d973a86",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-2.trunk-output-single": {
+      "file": "cycle-2.trunk-output-single.bin",
+      "shape": [
+        238,
+        384
+      ],
+      "bytes": 365568,
+      "sha256": "355dd2ec92c8aa8816be57200d54c38bab9803255b5b7895c13360289a2920e8",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-3.tap.z_init_generic": {
+      "file": "cycle-3.tap.z_init_generic.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "c58bb4a54e538d7f00a44dcb5eecc722f39087320b70b338b2870e83794933ff",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-3.tap.template_term": {
+      "file": "cycle-3.tap.template_term.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "ba81063fadb919cb189891f9b949cacc804e08faab6dd0339c7e14ea67467e2b",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-3.tap.z_after_template": {
+      "file": "cycle-3.tap.z_after_template.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "f98c652b3edcc57a316b135ee8ae481f3c0c44d30c4ce34a633c6c19aa432039",
+      "derivation": "FP32 sum of observed template-input z and observed template output, matching the stock run_trunk add."
+    },
+    "cycle-3.tap.msa_activations": {
+      "file": "cycle-3.tap.msa_activations.bin",
+      "shape": [
+        257,
+        238,
+        64
+      ],
+      "bytes": 15658496,
+      "sha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-3.tap.z_after_msa": {
+      "file": "cycle-3.tap.z_after_msa.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "1448c20da7c86ea52851980608caddfcad9a22bc5f81838a24177080b17fc650",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-3.tap.trunk_in_single": {
+      "file": "cycle-3.tap.trunk_in_single.bin",
+      "shape": [
+        238,
+        384
+      ],
+      "bytes": 365568,
+      "sha256": "7141a54c15bd1a8bc79034677f75e0b6e8592cff224eb3928975bb1ecc15e742",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-3.tap.trunk_out_pair": {
+      "file": "cycle-3.tap.trunk_out_pair.bin",
+      "shape": [
+        238,
+        238,
+        128
+      ],
+      "bytes": 29001728,
+      "sha256": "43f3563bb44c7a691d633af34f1c368b6c7465f56c6482427689d3cd308d7a03",
+      "derivation": "Direct stock-native module boundary."
+    },
+    "cycle-3.trunk-output-single": {
+      "file": "cycle-3.trunk-output-single.bin",
+      "shape": [
+        238,
+        384
+      ],
+      "bytes": 365568,
+      "sha256": "b62025ba2b9bffbd21ada0968eab82907c6527e466f49d7e7dab5fdb5cbf16d5",
+      "derivation": "Direct stock-native module boundary."
+    }
+  },
+  "gatesDeclaredBeforeRun": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "timingScope": "All browser readbacks/hooks and uploads included; not a speed benchmark.",
+  "scriptSha256": "f30f6ebf74be33e234ddddc3dbf5c3f728638545b8420549a913fc7175b2dbb3"
+}

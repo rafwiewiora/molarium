@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-11-17T20:10:05.989261+00:00",
+  "jobId": 21153,
+  "queueBefore": "21153|molarium-weight-audit|CONFIGURING|compute",
+  "cancelledWhileUnallocated": false,
+  "accounting": "21153|RUNNING|0:0|00:00:47|2026-11-17T20:09:19|Unknown|psigreen-computenodeset-6\n",
+  "auditStarted": false,
+  "resultsExist": false,
+  "logs": {},
+  "reason": "CPU launcher token replacement collided with PYTHONDONTWRITEBYTECODE; preserve source and stop before any data audit.",
+  "newModelCalls": 0
+}

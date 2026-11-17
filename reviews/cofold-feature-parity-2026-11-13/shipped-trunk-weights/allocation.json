@@ -1,0 +1,14 @@
+{
+  "observedAt": "2026-11-17T20:20:33.309485+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-computenodeset-7",
+    "instance/id": "5790061138638080081",
+    "instance/zone": "projects/734263838611/zones/us-central1-a"
+  },
+  "job": "JobId=21158 JobName=molarium-weight-audit UserId=rafal_wiewiora_psivant_com(1706645947) GroupId=rafal_wiewiora_psivant_com(1706645947) MCS_label=N/A Priority=1 Nice=0 Account=(null) QOS=normal JobState=RUNNING Reason=None Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=00:20:00 TimeMin=N/A SubmitTime=2026-11-17T20:19:01 EligibleTime=2026-11-17T20:19:01 AccrueTime=2026-11-17T20:19:01 StartTime=2026-11-17T20:20:33 EndTime=2026-11-17T20:40:33 Deadline=2026-11-20T22:30:00 SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-17T20:19:02 Scheduler=Main Partition=compute AllocNode:Sid=psigreen-login-001:2810068 ReqNodeList=(null) ExcNodeList=(null) NodeList=psigreen-computenodeset-7 BatchHost=psigreen-computenodeset-7 NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=6G,node=1,billing=2 AllocTRES=cpu=4,mem=6G,node=1,billing=4 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=6G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null) Command=/workspacenfs/rafal_wiewiora/molarium-shipped-trunk-weight-audit-20261117-attempt003/cpu.sh WorkDir=/workspacenfs/rafal_wiewiora/molarium-shipped-trunk-weight-audit-20261117-attempt003 Comment=project:molarium,experiment:shipped-trunk-weight-identity,owner:rafal  StdErr=/workspacenfs/rafal_wiewiora/molarium-shipped-trunk-weight-audit-20261117-attempt003/logs/cpu-21158.log StdIn=/dev/null StdOut=/workspacenfs/rafal_wiewiora/molarium-shipped-trunk-weight-audit-20261117-attempt003/logs/cpu-21158.log Power= TresPerTask=cpu:2 \n",
+  "cpus": "2",
+  "memoryMiB": "6144",
+  "gpuRequests": 0,
+  "newModelCalls": 0
+}

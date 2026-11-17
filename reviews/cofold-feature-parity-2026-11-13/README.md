@@ -67,6 +67,15 @@ Producer readiness and precision findings are linked to fixes, with failed stage
 retained. No complete-model parity or pose-error cause is inferred; production
 folding defaults are unchanged.
 
+The [shipped parameter audit](shipped-trunk-weights/README.md) now checks the
+same captured 169-tensor weight table against the actual browser bundle. All
+66 FP32 tensors match bit-for-bit; applying the pinned upstream quantizer
+reproduces all 103 INT5 tensors' codes, scales and offsets exactly. Independent
+host decoding hashes agree for every tensor. The resulting 3.85% relative
+parameter difference is separate from model-output and pose error. Complete
+native input weights are public; a strict-FP32 parameter-propagation control
+is queued, with no result claimed yet.
+
 Two diagnostic systems were selected before capture: STARD4 (9T51), with
 0.48 Å seed-paired mean browser/native ligand disagreement, and YTHDF2 (32QY),
 with 13.85 Å disagreement. Selection uses the observed discrepancy; these are

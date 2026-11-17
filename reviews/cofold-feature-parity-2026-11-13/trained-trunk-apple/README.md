@@ -86,6 +86,9 @@ and [verified upload](release-upload-verification.json) record SHA-256
 The trained-weights binary is omitted because offline error replay does not use
 it; its hash and metadata remain attached. New GPU recomputation requires
 separately obtaining that exact binary.
+The [later parameter audit](../shipped-trunk-weights/README.md#complete-public-inputs-and-replay)
+now provides this unchanged native weight blob in verified public parts; the
+original array archive and its omission record remain unchanged.
 
 The [second archive receipt](control-archive-receipt.json) and
 [verified upload](control-release-upload-verification.json) identify the

@@ -1,0 +1,63 @@
+{
+  "schema": "molarium.shipped-weight-trunk-producer-adaptation.v1",
+  "status": "Queued as regular-L4 job 21165; no GPU measurement yet",
+  "baseCommit": "e3f23623698f6b1e250d240edec6fdf62a6f6c0c",
+  "baseFile": "scripts/cofold-trained-trunk.browser.mjs",
+  "baseSha256": "a41ff308172877651e0f8036ee423c6dbdec6dbf581febead9dcc16a08717fe0",
+  "producerFile": "scripts/cofold-shipped-trunk.browser.mjs",
+  "producerSha256": "93e0f505dfaaafae3138ef2b418864e06ee85b359f0b32ba201017e12b27ad93",
+  "changes": [
+    {
+      "from": "// Observe the actual production trunk. Native seams/weights are required fixtures.",
+      "to": "// Controlled parameter experiment: shipped weights, captured native inputs, strict FP32 arithmetic.",
+      "occurrences": 1
+    },
+    {
+      "from": "const [fixture, output] = process.argv.slice(2);",
+      "to": "const [fixture, output, shipped] = process.argv.slice(2);",
+      "occurrences": 1
+    },
+    {
+      "from": "if (!output) throw Error('Usage: bun scripts/cofold-trained-trunk.browser.mjs FIXTURE NEW_OUTPUT_DIRECTORY');",
+      "to": "if (!output || !shipped) throw Error('Usage: bun scripts/cofold-shipped-trunk.browser.mjs NATIVE_FIXTURE NEW_OUTPUT_DIRECTORY SHIPPED_WEIGHT_AUDIT');",
+      "occurrences": 1
+    },
+    {
+      "from": "if (fixtureReceipt.schema !== 'molarium.trained-trunk-fixture.v1') throw Error('Wrong fixture');",
+      "to": "if (fixtureReceipt.schema !== 'molarium.trained-trunk-fixture.v1') throw Error('Wrong fixture');\nconst stockManifestBytes=await readFile(join(shipped,'stock-manifest.json'));\nconst stockAuditBytes=await readFile(join(shipped,'analysis.json'));\nconst stockManifest=JSON.parse(stockManifestBytes),stockAudit=JSON.parse(stockAuditBytes);\nconst nativeWeights=JSON.parse(await readFile(join(fixture,'weights.json')));\nif(stockAudit.status!=='complete'||stockAudit.tensors!==169||stockAudit.nativeWeightBlobSha256!==nativeWeights.blob.sha256)throw Error('Wrong parent weight audit');\nif(stockManifest.model.name!=='openbind0')throw Error('Wrong shipped model');\nfor(const[name,t]of Object.entries(nativeWeights.tensors))if(!stockManifest.tensors[name]||JSON.stringify(t.shape)!==JSON.stringify(stockManifest.tensors[name].shape))throw Error('Changed shipped tensor shape '+name);\nconst stockFiles=new Set(stockAudit.shards.map(r=>r.file));\nif(stockFiles.size!==8||stockAudit.shards.some(r=>r.sha256!==stockManifest.shardDigests[r.file]))throw Error('Changed shipped shard inventory');\n",
+      "occurrences": 1
+    },
+    {
+      "from": "  'vendor/localfold/shared/af3/featurise/contact-classes.js',",
+      "to": "  'vendor/localfold/shared/af3/featurise/contact-classes.js',\n  'vendor/localfold/shared/weights/dtype.js',",
+      "occurrences": 1
+    },
+    {
+      "from": "    else if(allowed.has(path.slice(1)))",
+      "to": "    else if(path==='/stock/manifest.json'){body=stockManifestBytes;type='application/json';}\n    else if(path.startsWith('/stock/')&&stockFiles.has(path.slice(7))){body=Bun.file(join(shipped,'shards',path.slice(7)));type='application/octet-stream';}\n    else if(allowed.has(path.slice(1)))",
+      "occurrences": 1
+    },
+    {
+      "from": "Stock-trained trunk comparison",
+      "to": "Shipped-weight trunk comparison",
+      "occurrences": 2
+    },
+    {
+      "from": "scope:fixtureReceipt.scope,fixtureReceiptSha256:sha(receiptBytes),",
+      "to": "scope:'Four-cycle parameter-rounding control: captured native features/MSA and host-decoded shipped INT5 weights with strict FP32 GPU arithmetic. No denoising, confidence, production GPU INT5 decoding or pose claim.',fixtureReceiptSha256:sha(receiptBytes),\n  shippedWeightAuditSha256:sha(stockAuditBytes),shippedManifestSha256:sha(stockManifestBytes),",
+      "occurrences": 1
+    },
+    {
+      "from": "      const receipt=await json('receipt.json'),wm=await json('weights.json');\n      const wb=await(await fetch('/fixture/weights.bin')).arrayBuffer();\n      if(wb.byteLength!==wm.blob.bytes||await digest(wb)!==wm.blob.sha256)throw Error('Weight blob changed');\n      for(const d of Object.values(wm.tensors))if(await digest(wb.slice(d.byteOffset,d.byteOffset+d.bytes))!==d.sha256)throw Error('Weight slice changed');\n      const store={manifest:wm,shape:name=>{if(!wm.tensors[name])throw Error('Missing tensor '+name);return wm.tensors[name].shape;},\n        tensor:async name=>{const d=wm.tensors[name];if(!d)throw Error('Missing tensor '+name);return new Float32Array(wb,d.byteOffset,d.bytes/4);},\n        tensorRangeSync:(name,from,count)=>{const d=wm.tensors[name];if(!d||from<0||from+count>d.bytes/4)throw Error('Weight bounds');return new Float32Array(wb,d.byteOffset+4*from,count);}};\n",
+      "to": "      const receipt=await json('receipt.json'),nativeWM=await json('weights.json');\n      const wm=await(await fetch('/stock/manifest.json')).json();\n      const {readTensor,readTensorRange}=await import('/vendor/localfold/shared/weights/dtype.js');\n      const blobs=new Map();\n      for(const[name,expected]of Object.entries(wm.shardDigests)){\n        const buffer=await(await fetch('/stock/'+name)).arrayBuffer();\n        if(await digest(buffer)!==expected)throw Error('Changed shipped shard '+name);\n        blobs.set(name,buffer);\n      }\n      // Expose the same captured names/shapes and logical FP32 representation.\n      // This deliberately isolates rounded values from the device INT5 upload path.\n      const manifest={model:nativeWM.model,tensors:Object.fromEntries(Object.entries(nativeWM.tensors).map(([name,d])=>[name,{shape:d.shape,dtype:'float32'}]))};\n      const descriptor=name=>{const d=wm.tensors[name];if(!manifest.tensors[name]||!d||!blobs.has(d.file))throw Error('Missing shipped tensor '+name);return d;};\n      const store={manifest,shape:name=>descriptor(name).shape,\n        tensor:async name=>{const d=descriptor(name);return readTensor(d,blobs.get(d.file),d.byteOffset);},\n        tensorRangeSync:(name,from,count)=>{const d=descriptor(name);return readTensorRange(d,blobs.get(d.file),d.byteOffset,from,count);}};\n",
+      "occurrences": 1
+    },
+    {
+      "from": "precisionControl:{pairMatrixKernels:false,requireNoF16Shaders:true}",
+      "to": "precisionControl:{pairMatrixKernels:false,requireNoF16Shaders:true,weightSource:'Pinned shipped INT5, production host decoder, FP32 GPU arithmetic'}",
+      "occurrences": 1
+    }
+  ],
+  "unchanged": "All trunk kernels, captured target/MSA inputs, four-cycle loop, original gates, strict FP32 shader guard and shared headless helper.",
+  "scope": "Isolate shipped parameter rounding under the same strict FP32 arithmetic; not production GPU INT5 upload or a complete prediction."
+}

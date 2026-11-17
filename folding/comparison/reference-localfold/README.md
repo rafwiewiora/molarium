@@ -1,0 +1,1 @@
+Unmodified upstream quantizer and license from https://github.com/sokrypton/localfold at commit `5ea3d42c911949700401b54003cb28c557fcf2a6`. Used only for data-only parameter re-encoding in the cofolding audit.
